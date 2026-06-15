@@ -5,7 +5,7 @@ export default function Restuarants() {
   const navigate = useNavigate()
   return (<div className="bg-white h-screen text-black text-sm flex  flex-col  items-center overflow-y-auto overflow-x-hidden">
     <section className="">
-      <h1 className="text-4xl text-center p-6 m-4 font-bold text-gray-900">Restuarants Website for You</h1>
+      <h1 className="text-5xl text-center p-6 m-4 font-bold text-gray-900">Restuarants Website for You</h1>
     </section>
     <p className="font-bold text-gray-400 text-2xl text-center">Live in 24hrs. Mobile-friendly Whatsapp order $49.5</p>
 
@@ -15,19 +15,10 @@ export default function Restuarants() {
     
     <p className="text-xl text-gray-400 text-center">I Will Reply in 5mins. No Upfront payment</p>
 
-    <section className="w-full flex flex-col justify-center items-center">
-      <h1
-        onClick={() => navigate("/home")}
-        className="italic active:scale-110 cursor-pointer py-6 text-3xl font-bold text-green-700 underline">See it Live</h1>
-      <div className="border-4 border-orange-400 rounded-2xl">
-        <iframe
-          className="w-full h-[300px]"
-          src="https://easitechlr.com"
-          >
-        </iframe>
-      </div>
-        <p className="p-4 italic font-semibold">This is Monrovia food center built by Easi Tech Lr.</p>
-    </section>
+    <h1 className="p-4 text-2xl">see my work</h1>
+    <a
+      className="italic bg-green-500 px-4 rounded-2xl shadow-xl shadow-black p-2 text-white font-bold active:bg-green-700"
+      onClick={() => navigate("/home")}>click here</a>
 
     <section className="p-8">
       <h1 className="p-2 text-center text-3xl font-bold m-2 text-green-800">What You get for $49.5</h1>
