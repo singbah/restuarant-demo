@@ -1,10 +1,15 @@
+import NavBar from "./navbar"
 
 const h3Style = "text-xl font-bold text-center py-2 "
 const pStyle = "p-2 text-l text-center"
 
 export default function AboutUs() {
   
-  return (<div className="h-screen relative p-4 lg:mx-40 lg:border ">
+  return (
+    <div className="h-screen relative">
+      <NavBar/>
+    <div className="p-4 lg:mx-40 lg:border overflow-y-auto">
+    
     <h1 className="text-center p-4 font-extrabold text-2xl">About Monrovia Food Center</h1>
     <p className={pStyle}>At Monrovia Food Center, food is more than a meal, it’s an experience. We believe in bringing people together through flavors that celebrate tradition while embracing creativity.</p>
 
@@ -25,6 +30,7 @@ export default function AboutUs() {
     <h3 className={h3Style}>✨ Our Promise  </h3>
     <p className={pStyle}>
       Great food, warm service, and a welcoming atmosphere—that’s what you’ll always find at Monrovia Food Center.
-    </p>
+        </p>
+  </div>
   </div>)
 }

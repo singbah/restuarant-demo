@@ -1,12 +1,15 @@
 
 import { FaWhatsapp, FaPhone, FaClock, FaLocationArrow } from "react-icons/fa"
 import { useNavigate } from "react-router-dom"
+import NavBar from "./navbar"
 
 
 export default function ContactSection() {
   const navigate = useNavigate()
 
-  return (<div className="relative h-screen flex flex-col justify-center items-center">
+  return (<div className="relative h-screen">
+    <NavBar/>
+    <div className="relative h-screen flex flex-col justify-center items-center">
     <a
       className="bg-green-600 text-2xl p-4 font-bold px-6 m-10 rounded-2xl text-white shadow-xl shadow-black whitespace-nowrap cursor-pointer active:bg-green-800 transition hover:bg-green-700"
       href="https://wa.me/231880868634?text=Hi, I want to order"><FaWhatsapp className="inline" size={50} /> Order On WhatsApp</a>
@@ -33,6 +36,7 @@ export default function ContactSection() {
       href="#">
       <FaPhone
         className="inline text-green-600 " size={30} />
-      +231777322000</a>
+        +231777322000</a>
+    </div>
   </div>)
 }

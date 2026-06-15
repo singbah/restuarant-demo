@@ -5,6 +5,7 @@ import MenuSection from "./components/menu"
 import AboutUs from "./components/about"
 import ContactSection from "./components/contact"
 import FindUs from "./components/map"
+import Restuarants from "./components/restaurants"
 import {
   FaFacebook, FaVoicemail,
   FaWhatsapp,
@@ -19,23 +20,13 @@ export default function App() {
   const navigate = useNavigate()
 
   return (<div className="relative">
-    <header className="bg-black text-white sticky top-0 flex justify-center items-center py-3 gap-3 z-50">
-      <nav className="flex justify-center items-center gap-2">
-        <a href="/" className={navAStyle}>Home</a>
-        <a onClick={() => navigate("menu")} className={navAStyle}>Menu</a>
-        <a onClick={() => navigate("contact")} className={navAStyle}>Contact</a>
-        <a onClick={() => navigate("about-us")}
-          className={navAStyle}>About</a>
-
-      </nav>
-    </header>
-
     <Routes>
       <Route path="/" element={<HeroSection />} />
       <Route path="/menu" element={<MenuSection />} />
       <Route path="/about-us" element={<AboutUs />} />
       <Route path="/contact" element={<ContactSection />} />
       <Route path="/find-us" element={<FindUs />} />
+      <Route path="/restaurants" element={<Restuarants />} />
     </Routes>
   </div>)
 }

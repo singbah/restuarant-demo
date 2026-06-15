@@ -1,8 +1,11 @@
-
+import NavBar from "./navbar"
 import { site_data } from "../data/site_data"
 
 export default function MenuSection() {
-  return (<div className="relative h-screen bg-black text-white text-sm flex flex-col items-center overflow-y-auto lg:mx-40">
+  return (
+    <div className="relative h-screen bg-black">
+      <NavBar/>
+    <div className=" bg-black text-white text-sm flex flex-col items-center overflow-y-auto lg:mx-40">
     
     <h1 className="text-2xl p-1 m-3 font-bold border w-1/2 rounded-ee-2xl rounded-l-2xl text-center">Food Menu</h1>
     <div className="flex flex-col justify-center items-center p-4 border m-1 rounded-2xl bg-amber-950">
@@ -41,6 +44,6 @@ export default function MenuSection() {
         </div>)}
       </section>
     </div>
-      
+    </div>
   </div>)
 }
