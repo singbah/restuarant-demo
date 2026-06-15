@@ -31,7 +31,7 @@ export default function Restuarants() {
             📱
           </div>
           <h2 className="text-center font-bold text-2xl">Mobile First</h2>
-          <p className="">90% of customer use phone. So your menu look perfect on line</p>
+          <p className="">90% of customers use phone. So your menu look perfect on line</p>
         </div>
     
         <div className="text-center p-6 rounded-2xl shadow-2xl flex flex-col border">
@@ -39,7 +39,7 @@ export default function Restuarants() {
             💬
           </div>
           <h2 className="text-center font-bold text-2xl">Whatsapp Order</h2>
-          <p className="">One tap custumer order directly from whatsapp not extra app</p>
+          <p className="">One tap customers order directly from whatsapp no extra app</p>
         </div>
 
         <div className="text-center p-6 rounded-2xl shadow-2xl flex flex-col border">
@@ -55,7 +55,7 @@ export default function Restuarants() {
             🌍
           </div>
           <h2 className="text-center font-bold text-2xl">Free Domain Name</h2>
-          <p className="">Your Business with free .com</p>
+          <p className="">Your Business name with free .com</p>
         </div>
       </div>
     </section>
