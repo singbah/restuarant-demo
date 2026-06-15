@@ -11,7 +11,7 @@ import {
 } from "react-icons/fa"
 
 
-const navAStyle = "px-3 p-1 rounded-2xl text-sm font-bold focus:text-red-500"
+const navAStyle = "px-3 p-1 rounded-2xl text-sm font-bold focus:text-red-500 cursor-pointer"
 const iconStyle = "inline"
 
 
