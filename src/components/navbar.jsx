@@ -9,7 +9,7 @@ export default function NavBar() {
   return (<div>
     <header className="bg-black text-white sticky top-0 flex justify-center items-center py-3 gap-3 z-50">
       <nav className="flex justify-center items-center gap-2">
-        <a href="/" className={navAStyle}>Home</a>
+        <a onClick={() => navigate("/home")} className={navAStyle}>Home</a>
         <a onClick={() => navigate("/menu")} className={navAStyle}>Menu</a>
         <a onClick={() => navigate("/contact")} className={navAStyle}>Contact</a>
         <a onClick={() => navigate("/about-us")}

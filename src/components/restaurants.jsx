@@ -1,6 +1,8 @@
 import { FaWhatsapp } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 export default function Restuarants() {
+  const navigate = useNavigate()
   return (<div className="bg-white h-screen text-black text-sm flex  flex-col  items-center overflow-y-auto overflow-x-hidden">
     <section className="">
       <h1 className="text-4xl text-center p-6 m-4 font-bold text-gray-900">Restuarants Website for You</h1>
@@ -14,7 +16,9 @@ export default function Restuarants() {
     <p className="text-xl text-gray-400 text-center">I Will Reply in 5mins. No Upfront payment</p>
 
     <section className="w-full flex flex-col justify-center items-center">
-      <h1 className="py-6 text-3xl font-bold text-blue-700">See it Live</h1>
+      <h1
+        onClick={() => navigate("/home")}
+        className="italic active:scale-110 cursor-pointer py-6 text-3xl font-bold text-green-700 underline">See it Live</h1>
       <div className="border-4 border-orange-400 rounded-2xl">
         <iframe
           className="w-full h-[300px]"

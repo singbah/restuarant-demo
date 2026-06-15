@@ -6,9 +6,7 @@ import AboutUs from "./components/about"
 import ContactSection from "./components/contact"
 import FindUs from "./components/map"
 import Restuarants from "./components/restaurants"
-import {
-  FaFacebook, FaVoicemail,
-  FaWhatsapp,
+import {FaFacebook, FaVoicemail, FaWhatsapp,
 } from "react-icons/fa"
 
 
@@ -21,12 +19,13 @@ export default function App() {
 
   return (<div className="relative">
     <Routes>
-      <Route path="/" element={<HeroSection />} />
+      <Route path="/home" element={<HeroSection />} />
+      <Route path="/menu" element={<MenuSection />} />
       <Route path="/menu" element={<MenuSection />} />
       <Route path="/about-us" element={<AboutUs />} />
       <Route path="/contact" element={<ContactSection />} />
       <Route path="/find-us" element={<FindUs />} />
-      <Route path="/restaurants" element={<Restuarants />} />
+      <Route path="/" element={<Restuarants />} />
     </Routes>
   </div>)
 }
