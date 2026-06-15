@@ -20,7 +20,7 @@ export default function MenuSection() {
           <p className="text-sm italic text-red-500 font-extrabold p-1">Price: {data.price}</p>
           <p className="p-2 text-gray-400 italic">{data.desc}</p>
           <a
-            href={`https://wa.me/0880868634?text=I want ${data.name}`}
+            href={`https://wa.me/231880868634?text=I want ${data.name}`}
             className="bg-amber-500 px-4 m-2 rounded p-1 font-semibold active:scale-110 active:bg-amber-800">Order Now</a>
         </div>)}
       </section>
@@ -39,7 +39,7 @@ export default function MenuSection() {
           <p className="text-sm italic text-red-500 font-extrabold p-1">Price: {data.price}</p>
           <p className="p-2 text-gray-400 italic">{data.desc}</p>
           <a
-            href={`https://wa.me/0880868634?text=I want ${data.name}`}
+            href={`https://wa.me/231880868634?text=I want ${data.name}`}
             className="bg-amber-500 px-4 m-2 rounded p-1 font-semibold active:scale-110 active:bg-amber-800">Order Now</a>
         </div>)}
       </section>
