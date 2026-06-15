@@ -16,7 +16,9 @@ export default function MenuSection() {
           <h1 className="text-xl font-bold py-1">{data.name}</h1>
           <p className="text-sm italic text-red-500 font-extrabold p-1">Price: {data.price}</p>
           <p className="p-2 text-gray-400 italic">{data.desc}</p>
-          <button className="bg-amber-500 px-4 m-2 rounded p-1 font-semibold active:scale-110 active:bg-amber-800">Order Now</button>
+          <a
+            href={`https://wa.me/0880868634?text=I want ${data.name}`}
+            className="bg-amber-500 px-4 m-2 rounded p-1 font-semibold active:scale-110 active:bg-amber-800">Order Now</a>
         </div>)}
       </section>
     </div>
@@ -33,7 +35,9 @@ export default function MenuSection() {
           <h1 className="text-xl font-bold py-1">{data.name}</h1>
           <p className="text-sm italic text-red-500 font-extrabold p-1">Price: {data.price}</p>
           <p className="p-2 text-gray-400 italic">{data.desc}</p>
-          <button className="bg-amber-500 px-4 m-2 rounded p-1 font-semibold active:scale-110 active:bg-amber-800">Order Now</button>
+          <a
+            href={`https://wa.me/0880868634?text=I want ${data.name}`}
+            className="bg-amber-500 px-4 m-2 rounded p-1 font-semibold active:scale-110 active:bg-amber-800">Order Now</a>
         </div>)}
       </section>
     </div>

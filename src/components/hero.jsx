@@ -17,6 +17,6 @@ export default function HeroSection() {
     <h1 className="uppercase text-3xl font-bold m-3 p-1 text-center">Monrovia Food Center</h1>
     <a
       href="https://wa.me/0880868634?text=Hello, I woul like to order from your menu"
-      className="bg-orange-400 px-4 text-2xl p-3 border rounded-2xl shadow-2xl shadow-white hover:scale-110 hover:bg-amber-500 m-5 active:scale-110 font-semibold active:bg-orange-700">Order Now</a>
+      className="bg-orange-400 px-4 text-2xl p-3 border rounded-2xl shadow-xl shadow-black hover:scale-110 hover:bg-amber-500 m-5 active:scale-110 font-semibold active:bg-orange-700">Order Now</a>
   </div>) 
 }
