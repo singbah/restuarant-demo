@@ -8,6 +8,7 @@ import FindUs from "./components/map"
 import Restuarants from "./components/restaurants"
 import {FaFacebook, FaVoicemail, FaWhatsapp,
 } from "react-icons/fa"
+import ProductView from "./components/productsview"
 
 
 const navAStyle = "px-3 p-1 rounded-2xl text-sm font-bold focus:text-red-500 cursor-pointer"
@@ -19,13 +20,13 @@ export default function App() {
 
   return (<div className="relative">
     <Routes>
+      <Route path="/" element={<Restuarants />} />
       <Route path="/home" element={<HeroSection />} />
-      <Route path="/menu" element={<MenuSection />} />
       <Route path="/menu" element={<MenuSection />} />
       <Route path="/about-us" element={<AboutUs />} />
       <Route path="/contact" element={<ContactSection />} />
       <Route path="/find-us" element={<FindUs />} />
-      <Route path="/" element={<Restuarants />} />
+      <Route path="/product" element={<ProductView />} />
     </Routes>
   </div>)
 }
