@@ -5,10 +5,10 @@ export default function Restuarants() {
   const navigate = useNavigate()
   return (<div className="bg-white h-screen text-black text-sm flex  flex-col  items-center overflow-y-auto overflow-x-hidden">
     <section className="">
-      <h1 className="text-6xl text-center p-6 m-4 font-bold text-gray-900">Restuarants Website for You</h1>
+      <h1 className="text-6xl text-center p-6 m-4 font-bold text-gray-900">Welcome to Easi Tech Lr.</h1>
     </section>
 
-    <p className="m-4 text-xl font-semibold text-red-500 text-center">Stop loosing customers to restaurants with websites</p>
+    <p className="m-4 text-xl font-semibold text-red-500 text-center">Stop loosing customers to others with websites</p>
     
     <p className="font-bold text-gray-400 text-2xl text-center">Live in 24hrs. Mobile-friendly Whatsapp order $49.5</p>
 
@@ -18,10 +18,12 @@ export default function Restuarants() {
     
     <p className="text-xl text-gray-400 text-center">I Will Reply in 5mins. No Upfront payment</p>
 
-    <h1 className="p-4 text-2xl">see my work</h1>
+    <section className="flex flex-col border p-5 m-4 bg-black rounded-2xl text-white">
+      <h1 className="p-4 text-2xl text-center font-bold uppercase">see my work</h1>
     <a
-      className="italic bg-green-500 px-4 rounded-2xl shadow-xl shadow-black p-2 text-white font-bold active:bg-green-700"
-      onClick={() => navigate("/home")}>click here</a>
+      className="italic border-2 px-8 rounded-2xl shadow-xl shadow-black p-2 text-red-600 font-bold active:bg-green-700 text-2xl text-center"
+      onClick={() => navigate("/home")}>See Live Demo</a>
+    </section>
 
     <section className="p-8">
       <h1 className="p-2 text-center text-3xl font-bold m-2 text-green-800">What You get for $49.5</h1>
