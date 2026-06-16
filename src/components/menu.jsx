@@ -21,6 +21,7 @@ export default function MenuSection() {
           className="border flex flex-col w-full justify-center items-center rounded-2xl"
           key={index}>
           <img
+            onClick={() => viewProduct(data) }
             className="h-2/1 rounded-2xl"
             src={data.photo} alt="food photo here" />
           <h1 className="text-xl font-bold py-1">{data.name}</h1>
@@ -40,6 +41,7 @@ export default function MenuSection() {
           className="border flex flex-col w-full justify-center items-center rounded-2xl"
           key={index}>
           <img
+            onClick={() => viewProduct(data) }
             className="h-2/1 rounded-2xl"
             src={data.photo} alt="food photo here" />
           <h1 className="text-xl font-bold py-1">{data.name}</h1>
