@@ -1,14 +1,13 @@
 import HeroSection from "./components/hero"
 import { FanIcon } from "lucide-react"
 import { Route, Routes, useNavigate } from "react-router-dom"
-import MenuSection from "./components/menu"
 import AboutUs from "./components/about"
 import ContactSection from "./components/contact"
 import FindUs from "./components/map"
 import Restuarants from "./components/restaurants"
 import {FaFacebook, FaVoicemail, FaWhatsapp,
 } from "react-icons/fa"
-import ProductView from "./components/productsview"
+
 
 
 const navAStyle = "px-3 p-1 rounded-2xl text-sm font-bold focus:text-red-500 cursor-pointer"
@@ -22,11 +21,9 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Restuarants />} />
       <Route path="/home" element={<HeroSection />} />
-      <Route path="/menu" element={<MenuSection />} />
       <Route path="/about-us" element={<AboutUs />} />
       <Route path="/contact" element={<ContactSection />} />
       <Route path="/find-us" element={<FindUs />} />
-      <Route path="/product" element={<ProductView />} />
     </Routes>
   </div>)
 }

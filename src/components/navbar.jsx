@@ -14,7 +14,6 @@ export default function NavBar() {
         <a onClick={() => navigate("/contact")} className={navAStyle}>Contact</a>
         <a onClick={() => navigate("/about-us")}
           className={navAStyle}>About</a>
-
       </nav>
     </header>
   </div>)

@@ -3,71 +3,117 @@ import { useNavigate } from "react-router-dom";
 
 export default function Restuarants() {
   const navigate = useNavigate()
-  return (<div className="bg-white h-screen text-black text-sm flex  flex-col  items-center overflow-y-auto overflow-x-hidden">
-    <section className="">
-      <h1 className="text-6xl text-center p-6 m-4 font-bold text-gray-900">Welcome to Easi Tech Lr.</h1>
-    </section>
+  const pStyle = 'px-2'
+  const h2Style = "px-4 text-xl font-extrabold"
+  const uListStyle = "flex flex-col justify-center px-10 list-disc"
+  return (<div className="bg-white h-screen text-black text-sm flex  flex-col  items-center overflow-y-auto overflow-x-hidden font-serif text-[16px]">
+    <header>
+      <ul>
+        <a>Contact</a>
+      </ul>
+    </header>
 
-    <p className="m-4 text-xl font-semibold text-red-500 text-center">Stop loosing customers to others with websites</p>
-    
-    <p className="font-bold text-gray-400 text-2xl text-center">Live in 24hrs. Mobile-friendly Whatsapp order $49.5</p>
-
-    <a
-      className="p-4 font-bold text-xl bg-green-700 text-white px-8 rounded-3xl m-8 shadow-2xl shadow-black"
-      href="https://wa.me/231880868634?text=I want a website for my resturant"><FaWhatsapp className="inline" size={40} /> +231 880 868 634</a>
-    
-    <p className="text-xl text-gray-400 text-center">I Will Reply in 5mins. No Upfront payment</p>
-
-    <section className="flex flex-col border p-5 m-4 bg-black rounded-2xl text-white">
-      <h1 className="p-4 text-2xl text-center font-bold uppercase">see my work</h1>
-    <a
-      className="italic border-2 px-8 rounded-2xl shadow-xl shadow-black p-2 text-red-600 font-bold active:bg-green-700 text-2xl text-center"
-      onClick={() => navigate("/home")}>See Live Demo</a>
-    </section>
-
-    <section className="p-8">
-      <h1 className="p-2 text-center text-3xl font-bold m-2 text-green-800">What You get for $49.5</h1>
-      <div className="grid grid-cols-2 gap-8">
-        <div className="text-center p-6 rounded-2xl shadow-2xl flex flex-col border">
-          <div className="text-4xl text-center m-4">
-            📱
-          </div>
-          <h2 className="text-center font-bold text-2xl">Mobile First</h2>
-          <p className="">90% of customers use phone. So your menu look perfect on line</p>
-        </div>
-    
-        <div className="text-center p-6 rounded-2xl shadow-2xl flex flex-col border">
-          <div className="text-4xl text-center m-4 text-green-600">
-            💬
-          </div>
-          <h2 className="text-center font-bold text-2xl">Whatsapp Order</h2>
-          <p className="">One tap customers order directly from whatsapp no extra app</p>
-        </div>
-
-        <div className="text-center p-6 rounded-2xl shadow-2xl flex flex-col border">
-          <div className="text-4xl text-center m-4 text-green-600">
-            🚀
-          </div>
-          <h2 className="text-center font-bold text-2xl">Live in 24hrs</h2>
-          <p className="">Send me your menu and your site will be live tomorrow</p>
-        </div>
-
-        <div className="text-center p-6 rounded-2xl shadow-2xl flex flex-col border">
-          <div className="text-4xl text-center m-4 text-green-600">
-            🌍
-          </div>
-          <h2 className="text-center font-bold text-2xl">Free Domain Name</h2>
-          <p className="">Your Business name with free .com</p>
+    <section>
+      
+      <div className="m-1 my-6">
+        <h1 className="p-4 text-2xl font-bold">How Much Does a Website Cost in Monrovia, Liberia in 2026?</h1>
+        <div className="border m-2 rounded bg-blue-50 border-gray-300 text-sm">
+          <p className={pStyle}>If you’re planning to build a website for your 
+          business in Monrovia, one of the first questions you’ll ask is: 
+          “How much will it cost?”</p>
+        <p className={pStyle}>The answer depends on the type of website you need, 
+          the features required, and who builds it. In this guide, 
+          we’ll break down realistic website costs in Liberia in 2026.</p>
         </div>
       </div>
-    </section>
 
-    <section className="py-16 px-6 text-center">
-      <h1 className="text-xl font-bold m-8">Ready to go <a className="text-green-600">online</a></h1>
-      <a
-        className="text-white text-xl p-4 bg-green-600 px-4 shadow-2xl m-4 rounded-xl shadow-black font-mono"
-        href="https://wa.me/231880868634?text=I want build a website for my restaurant"><FaWhatsapp className="inline" size={40}/> Whatsap Me Now</a>
-    </section>
+      <div className="bg-amber-50 mx-2 rounded p-2">
+        <h2 className={h2Style}> 1. Basic Business Website</h2>
+        <h3 className="px-5 text-xl "> basic business website is ideal for:</h3>
+        <ul className={uListStyle}>
+          <li>Small businesses</li>
+          <li>NGOS</li>
+          <li>Restaurants</li>
+          <li>Personal brands</li>
+          <li>churches</li>
+        </ul>
+        <h3 className="px-5 text-xl py-2">Typical features include:</h3>
+        <ul className={uListStyle}>
+          <li>Home page</li>
+          <li>About page</li>
+          <li>Services page</li>
+          <li>Contact page</li>
+          <li>Mobile-friendly design</li>
+        </ul>
+        <p className="pb-4 text-red-500 px-4">Estimated Cost: USD $200 - $600</p>
+      </div>
 
+      <div className="bg-amber-50 mx-2 rounded p-2">
+        <h2 className={h2Style}> 2. Professional Business Website</h2>
+        <h3 className="px-5 text-xl "> A professional website typically includes:</h3>
+        <ul className={uListStyle}>
+          <li>Custom design</li>
+          <li>Multiple service pages</li>
+          <li>Blog functionality</li>
+          <li>SEO optimization</li>
+          <li>Contact forms</li>
+          <li>Analytics integration</li>
+        </ul>
+        <p className="p-4 text-red-500">Estimated Cost: USD $600 - $1,500</p>
+      </div>
+
+      <div className="bg-amber-50 mx-2 rounded p-2">
+        <h2 className={h2Style}>3. E-Commerce Website</h2>
+        <p className="px-4">If you want to sell products online, you’ll need an e-commerce website.</p>
+        <h3 className="px-5 text-xl ">Features may include:</h3>
+
+        <ul className={uListStyle}>
+          <li>Product catalog</li>
+          <li>Shopping cart</li>
+          <li>Customer accounts</li>
+          <li>Online payments</li>
+          <li>Inventory management</li>
+        </ul>
+        <p className="p-4 text-red-500">Estimated Cost: USD $1,000 - $5,000+</p>
+      </div>
+
+      <div className="bg-amber-50 mx-2 rounded p-2">
+        <h2 className={h2Style}>4. Custom Web Applications</h2>
+        <h3 className="px-5 text-xl ">Custom systems such as:</h3>
+
+        <ul className={uListStyle}>
+          <li>School management portals</li>
+          <li>Hospital systems</li>
+          <li>Booking platforms</li>
+          <li>CRM software</li>
+          <li>Customer dashboards</li>
+        </ul>
+        <p className="p-4 text-red-500">Estimated Cost: USD $2,000 - $20,000+</p>
+      </div>
+
+      <div className="flex flex-col bg-amber-200 p-4 m-2 rounded-xl">
+        <h1 className="font-bold text-2xl text-center">Additional Costs to Consider</h1>
+        <h2 className="font-bold">Domain Name</h2>
+        <p>A domain name is your website address</p>
+        <h4 className="font-semibold">Examples</h4>
+        <ul className="px-4 list-disc">
+          <li>yourbusiness.com</li>
+          <li>yourbusiness.l</li>
+        </ul>
+        <p className="font-bold text-red-500 p-2">Estimate Cost: USD $10 - $50 per year</p>
+
+        <h2 className="font-bold">Web Hosting</h2>
+        <p>Hosting keeps your website online.</p>
+        <h3 className="font-black p-2">Estimated Cost:</h3>
+        <ul className="list-disc px-4 text-red-600">
+          <li>Shared hosting: USD $50-150/month</li>
+          <li>Shared hosting: USD $200-1,000/month</li>
+        </ul>
+
+        <h2 className="font-bold">Mantaince</h2>
+        <p>Websites require updates, backups and security monitoring.</p>
+        <p>Estimated Cost: USD $10 - $100/month</p>
+      </div>
+    </section>
   </div>)
 }
