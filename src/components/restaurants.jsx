@@ -1,3 +1,4 @@
+import { MenuIcon } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
@@ -7,12 +8,6 @@ export default function Restuarants() {
   const h2Style = "px-4 text-xl font-extrabold"
   const uListStyle = "flex flex-col justify-center px-10 list-disc"
   return (<div className="bg-white h-screen text-black text-sm flex  flex-col  items-center overflow-y-auto overflow-x-hidden font-serif text-[16px]">
-    <header>
-      <ul>
-        <a>Contact</a>
-      </ul>
-    </header>
-
     <section>
       
       <div className="m-1 my-6">
@@ -91,7 +86,7 @@ export default function Restuarants() {
         <p className="p-4 text-red-500">Estimated Cost: USD $2,000 - $20,000+</p>
       </div>
 
-      <div className="flex flex-col bg-amber-200 p-4 m-2 rounded-xl">
+      <div className="flex flex-col bg-white shadow-black shadow-2xl p-4 m-4 rounded-xl">
         <h1 className="font-bold text-2xl text-center">Additional Costs to Consider</h1>
         <h2 className="font-bold">Domain Name</h2>
         <p>A domain name is your website address</p>
