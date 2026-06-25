@@ -93,7 +93,7 @@ export default function Restuarants() {
         <h4 className="font-semibold">Examples</h4>
         <ul className="px-4 list-disc">
           <li>yourbusiness.com</li>
-          <li>yourbusiness.l</li>
+          <li>yourbusiness.lr</li>
         </ul>
         <p className="font-bold text-red-500 p-2">Estimate Cost: USD $10 - $50 per year</p>
 
@@ -101,8 +101,8 @@ export default function Restuarants() {
         <p>Hosting keeps your website online.</p>
         <h3 className="font-black p-2">Estimated Cost:</h3>
         <ul className="list-disc px-4 text-red-600">
-          <li>Shared hosting: USD $50-150/month</li>
-          <li>Shared hosting: USD $200-1,000/month</li>
+          <li>Shared hosting: USD $50-150/year</li>
+          <li>Shared hosting: USD $200-1,000/year</li>
         </ul>
 
         <h2 className="font-bold">Mantaince</h2>
