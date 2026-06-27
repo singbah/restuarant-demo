@@ -1,12 +1,12 @@
-import HeroSection from "./components/hero"
-import { FanIcon } from "lucide-react"
 import { Route, Routes, useNavigate } from "react-router-dom"
-import AboutUs from "./components/about"
-import ContactSection from "./components/contact"
-import FindUs from "./components/map"
-import Restuarants from "./components/restaurants"
+import { FanIcon } from "lucide-react"
 import {FaFacebook, FaVoicemail, FaWhatsapp,
 } from "react-icons/fa"
+
+import HeroSection from "./components/hero"
+import ContactSection from "./components/contact"
+import Restuarants from "./components/restaurants"
+import LayoutScreen from "./components/layouts/Layout"
 
 
 
@@ -19,11 +19,8 @@ export default function App() {
 
   return (<div className="relative">
     <Routes>
-      <Route path="/" element={<Restuarants />} />
+      <Route path="/" element={<LayoutScreen />} />
       <Route path="/home" element={<HeroSection />} />
-      <Route path="/about-us" element={<AboutUs />} />
-      <Route path="/contact" element={<ContactSection />} />
-      <Route path="/find-us" element={<FindUs />} />
     </Routes>
   </div>)
 }

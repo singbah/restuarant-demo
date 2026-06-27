@@ -2,12 +2,15 @@ import { MenuIcon } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
+import NavBar from "./layouts/navbar";
+
 export default function Restuarants() {
   const navigate = useNavigate()
   const pStyle = 'px-2'
   const h2Style = "px-4 text-xl font-extrabold"
   const uListStyle = "flex flex-col justify-center px-10 list-disc"
   return (<div className="bg-white h-screen text-black text-sm flex  flex-col  items-center overflow-y-auto overflow-x-hidden font-serif text-[16px]">
+    <NavBar/>
     <section>
       
       <div className="m-1 my-6">

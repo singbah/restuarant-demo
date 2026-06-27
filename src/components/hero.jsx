@@ -1,5 +1,7 @@
-import NavBar from "./navbar"
+
 import { useNavigate } from "react-router-dom"
+
+import NavBar from "./layouts/navbar"
 
 
 export default function HeroSection() {

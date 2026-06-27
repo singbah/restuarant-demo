@@ -1,7 +1,7 @@
 
 import { FaWhatsapp, FaPhone, FaClock, FaLocationArrow } from "react-icons/fa"
 import { useNavigate } from "react-router-dom"
-import NavBar from "./navbar"
+import NavBar from "./layouts/navbar"
 
 
 export default function ContactSection() {
