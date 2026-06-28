@@ -1,6 +1,7 @@
 import { HomeIcon, MenuIcon } from "lucide-react";
 import { BsYoutube } from "react-icons/bs";
 import { FaFacebook, FaTiktok, FaWhatsapp } from "react-icons/fa";
+import NewsLetter from "../forms/NewsLetters";
 
 function Footer1(){
     const footerP = "flex flex-col justify-center items-center px-4"
@@ -28,7 +29,9 @@ function Footer1(){
 };
 
 function Footer2(){
-    return(<footer className="flex bg-black text-white gap-6 p-2 justify-center items-center">
+    return(<div className="bg-black m-0">
+        <NewsLetter/>
+        <footer className="flex bg-black text-white gap-6 p-2 justify-center items-center">
         <a 
         
         className="text-blue-500 text-2xl px-4 active:scale-110 hover:text-blue-800 cursor-pointer transition"
@@ -44,7 +47,8 @@ function Footer2(){
         <a 
             className="text-black bg-white rounded-full p-1 text-xl active:scale-110 hover:text-gray-800 cursor-pointer transition"
         href="https://www.wa.me"><FaTiktok/></a>
-    </footer>)
+    </footer>
+    </div>)
 }
 
 export {Footer1, Footer2}

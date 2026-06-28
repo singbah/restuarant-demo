@@ -11,8 +11,8 @@ export default function NavBar() {
     <header className="bg-black text-white sticky top-0 flex flex-col lg:flex-row justify-center items-center py-3 lg:gap-10 gap-2 z-50">
       <nav className="flex justify-center items-center gap-4">
         <a onClick={() => navigate("/")} className={navAStyle}>Home</a>
-        <a onClick={() => navigate("/menu")} className={navAStyle}>Blogs</a>
-        <a onClick={() => navigate("/contact")} className={navAStyle}>Contact</a>
+        <a onClick={() => navigate("/home")} className={navAStyle}>Blogs</a>
+        <a onClick={() => navigate("/blog")} className={navAStyle}>Contact</a>
         <a onClick={() => navigate("/about-us")}
           className={navAStyle}>About</a>
       </nav>

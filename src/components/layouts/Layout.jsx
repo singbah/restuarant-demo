@@ -8,6 +8,7 @@ import NavBar from "./navbar"
 import PostCard from "../blog/PostCards"
 import PostLists from "../blog/PostLists"
 import ContactForm from "../forms/ContactForms"
+import NewsLetter from "../forms/NewsLetters"
 
 
 export default function LayoutScreen({compo}){
@@ -28,15 +29,14 @@ export default function LayoutScreen({compo}){
         <NavBar/>
         {compo?compo:
         <div 
-            className="flex-1 m-1 
+            className="flex-1 
             gap-2 overflow-y-auto flex flex-col lg:flex-row lg:mx-20 ">
             <div className=" lg:w-full lg:overflow-y-auto">
-                <ContactForm/>
+                
+            <Footer2/>
             </div>
             <div className=" lg:w-1/3 lg:overflow-y-auto">
-                
             </div>
         </div>}
-        <Footer2/>
     </div>)
 }

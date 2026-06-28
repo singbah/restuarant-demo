@@ -3,9 +3,6 @@ import { FanIcon } from "lucide-react"
 import {FaFacebook, FaVoicemail, FaWhatsapp,
 } from "react-icons/fa"
 
-import HeroSection from "./components/hero"
-import ContactSection from "./components/contact"
-import Restuarants from "./components/restaurants"
 import LayoutScreen from "./components/layouts/Layout"
 
 
@@ -20,7 +17,6 @@ export default function App() {
   return (<div className="relative">
     <Routes>
       <Route path="/" element={<LayoutScreen />} />
-      <Route path="/home" element={<HeroSection />} />
     </Routes>
   </div>)
 }
