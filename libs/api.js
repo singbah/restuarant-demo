@@ -15,7 +15,7 @@ async function getBlogs(){
     }
 };
 
-async function userFetch(url) {
+async function fetchUrl(url) {
     try{
         const response = await axios.get(`${API_URL}${url}`);
         const data = response.data;
@@ -28,4 +28,4 @@ async function userFetch(url) {
 }
 
 
-export {getBlogs, API_URL, userFetch}
+export {getBlogs, API_URL, fetchUrl}

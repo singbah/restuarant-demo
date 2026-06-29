@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react"
-import { userFetch } from "../../../libs/api";
 
 export default function Tagbadges(){
     const [tags, setTags] = useState([]);
