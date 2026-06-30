@@ -27,5 +27,17 @@ async function fetchUrl(url) {
     }
 }
 
+async function postBlog(url, postData) {
+    try{
+        const response = await axios.post(`${API_URL}${url}`, postData);
+        const data = response.data;
+        console.log(data);
+        return data
+    }catch(error){
+        console.log(error);
+        return error
+    }
+}
 
-export {getBlogs, API_URL, fetchUrl}
+
+export {getBlogs, API_URL, fetchUrl, postBlog}

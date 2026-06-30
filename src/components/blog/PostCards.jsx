@@ -5,6 +5,7 @@ import Inputs from "../ui/Inputs"
 import dateFormator from "../../../libs/DateFormating"
 
 
+
 export default function PostCard({content}){
     if(!content) return(<div>
         <h1>Can't find content</h1>

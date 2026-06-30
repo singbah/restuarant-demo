@@ -3,7 +3,7 @@ import { AdminContext } from "./adminContext"
 import { useNavigate } from "react-router-dom";
 
 function AdminLogin() {
-  const { login, rrorMsg, setErrorMsg } = useContext(AdminContext);
+  const { loginRoute, rrorMsg, setErrorMsg } = useContext(AdminContext);
   const [loginData, setLoginData] = useState({phone:'', password:""})
 
   const navigate = useNavigate()
@@ -12,7 +12,7 @@ function AdminLogin() {
     console.log(loginData)
     e.preventDefault();
     // navigate("/admin/dashboard")
-    login(loginData)
+    loginRoute(loginData)
     
   }
 

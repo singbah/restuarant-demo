@@ -6,19 +6,20 @@ import { SiTrueup } from "react-icons/si";
 import useFetch from "../hooks/UseFetch";
 import { AdminContext } from "./adminContext";
 import PostLists from "../blog/PostLists";
-import { getBlogs } from "../../../libs/api";
+import { API_URL, postBlog, getBlogs } from "../../../libs/api";
+
 
 
 export default function PostEditors({ menu_item }) {
 
-  const [postData, setPostData] = useState({featured_image:null, title:'', excert:'', content:'', published_at:'',  });
+  const [postData, setPostData] = useState({photo:null, title:'', excert:'', content:'', published_at:'',  });
   const {admin, adminFetch} = useContext(AdminContext)
   const [prevPic, setPrevPic] = useState(null);
   const [blogPost, setBlogPost] = useState([]);
   
   const reqKey = useRef()
 
-  const {data, loading, error} = useFetch("http://127.0.0.1:8000/posts/posts")
+  const {data, loading, error} = useFetch(`${API_URL}posts/posts`)
 
   function handelForm(e) {
     const { name, value} = e.target;
@@ -28,7 +29,13 @@ export default function PostEditors({ menu_item }) {
 
   function submitMenuItem(e){
     e.preventDefault();
-    console.log(postData)
+    const formData = new FormData()
+
+    for(let da in postData){
+      formData.append(da, postData[da])
+    }
+
+    postBlog('posts/create_post',formData)
   }
 
   return (<div className="flex flex-row m-2 w-full relative">
@@ -48,7 +55,7 @@ export default function PostEditors({ menu_item }) {
           <input
             style={{ display: "none" }}
             onChange={(e) => {
-              setPostData((prev) => ({ ...prev, featured_image: e.target.files[0] }));
+              setPostData((prev) => ({ ...prev, photo: e.target.files[0] }));
               setPrevPic(URL.createObjectURL(e.target.files[0]))
             }}
             type="file"

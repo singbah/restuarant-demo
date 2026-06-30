@@ -17,21 +17,21 @@ import { useFetcher } from "react-router-dom"
 export default function Dashboard() {
 
   const navStyle = "font-bold cursor-pointer hover:scale-105 transition"
-  const { admin, errorMsg, setErrorMsg, refreshAdmin } = useContext(AdminContext)
+  const { admin, errorMsg, setErrorMsg, refreshAdmin  } = useContext(AdminContext)
   const [itemPhoto, setItemPhoto] = useState(null)
   const [activeTap, setActiveTap] = useState(null)
 
   const {data, loading, error} = useFetch("http://127.0.0.1:8000/posts/posts")
 
 
-  // useEffect(() =>{
-  //   refreshAdmin()
-  // },[])
+  useEffect(() =>{
+    refreshAdmin()
+  },[])
 
-  // if (!admin) {
-  //   return (<div>
-  //   <a href="/admin/login">You Must Login</a>
-  // </div>) }
+  if (!admin) {
+    return (<div>
+    <a href="/admin/login">You Must Login</a>
+  </div>) }
   
   return (<div className="h-dvh flex bg-gray-100">
     <NavigationBar tapFunc={setActiveTap}/>

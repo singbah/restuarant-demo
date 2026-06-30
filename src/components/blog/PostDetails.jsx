@@ -7,6 +7,8 @@ import PostCard from "./PostCards";
 import LayoutScreen from "../layouts/Layout";
 import { API_URL } from "../../../libs/api";
 import logo from '../../logo.jpg'
+import remarkGfm from "remark-gfm";
+import rehypeSanitize from "rehype-sanitize";
 
 
 export default function PostsDetails({}){
@@ -56,8 +58,10 @@ export default function PostsDetails({}){
             <img 
                 className="rounded"
                 src={`${API_URL}posts/send_file?filename=${data.featured_image}`} alt="photo.jpg"/>
-            
-            <ReactMarkDown>
+            <p>{data.excert}</p>
+            <ReactMarkDown 
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeSanitize]}>
                 {data.content}
             </ReactMarkDown>
             
