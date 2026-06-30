@@ -4,6 +4,7 @@ import { useLocation, useNavigate, useSearchParams } from "react-router-dom"
 import { use, useEffect, useState } from "react"
 import { getBlogs } from "../../../libs/api"
 import PostCard from "../blog/PostCards"
+import PageNotFound from "./NotFound"
 
 export default function Blogs(){
     const navigate = useNavigate()
@@ -21,7 +22,7 @@ export default function Blogs(){
                 onClick={() => navigate(`/post/${blog.slug}`, {state:blog})}
                 >
                 <PostCard content={blog}/>
-            </li>):<h1>System down</h1>}
+            </li>):<PageNotFound/>}
         </div>}/>
     </div>)
 }

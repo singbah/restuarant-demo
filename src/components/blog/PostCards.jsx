@@ -2,6 +2,7 @@ import { Download, DownloadIcon } from "lucide-react"
 import { API_URL } from "../../../libs/api"
 import Tagbadges from "./TagBadges"
 import Inputs from "../ui/Inputs"
+import dateFormator from "../../../libs/DateFormating"
 
 
 export default function PostCard({content}){
@@ -14,7 +15,7 @@ export default function PostCard({content}){
         <img src={`${API_URL}posts/send_file?filename=${content.featured_image}`} alt="" />
         <h4>{content.excert}</h4>
         <p className="px-4">{content.content}</p>
-        <p>{content.created_at}</p>
+        <p>{dateFormator(content.created_at)}</p>
     </div>)
 
 }

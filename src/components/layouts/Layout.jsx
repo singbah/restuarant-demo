@@ -30,7 +30,10 @@ export default function LayoutScreen({compo}){
         <NavBar/>
         <div className="flex gap-2 overflow-y-auto flex-col lg:flex-row lg:mx-20 ">
             {compo} 
-        <Footer2/>
+            <div>
+                <NewsLetter/>
+            </div>
         </div>
+        <Footer2/>
     </div>)
 }

@@ -29,7 +29,7 @@ function Footer1(){
 };
 
 function Footer2(){
-    return(<div className="m-0 lg:flex justify-center bottom-0 absolute w-full bg-white border-t-4 border-gray-300">
+    return(<div className="m-0 lg:flex justify-center bg-black border-t-4 ">
         {/* <NewsLetter/> */}
         <footer className="flex gap-6 p-2 justify-center items-center">
         <a 
