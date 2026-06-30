@@ -15,9 +15,9 @@ async function getBlogs(){
     }
 };
 
-async function fetchUrl(url) {
+async function deleteStuff(url) {
     try{
-        const response = await axios.get(`${API_URL}${url}`);
+        const response = await axios.delete(url);
         const data = response.data;
         console.log(data);
         return data
@@ -40,4 +40,4 @@ async function postBlog(url, postData) {
 }
 
 
-export {getBlogs, API_URL, fetchUrl, postBlog}
+export {getBlogs, API_URL, postBlog, deleteStuff}

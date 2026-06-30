@@ -12,7 +12,7 @@ import { API_URL, postBlog, getBlogs } from "../../../libs/api";
 
 export default function PostEditors({ menu_item }) {
 
-  const [postData, setPostData] = useState({photo:null, title:'', excert:'', content:'', published_at:'',  });
+  const [postData, setPostData] = useState({photo:null, title:'', excert:'', content:'', published_at:'', published_time:'' });
   const {admin, adminFetch} = useContext(AdminContext)
   const [prevPic, setPrevPic] = useState(null);
   const [blogPost, setBlogPost] = useState([]);
@@ -110,6 +110,17 @@ export default function PostEditors({ menu_item }) {
           />
         </label>
 
+        <label
+          className="text-2xl font-bold"
+        >Post Time
+          <input
+            onChange={handelForm}
+            className="border m-2 rounded p-0.5 text-xl font-normal"
+            type="time"
+            name="published_time"
+          />
+        </label>
+
         <button
           className="bg-green-400 mx-30 my-4 p-2 text-xl font-bold text-white rounded-2xl shadow"
           type="submit">Publish Now</button>
@@ -119,7 +130,7 @@ export default function PostEditors({ menu_item }) {
     <section className="m-2 w-1/3 overflow-y-auto bg-white p-2 rounded-2xl shadow">
 
       <div className="w-full overflow-y-auto">
-        <PostLists container={data}/>
+        <PostLists container={data} action={() => alert("You will delete this stuff")}/>
       </div>
     </section>
 

@@ -1,14 +1,14 @@
 import { useLocation, useParams } from "react-router-dom"
 import { Helmet } from "react-helmet";
-import ReactMarkDown from "react-markdown"
+import remarkGfm from "remark-gfm";
+import rehypeSanitize from "rehype-sanitize";
+import ReactMarkDown from 'react-markdown'
 
 import useFetch from "../hooks/UseFetch";
 import PostCard from "./PostCards";
 import LayoutScreen from "../layouts/Layout";
 import { API_URL } from "../../../libs/api";
 import logo from '../../logo.jpg'
-import remarkGfm from "remark-gfm";
-import rehypeSanitize from "rehype-sanitize";
 
 
 export default function PostsDetails({}){
@@ -23,10 +23,12 @@ export default function PostsDetails({}){
     
     if(!data) return(<div>'loading ...'</div>)
 
+
+
     const articleSchema = {
         "@context":"https://schema.org",
         "@type":"Article",
-        "headline":`${data.title}`,
+        "headline":`${data?data.title:blog.title}`,
         "description":data.excert,
         "image":`${API_URL}posts/send_file?filename=${data.featured_image}`,
         "datePublished":data.published_at,
@@ -47,22 +49,23 @@ export default function PostsDetails({}){
     return(<LayoutScreen compo={
         <div>
         <Helmet>
-            <title>{data.title} | Easi Tech</title>
+            <title>{data?data.title:blog.title} | Easi Tech</title>
             <meta name="description" content={data.content}  />
             <link rel="canonical" href={`${API_URL}/posts/${postSlug}`} />
             <script type="application/id+json">{JSON.stringify(articleSchema)}</script>
         </Helmet>
 
-        <article className="p-2">
+        <article className="p-2 prose prose-slate">
             <h1 className="text-3xl font-bold p-2">{data.title}</h1>
             <img 
                 className="rounded"
                 src={`${API_URL}posts/send_file?filename=${data.featured_image}`} alt="photo.jpg"/>
-            <p>{data.excert}</p>
+            <p className="p-2 font-semibold">{data.excert}</p>
             <ReactMarkDown 
                 remarkPlugins={[remarkGfm]}
                 rehypePlugins={[rehypeSanitize]}>
                 {data.content}
+                
             </ReactMarkDown>
             
         </article>

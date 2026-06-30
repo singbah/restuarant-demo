@@ -13,6 +13,7 @@ export default function NavBar() {
         <NavLink to={'/'}>Home</NavLink>
         <NavLink to={'/blog'} >Blog</NavLink>
         <NavLink to={'/contact'} >Contact</NavLink>
+        <NavLink to={'/contact'} >Market Stat</NavLink>
       </nav>
     </header>
   </div>)
