@@ -49,7 +49,6 @@ export default function Dashboard() {
       </section>
 
       <section className="grid grid-cols-3">
-        {/* grid like stuff here */}
         <PostLists container={data?data:[]}/>
         <PostLists container={data?data:[]}/>
         <PostLists container={data?data:[]}/>
