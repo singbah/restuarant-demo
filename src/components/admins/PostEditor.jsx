@@ -1,12 +1,14 @@
 import axios from "axios";
-import { PencilIcon } from "lucide-react";
+import { AlignRight, PencilIcon } from "lucide-react";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { SiTrueup } from "react-icons/si";
 
 import useFetch from "../hooks/UseFetch";
+import AlertCard from "../layouts/AlertCard";
 import { AdminContext } from "./adminContext";
 import PostLists from "../blog/PostLists";
 import { API_URL, postBlog, getBlogs } from "../../../libs/api";
+import { postDataFunc } from "../hooks/UsePost";
 
 
 
@@ -16,6 +18,7 @@ export default function PostEditors({ menu_item }) {
   const {admin, adminFetch} = useContext(AdminContext)
   const [prevPic, setPrevPic] = useState(null);
   const [blogPost, setBlogPost] = useState([]);
+  const [state, setState] = useState(false)
   
   const reqKey = useRef()
 
@@ -35,13 +38,22 @@ export default function PostEditors({ menu_item }) {
       formData.append(da, postData[da])
     }
 
-    postBlog('posts/create_post',formData)
+    const {data, success, status} = postDataFunc("/posts/create_post",formData)
+    alert(data)
+    console.log(data)
+    if(success){
+      alert("Posted")
+    }else{
+      alert(data)
+      console.log(data)
+    }
   }
 
   return (<div className="flex flex-row m-2 w-full relative">
     
     <section className="overflow-y-auto m-2 w-2/3 flex flex-col items-center p-4">
-      
+      {(<AlertCard props={{message:"Hello, message", state:state}} action={setState}/>)}
+      <button onChange={() =>setState(true)}>Try something</button>
       <form
         onSubmit={submitMenuItem}
         className="flex flex-col p-2 border w-4/5 rounded-2xl">
@@ -130,7 +142,7 @@ export default function PostEditors({ menu_item }) {
     <section className="m-2 w-1/3 overflow-y-auto bg-white p-2 rounded-2xl shadow">
 
       <div className="w-full overflow-y-auto">
-        <PostLists container={data} action={() => alert("You will delete this stuff")}/>
+        <PostLists container={data}/>
       </div>
     </section>
 

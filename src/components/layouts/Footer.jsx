@@ -1,55 +1,91 @@
-import { HomeIcon, MenuIcon } from "lucide-react";
+import { Link } from "react-router-dom";
 import { BsYoutube } from "react-icons/bs";
-import { FaFacebook, FaTiktok, FaWhatsapp } from "react-icons/fa";
-import NewsLetter from "../forms/NewsLetters";
+import {
+  FaFacebook,
+  FaWhatsapp,
+  FaTiktok,
+} from "react-icons/fa";
 
-function Footer1(){
-    const footerP = "flex flex-col justify-center items-center px-4"
-    return(<div 
-    className="border-t-4 border-gray-600
-    flex justify-center items-center pb-2 
+export default function Footer() {
+  return (
+    <footer className="bg-gray-900 text-gray-300 mt-16">
+      <div className="mx-auto max-w-7xl px-6 py-12 grid gap-10 md:grid-cols-3">
 
-    shadow-white">
+        {/* Brand */}
+        <div>
+          <h2 className="text-2xl font-bold text-white">
+            Monrovia Money
+          </h2>
 
-        <footer className="flex justify-center items-center">
-            <ul className="flex justify-start items-center font-bold gap-4">
-                <p className={footerP}>
-                    <a>Home</a>
-                    <HomeIcon/>
-                </p>
-                
-                <p className={footerP}>
-                    <a>Menu</a>
-                    <MenuIcon/>
-                </p>
+          <p className="mt-4 text-sm leading-6">
+            Stay informed with current market prices,
+            exchange rates, fuel prices, and practical
+            financial information for Liberia.
+          </p>
+        </div>
 
-            </ul>
-        </footer>
-    </div>)
-};
+        {/* Quick Links */}
+        <div>
+          <h3 className="font-semibold text-white mb-4">
+            Quick Links
+          </h3>
 
-function Footer2(){
-    return(<div className="m-0 lg:flex justify-center bg-black border-t-4 ">
-        {/* <NewsLetter/> */}
-        <footer className="flex gap-6 p-2 justify-center items-center">
-        <a 
-        
-        className="text-blue-500 text-2xl px-4 active:scale-110 hover:text-blue-800 cursor-pointer transition"
-        ><FaFacebook/></a>
-        <a 
-        href="https://www.wa.me"
-        className="text-red-500 text-2xl px-4 active:scale-110 hover:text-red-800 cursor-pointer transition"
-        ><BsYoutube/></a>
-        <a 
-        href="https://www.wa.me"
-        className="text-green-500 text-2xl px-4 active:scale-110 hover:text-green-800 cursor-pointer transition"
-        ><FaWhatsapp/></a>
-        <a className="text-black bg-white rounded-full p-1 text-xl 
-            active:scale-110 hover:text-gray-800 cursor-pointer transition"
-        href="https://www.wa.me"><FaTiktok/></a>
+          <ul className="space-y-2">
+            <li>
+              <Link to="/" className="hover:text-white">
+                Home
+              </Link>
+            </li>
+
+            <li>
+              <Link to="/market" className="hover:text-white">
+                Market Prices
+              </Link>
+            </li>
+
+            <li>
+              <Link to="/blog" className="hover:text-white">
+                Blog
+              </Link>
+            </li>
+
+            <li>
+              <Link to="/contact" className="hover:text-white">
+                Contact
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        {/* Social */}
+        <div>
+          <h3 className="font-semibold text-white mb-4">
+            Follow Us
+          </h3>
+
+          <div className="flex gap-4 text-2xl">
+            <a href="#" className="hover:text-blue-500">
+              <FaFacebook />
+            </a>
+
+            <a href="#" className="hover:text-red-500">
+              <BsYoutube />
+            </a>
+
+            <a href="#" className="hover:text-green-500">
+              <FaWhatsapp />
+            </a>
+
+            <a href="#" className="hover:text-white">
+              <FaTiktok />
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div className="border-t border-gray-700 py-4 text-center text-sm text-gray-400">
+        © {new Date().getFullYear()} Monrovia Money. All rights reserved.
+      </div>
     </footer>
-    </div>)
+  );
 }
-
-export {Footer1, Footer2}
-

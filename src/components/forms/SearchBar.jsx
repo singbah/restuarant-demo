@@ -1,53 +1,101 @@
-import axios from "axios";
 import { SearchIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-export default function SearchBars(){
-    const [display, setDisplay] = useState(false);
-    const [inputValue, setInputValue] = useState('');
-    const [results, setResults] = useState([])
+export default function SearchBar() {
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const [show, setShow] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-    const navigate = useNavigate(null)
+  const navigate = useNavigate();
 
-    const barDisappear = async(item) =>{
-        try{
-            const resp = await axios.get(`http://127.0.0.1:8000/posts/search/blog?q=${item}`);
-            const data = resp.data;
-            setResults(data);
-            setDisplay(true)
-            return;
-        }catch(error){
-            console.log(error)
-        }finally{
-            // setDisplay(false)
-        }
+  async function fetchResults(search) {
+    if (!search.trim()) {
+      setResults([]);
+      return;
     }
 
-    return(<div className="relative">
-        <section
-            style={{display:display?"block":"none"}}
-            className="h-100 shadow shadow-black p-2 absolute top-4 m-5 bg-white w-80 rounded-xl ">
+    try {
+      setLoading(true);
 
-            {results.map((tags, index) => <li 
-                onClick={() => navigate(`/blog/${tags.slug}`, {state:item})}
-                key={index}>{tags.title}</li>)}
-        </section>
-        <article
-        className="flex m-2 relative"
-        >
-        <SearchIcon 
-            onClick={() => barDisappear(inputValue)}
-            className="absolute right-1 top-1 
-            active:text-blue-900
-            cursor-pointer active:scale-105 text-blue-700 transition"/>
-        <input 
-            onFocus={() => setDisplay(true)}
-            onBlur={() => setDisplay(false)}
-            onChange={(e) => setInputValue(e.target.value)}
-            type="text" 
-            name="search" 
-            className="w-full p-1 rounded-xl shadow shadow-black"/>
-    </article>
-    </div>)
+      const res = await axios.get(
+        `http://127.0.0.1:8000/posts/search/blog?q=${search}`
+      );
+
+      setResults(res.data || []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // debounce search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchResults(query);
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  return (
+    <div className="relative w-full max-w-md">
+      {/* input */}
+      <div className="relative">
+        <SearchIcon className="absolute right-3 top-3 text-gray-500" />
+
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onFocus={() => setShow(true)}
+          placeholder="Search blogs..."
+          className="w-full rounded-xl border px-4 py-2 pr-10 shadow-sm focus:border-blue-500 focus:outline-none"
+        />
+      </div>
+
+      {/* dropdown */}
+      {show && (
+        <div className="absolute z-50 mt-2 max-h-80 w-full overflow-y-auto rounded-xl border bg-white shadow-lg">
+          {loading && (
+            <p className="p-3 text-sm text-gray-500">
+              Searching...
+            </p>
+          )}
+
+          {!loading &&
+            results.map((blog) => (
+              <div
+                key={blog.slug}
+                onMouseDown={() => {
+                  navigate(`/blog/${blog.slug}`);
+                  setShow(false);
+                }}
+                className="cursor-pointer border-b p-3 hover:bg-gray-100"
+              >
+                <p className="font-semibold">
+                  {blog.title}
+                </p>
+
+                {blog.category && (
+                  <p className="text-xs text-gray-500">
+                    {blog.category}
+                  </p>
+                )}
+              </div>
+            ))}
+
+          {!loading &&
+            query &&
+            results.length === 0 && (
+              <p className="p-3 text-sm text-gray-500">
+                No results found.
+              </p>
+            )}
+        </div>
+      )}
+    </div>
+  );
 }

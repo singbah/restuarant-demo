@@ -9,6 +9,7 @@ import PostCard from "./PostCards";
 import LayoutScreen from "../layouts/Layout";
 import { API_URL } from "../../../libs/api";
 import logo from '../../logo.jpg'
+import Tagbadges from "./TagBadges";
 
 
 export default function PostsDetails({}){
@@ -20,10 +21,12 @@ export default function PostsDetails({}){
     const {data, loading, error} = useFetch(`${API_URL}posts${pathname}`)
 
     const postUrl = `${API_URL}${postSlug}`
+
+    const tableTry = `
+    The heading is gonna work
+    SECOND ITEM`
     
-    if(!data) return(<div>'loading ...'</div>)
-
-
+    if(!data) return <div>'loading ...'</div>
 
     const articleSchema = {
         "@context":"https://schema.org",
@@ -61,13 +64,15 @@ export default function PostsDetails({}){
                 className="rounded"
                 src={`${API_URL}posts/send_file?filename=${data.featured_image}`} alt="photo.jpg"/>
             <p className="p-2 font-semibold">{data.excert}</p>
+            <article className="prose max-w-none">
+
             <ReactMarkDown 
-                remarkPlugins={[remarkGfm]}
-                rehypePlugins={[rehypeSanitize]}>
+                remarkPlugins={[remarkGfm]}>
                 {data.content}
-                
             </ReactMarkDown>
-            
+            </article>
+
+            <Tagbadges/>
         </article>
     
     </div>

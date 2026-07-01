@@ -1,41 +1,134 @@
+import { useState } from "react";
 
+export default function ContactForm() {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+    newsletter: false,
+  });
 
-export default function ContactForm(){
-    return(<div className=" p-4 m-2 rounded-2xl lg:w-1/2">
-        <h1 className="text-2xl font-bold p-2">Get in touch!</h1>
-        <p className="text-normal font-mono p-2 px-4">Questions, collaborations, or corrections? Use the form below and i'll be in touch</p>
-        <form className="flex flex-col p-4 text-xl justify-center border rounded-xl">
-            <label className="m-2 w-full">
-                Name: <input 
-                    className="border rounded-xl p-1"
-                    type="text" 
-                    required
-                    placeholder="full name"
-                    name="name"/>
-            </label>
+  function handleChange(e) {
+    const { name, value, type, checked } = e.target;
 
-            <label className="m-2 w-full">
-                Email: <input 
-                    className="border rounded-xl p-1"
-                    type="email" 
-                    required
-                    placeholder="e.g johndoe@gmail.com"
-                    name="name"/>
-            </label>
-            <label className="m-2 w-full"> Subject </label>
-            <textarea 
-                required
-                className="border rounded-2xl p-2"
-                placeholder="What's on your mind"
-                name="subject">
-                
-            </textarea>
-            <label className="p-2">
-                <input type="checkbox" name="newsletter" className="inline"/>
-                <p className="text-sm inline px-2">Get More Update On our product and service
-                </p>
-            </label>
-            <button className="bg-blue-600 mx-10 m-4 p-2 text-2xl rounded-2xl font-bold text-white shadow shadow-black hover:bg-blue-800 transition active:bg-scale-105">Submit</button>
-        </form>
-    </div>)
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    console.log(form);
+
+    // TODO:
+    // sendContactForm(form)
+  }
+
+  return (
+    <section className="mx-auto w-full max-w-3xl rounded-3xl bg-white p-8 shadow-lg">
+      <div className="text-center">
+        <h2 className="text-3xl font-bold text-gray-900">
+          Get in Touch
+        </h2>
+
+        <p className="mt-3 text-gray-600">
+          Questions, corrections, partnership opportunities, or
+          general feedback? We'd love to hear from you.
+        </p>
+      </div>
+
+      <form
+        onSubmit={handleSubmit}
+        className="mt-8 space-y-5"
+      >
+        <div>
+          <label className="mb-2 block font-medium">
+            Full Name
+          </label>
+
+          <input
+            type="text"
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            placeholder="John Doe"
+            required
+            className="w-full rounded-xl border px-4 py-3 focus:border-blue-500 focus:outline-none"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block font-medium">
+            Email Address
+          </label>
+
+          <input
+            type="email"
+            name="email"
+            value={form.email}
+            onChange={handleChange}
+            placeholder="john@example.com"
+            required
+            className="w-full rounded-xl border px-4 py-3 focus:border-blue-500 focus:outline-none"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block font-medium">
+            Subject
+          </label>
+
+          <input
+            type="text"
+            name="subject"
+            value={form.subject}
+            onChange={handleChange}
+            placeholder="What's this about?"
+            required
+            className="w-full rounded-xl border px-4 py-3 focus:border-blue-500 focus:outline-none"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block font-medium">
+            Message
+          </label>
+
+          <textarea
+            name="message"
+            value={form.message}
+            onChange={handleChange}
+            rows={6}
+            placeholder="Write your message here..."
+            required
+            className="w-full rounded-xl border px-4 py-3 resize-none focus:border-blue-500 focus:outline-none"
+          />
+        </div>
+
+        <label className="flex items-center gap-3 text-sm">
+          <input
+            type="checkbox"
+            name="newsletter"
+            checked={form.newsletter}
+            onChange={handleChange}
+            className="h-4 w-4"
+          />
+
+          <span>
+            Subscribe me to the Monrovia Money newsletter.
+          </span>
+        </label>
+
+        <button
+          type="submit"
+          className="w-full rounded-xl bg-blue-600 py-3 font-bold text-white transition hover:bg-blue-700 active:scale-95"
+        >
+          Send Message
+        </button>
+      </form>
+    </section>
+  );
 }

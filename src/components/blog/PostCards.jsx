@@ -5,6 +5,9 @@ import { API_URL } from "../../../libs/api"
 import Tagbadges from "./TagBadges"
 import Inputs from "../ui/Inputs"
 import dateFormator from "../../../libs/DateFormating"
+import remarkGfm from "remark-gfm"
+import rehypeSanitize from "rehype-sanitize"
+import { Link } from "react-router-dom"
 
 
 
@@ -17,10 +20,20 @@ export default function PostCard({content}){
         <h1 className="text-3xl font-bold p-4">{content.title}</h1>
         <img src={`${API_URL}posts/send_file?filename=${content.featured_image}`} alt="" />
         <h4>{content.excert}</h4>
-        <ReactMarkDown>
-            {content.content}
-        </ReactMarkDown>
+        <article className="prose max-w-none">
+            {/* <ReactMarkDown
+                remarkPlugins={[remarkGfm]}
+                >
+                {content.content}
+                </ReactMarkDown> */}
+        </article>
         <p>{dateFormator(content.created_at)}</p>
+        <Link
+            to={`/post/${content.slug}`}
+            className="text-blue-600 hover:underline"
+            >
+            View All →
+        </Link>
     </div>)
 
 }

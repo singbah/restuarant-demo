@@ -1,39 +1,70 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 
-export default function CurrencyConvertor(){
-    const [rate, setRate] = useState({usd_rate:1, lrd_rate:194});
-    const [total, setTotal] = useState(rate.lrd_rate*rate.usd_rate)
-    const handelRate = (e) =>{
-        const {name, value} = e.target;
-        setRate((prev) => ({...prev, [name]:value}))
-    }
-    
-    useEffect(() =>{
-        setTotal((rate.lrd_rate*rate.usd_rate))
-    },[rate])
+export default function CurrencyConvertor() {
+  const [exchangeRate, setExchangeRate] = useState(194);
 
-    return(<div className="flex flex-col justify-center p-2 m-4 rounded-2xl shadow shadow-black">
-        <h1 className="text-xl text-center py-4 font-bold">current rate 194</h1>
-        <article className="flex gap-4 font-bold justify-center items-center">
-            <label >
-            USD <input 
-            onChange={handelRate}
-            value={rate.usd_rate}
-            className="border w-20 p-1 rounded"
-            type="number" 
-            name="usd_rate"/>
-        </label>
+  const [usd, setUsd] = useState(1);
+  const [lrd, setLrd] = useState(exchangeRate);
 
-        <label >
-            LRD <input 
-            onChange={handelRate}
-            value={rate.lrd_rate}
-            className="border w-20 p-1 rounded"
-            type="number" 
-            name="lrd_rate"/>
-        </label>
+  useEffect(() => {
+    // Later replace this with your API call
+    const rate = 194;
 
-        <label>{total}</label>
-        </article>
-    </div>)
+    setExchangeRate(rate);
+    setLrd(rate);
+  }, []);
+
+  const handleUsd = (e) => {
+    const value = Number(e.target.value);
+
+    setUsd(value);
+    setLrd((value * exchangeRate).toFixed(2));
+  };
+
+  const handleLrd = (e) => {
+    const value = Number(e.target.value);
+
+    setLrd(value);
+    setUsd((value / exchangeRate).toFixed(2));
+  };
+
+  return (
+    <div className="self-start rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+      <h2 className="text-xl font-bold text-center">
+        Currency Converter
+      </h2>
+
+      <p className="mt-2 text-center text-gray-500">
+        1 USD = {exchangeRate} LRD
+      </p>
+
+      <div className="mt-6 space-y-5">
+        <div>
+          <label className="mb-2 block font-medium">
+            USD
+          </label>
+
+          <input
+            type="number"
+            value={usd}
+            onChange={handleUsd}
+            className="w-full rounded-lg border px-4 py-2 focus:border-blue-500 focus:outline-none"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block font-medium">
+            LRD
+          </label>
+
+          <input
+            type="number"
+            value={lrd}
+            onChange={handleLrd}
+            className="w-full rounded-lg border px-4 py-2 focus:border-blue-500 focus:outline-none"
+          />
+        </div>
+      </div>
+    </div>
+  );
 }

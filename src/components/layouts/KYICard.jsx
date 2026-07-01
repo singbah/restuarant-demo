@@ -1,14 +1,40 @@
-import { BsPeople } from "react-icons/bs"
+export default function KyiCard({
+  title,
+  value,
+  percentage = 0,
+  icon,
+  onClick,
+}) {
+  const isPositive = percentage >= 0;
 
-export default function KyiCard({ title, value, percentage, icon, color}) {
-  return (<div
-    onClick={() => console.log("")}
-    className={`w-40 h-40 m-2 rounded-2xl bg-white flex flex-col justify-center text-sm items-center shadow hover:scale-105 cursor-pointer transition`}>
-    {icon}
-    <p className={`text-${color}-500 font-bold text-xl`}>{title}</p>
-    <h1 className={`text-xl font-bold text-center text-${color}-700`}>{value}</h1>
-    <p><a
-      style={{color:percentage<=0?"red":"green"}}
-      className={`font-bold`}>%{percentage}</a> from last 7 days</p>
-  </div>)
+  return (
+    <div
+      onClick={onClick}
+      className="w-full rounded-2xl bg-white border border-gray-200 p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg cursor-pointer"
+    >
+      <div className="flex items-start justify-between">
+        {icon}
+
+        <span
+          className={`text-sm font-semibold ${
+            isPositive ? "text-green-600" : "text-red-600"
+          }`}
+        >
+          {isPositive ? "▲" : "▼"} {Math.abs(percentage)}%
+        </span>
+      </div>
+
+      <h3 className="mt-5 text-gray-500 font-medium">
+        {title}
+      </h3>
+
+      <h2 className="mt-1 text-3xl font-bold">
+        {value}
+      </h2>
+
+      <p className="mt-2 text-sm text-gray-400">
+        Compared to last 7 days
+      </p>
+    </div>
+  );
 }

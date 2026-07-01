@@ -14,7 +14,7 @@ export default function BudgetHelper(){
             others:(numBudget*0.2).toFixed(0),
         })
     }
-    return(<div className="mt-8 m-2 p-1 rounded border">
+    return(<div className="mt-8 m-2 p-1 rounded border self-start border-gray-200 shadow shadow-black">
         <h3 className="text-lg font-bold mb-4">Budget Planner</h3>
         <div className="mb-4">
             <label className="block text-sm text-gray-500 mb-1">Monthly Budget (LRD)</label>

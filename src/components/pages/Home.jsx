@@ -1,58 +1,158 @@
-import { useMemo, useState } from "react"
-import { Footer2 } from "../layouts/Footer"
-import LayoutScreen from "../layouts/Layout"
-import { getBlogs } from "../../../libs/api";
-import NavBar from "../layouts/navbar";
-import SearchBars from "../forms/SearchBar";
-import KyiCard from "../layouts/KYICard";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { GiFoodTruck } from "react-icons/gi";
 import { FuelIcon } from "lucide-react";
-import CurrencyConvertor from "../layouts/CurrencyConvert";
-import MarketTable from "../layouts/MarkeyTable";
-import BudgetHelper from "../layouts/BudgetTracker";
+
+import { getBlogs } from "../../../libs/api";
+
+import NavBar from "../layouts/navbar";
+import Footer from "../layouts/Footer";
 import NewsLetter from "../forms/NewsLetters";
-import { Link } from "react-router-dom";
 
-export default function HomePage(){
-    const [blogs, setBlogs] = useState([]);
-    
-    useMemo(() =>{
-        getBlogs()
-            .then(res => setBlogs(res))
-            .catch(err => console.error(err))
-        
-            return () => console.log("widget clear")
-    },[])
+import KyiCard from "../layouts/KYICard";
+import MarketTable from "../layouts/MarkeyTable";
+import CurrencyConvertor from "../layouts/CurrencyConvert";
+import BudgetHelper from "../layouts/BudgetTracker";
+import PostCard from "../blog/PostCards";
+import SearchBars from "../forms/SearchBar";
 
-    return<div className="relative">
-        <NavBar/>
-        <div>
-            <section className="bg-gradient-to-b from-blue-400 to-green-400 text-white py-16 px-6">
-                <h1 className="text-4xl font-bold mb-4">Monrovia Money</h1>
-                <p className="text-xl mb-6">Latest prices for rice, fuel, and more</p>
-                <Link
-                    to={"/contact"}
-                    className="bg-white text-blue-600 px-6 py-3 font-bold rounded-lg">Get Updates</Link>
+export default function HomePage() {
+  const [blogs, setBlogs] = useState([]);
+
+  useEffect(() => {
+    async function fetchBlogs() {
+      try {
+        const res = await getBlogs();
+        setBlogs(res || []);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    fetchBlogs();
+  }, []);
+
+  return (
+    <div className="min-h-dvh flex flex-col">
+      <NavBar />
+
+      <main className="flex-1">
+        {/* Hero */}
+        <section className="bg-gradient-to-b from-blue-400 to-green-500 text-white">
+          <div className="max-w-7xl mx-auto px-6 py-20">
+            <SearchBars/>
+            <h1 className="text-4xl md:text-6xl font-bold">
+              Monrovia Money
+            </h1>
+
+
+            <p className="mt-4 text-lg md:text-xl max-w-2xl">
+              Stay updated with the latest market prices, exchange rates,
+              fuel prices, and helpful financial tools for everyday life.
+            </p>
+
+            <Link
+              to="/contact"
+              className="inline-block mt-8 rounded-lg bg-white text-blue-600 font-semibold px-6 py-3 hover:bg-gray-100 transition"
+            >
+              Get Updates
+            </Link>
+          </div>
+        </section>
+
+        {/* Latest Prices */}
+        <section className="max-w-7xl mx-auto px-6 py-12">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-3xl font-bold">
+              Latest Prices
+            </h2>
+
+            <Link
+              to="/market"
+              className="text-blue-600 hover:underline"
+            >
+              View All →
+            </Link>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <KyiCard
+                title="Gasoline"
+                value="$950/Gal"
+                percentage={8}
+                icon={
+                <FuelIcon
+                    size={100}
+                    className="rounded-xl bg-red-100 p-3 text-red-600"
+                />
+                }
+            />
+
+            <KyiCard
+                title="Diesel"
+                value="$900/Gal"
+                percentage={-3}
+                icon={
+                <FuelIcon
+                    size={100}
+                    className="rounded-xl bg-blue-100 p-3 text-blue-600"
+                />
+                }
+            />
+
+            <KyiCard
+                title="Rice"
+                value="$15 / 25kg"
+                percentage={5}
+                icon={
+                <GiFoodTruck
+                    size={100}
+                    className="rounded-xl bg-green-100 p-3 text-green-600"
+                />
+                }
+            />
+            </div>
+        </section>
+
+        {/* Latest Articles */}
+        {blogs.length > 0 && (
+          <section className="max-w-7xl mx-auto px-6 py-12">
+            <h2 className="text-3xl font-bold mb-8">
+              Latest Articles
+            </h2>
+
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {blogs.slice(0, 6).map((blog) => (
+                <PostCard
+                  key={blog.id}
+                  content={blog}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Tools */}
+        <section className="max-w-7xl mx-auto px-6 py-12">
+          <h2 className="text-3xl font-bold mb-8">
+            Financial Tools
+          </h2>
+
+          <section className="grid gap-6 lg:grid-cols-3 items-start">
+                <MarketTable />
+                <CurrencyConvertor />
+                <BudgetHelper />
             </section>
 
-            <section className="py-10 px-2">
-                <h2 className="text-2xl mb-6">Latest prices</h2>
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <KyiCard value={100} percentage={+10} icon={<FuelIcon size={50} className="text-red-600 bg-red-100 rounded-xl p-2"/>} color={'red'} title={"Gas or Fuel"} />
-                    <KyiCard value={"$950/Gal"} color={'blue'} percentage={+10} icon={<FuelIcon size={50} className="text-blue-600 bg-blue-100 rounded-xl p-2"/>} title={"Desiel"} />
-                    <KyiCard value={"$15USD/25KG"} color={'green'} percentage={-10} icon={<GiFoodTruck size={50} className="text-green-600 bg-blue-100 rounded-xl p-2"/>} title={"Rice"} />
-                </div>
-                <button>See More</button>
-            </section>
+        </section>
 
-                <h2 className="text-2xl mb-6">Tools</h2>
-            <section className="grid lg:grid-cols-3 p-2">
-                <MarketTable/>
-                <CurrencyConvertor/>
-                <BudgetHelper/>
-            </section>
-        </div>
-        <NewsLetter/>
-        <Footer2/>
+        {/* Newsletter */}
+        <section className="max-w-4xl mx-auto px-6 py-16">
+          <NewsLetter />
+        </section>
+      </main>
+
+      <Footer />
     </div>
+  );
 }

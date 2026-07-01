@@ -17,16 +17,11 @@ export default function PostLists({container, action}){
             <p className="text-sm">{blog.excert}</p>
             <p className='text-gray-400 text-[10px] italic p-1'>{dateFormator(blog.created_at)}</p>
             {action?<article className='flex gap-20 justify-center items-center'>
-                <button>see more</button>
                 <button 
-                style={{display:display?"block":"none"}}
+                
                 className='px-6 py-1 bg-red-700 font-bold text-white rounded-xl'
-                onClick={() => {
-                    deleteStuff(`${API_URL}posts/delete?post_id=${blog.id}`)
-                }
-                    }>Delete</button>
+                >Delete</button>
             </article>:"See More"}
         </div>):''}
-        <button>view more</button>
     </div>)
 };

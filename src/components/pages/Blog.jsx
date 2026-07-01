@@ -1,5 +1,4 @@
 import LayoutScreen from "../layouts/Layout"
-import { Footer2 } from "../layouts/Footer"
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom"
 import { use, useEffect, useState } from "react"
 import { getBlogs } from "../../../libs/api"

@@ -1,47 +1,94 @@
-import { useState } from "react"
+import { useState } from "react";
 
-export default function NewsLetter(){
-    const [userData, setUserData] = useState({name:'', email:''});
+export default function NewsLetter() {
+  const [userData, setUserData] = useState({
+    name: "",
+    email: "",
+  });
 
-    function handelForm(e){
-        const {value, name} = e.target;
-        setUserData((prev) => ({...prev, [name]:value}))
-    }
+  function handleForm(e) {
+    const { name, value } = e.target;
 
-    async function submit(e) {
-        e.preventDefault();
-        const source = window.location.href;
-        const data = {...userData, source:source}
-        console.log(data)
+    setUserData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }
 
-    }
-    return(<div className="flex flex-col p-2 text-sm justify-center items-center">
-        <h1 className="text-xl font-bold">Newsletter</h1>
-        <p>signup for our newsletter</p>
-        <p></p>
-        <form 
-            onSubmit={submit}
-            className="flex flex-col gap-4 m-2">
-            <label className="">
-                Email <input 
-                    className="border rounded-xl px-2"
-                    type="text" 
-                    placeholder="your@email.com"
-                    onChange={handelForm}
-                    required
-                    name="email"/>
-            </label>
+  async function submit(e) {
+    e.preventDefault();
 
-            <label className="">
-                Name <input 
-                    className="border px-4 rounded-xl"
-                    type="text" 
-                    onChange={handelForm}
-                    name="name"/>
-            </label>
-            <button 
-                type="submit"
-                className="bg-blue-500 font-bold text-white active:scale-105 active:bg-blue-800 mx-10 shadow shadow-black rounded-xl transition">Submit</button>
-        </form>
-    </div>)
+    const data = {
+      ...userData,
+      source: window.location.href,
+    };
+
+    console.log(data);
+
+    // TODO:
+    // await subscribeUser(data)
+  }
+
+  return (
+    <section className="mx-auto w-full max-w-2xl rounded-3xl bg-gradient-to-r from-blue-600 to-green-600 p-8 text-white shadow-xl">
+      <div className="text-center">
+        <h2 className="text-3xl font-bold">
+          Stay Ahead of Market Prices
+        </h2>
+
+        <p className="mt-3 text-blue-100">
+          Get weekly updates on fuel prices, exchange rates,
+          rice prices, and market news delivered straight to
+          your inbox.
+        </p>
+      </div>
+
+      <form
+        onSubmit={submit}
+        className="mt-8 space-y-4"
+      >
+        <div>
+          <label className="mb-2 block font-medium">
+            Name (Optional)
+          </label>
+
+          <input
+            type="text"
+            name="name"
+            value={userData.name}
+            onChange={handleForm}
+            placeholder="John Doe"
+            className="w-full rounded-xl border border-white/20 bg-white px-4 py-3 text-gray-800 outline-none focus:ring-2 focus:ring-yellow-300"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block font-medium">
+            Email Address
+          </label>
+
+          <input
+            type="email"
+            name="email"
+            value={userData.email}
+            onChange={handleForm}
+            placeholder="you@example.com"
+            required
+            className="w-full rounded-xl border border-white/20 bg-white px-4 py-3 text-gray-800 outline-none focus:ring-2 focus:ring-yellow-300"
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="w-full rounded-xl bg-white py-3 font-bold text-blue-700 transition hover:bg-gray-100 active:scale-[0.98]"
+        >
+          Subscribe Now
+        </button>
+      </form>
+
+      <p className="mt-4 text-center text-sm text-blue-100">
+        No spam. Unsubscribe anytime.
+      </p>
+    </section>
+  );
 }
