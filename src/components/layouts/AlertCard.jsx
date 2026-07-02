@@ -4,15 +4,8 @@ import { useState } from "react"
 export default function AlertCard({props, action}){
     const [display, setDisplay] = useState(false)
 
-    const changeState = () =>{
-        if(props){
-            setDisplay(props.state)
-            action(false)
-        }
-    }
-
     return(<div 
-            style={{display:props&&props.state?"block":"none"}}
+            // style={{display:props&&props.state?"block":"none"}}
             className="absolute justify-center 
             bg-white z-50 rounded-2xl p-4 flex w-100 h-60 
             items-center shadow shadow-green-500 right-1/2 bottom-1/2">

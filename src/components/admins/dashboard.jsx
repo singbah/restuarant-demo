@@ -7,11 +7,12 @@ import axios from "axios"
 import PostEditors from "./PostEditor"
 import KyiCard from "../layouts/KYICard"
 import PostLists from "../blog/PostLists"
-import { getBlogs } from "../../../libs/api"
+import { API_URL, getBlogs } from "../../../libs/api"
 import useFetch from '../hooks/UseFetch'
 
 import { MessageCircle } from "lucide-react"
 import { useFetcher } from "react-router-dom"
+import usePost from "../hooks/UsePost"
 
 
 export default function Dashboard() {
@@ -21,12 +22,14 @@ export default function Dashboard() {
   const [itemPhoto, setItemPhoto] = useState(null)
   const [activeTap, setActiveTap] = useState(null)
 
-  const {data, loading, error} = useFetch("http://127.0.0.1:8000/posts/posts")
+  const {data, loading, error, refetch} = useFetch(`${API_URL}admin/contacts`)
 
 
   useEffect(() =>{
     refreshAdmin()
+    refetch()
   },[])
+  
 
   if (!admin) {
     return (<div>
@@ -39,20 +42,30 @@ export default function Dashboard() {
     {activeTap === null && (    <section className="p-2 w-full overflow-x-hidden">
       {/* HEADER HERE */}
 
-      <section className="flex overflow-x-auto p-2 justify-center gap-2 w-250">
-        <KyiCard title={"Visitors"} color={'blue'} value={"1K"} percentage={10} icon={<BsPeople 
-        className="text-blue-700 bg-blue-200 p-1 rounded-xl" size={50}/>}/>
+      {!loading?<>
+        <section className="flex overflow-x-auto p-2 justify-center gap-2 w-250 ">
+          <KyiCard title={"Visitors"} color={'blue'} value={"1K"} percentage={10} icon={<BsPeople 
+          className="text-blue-700 bg-blue-200 p-1 rounded-xl" size={50}/>}/>
 
-        <KyiCard title={"Comments"} color={'green'} value={"50"} percentage={5} icon={<MessageCircle 
-        className="text-green-700 bg-green-200 p-1 rounded-xl" size={50}/>}/>
-        
-      </section>
+          <KyiCard title={"Comments"} color={'green'} value={"50"} percentage={5} icon={<MessageCircle 
+          className="text-green-700 bg-green-200 p-1 rounded-xl" size={50}/>}/>
 
-      <section className="grid grid-cols-3">
-        <PostLists container={data?data:[]}/>
-        <PostLists container={data?data:[]}/>
-        <PostLists container={data?data:[]}/>
-      </section>
+          <KyiCard title={"Contact Messages"} color={'green'} value={data.length} percentage={5} icon={<MessageCircle 
+          className="text-green-700 bg-green-200 p-1 rounded-xl" size={50}/>}/>
+
+          <KyiCard title={"Comments"} color={'green'} value={"50"} percentage={5} icon={<MessageCircle 
+          className="text-green-700 bg-green-200 p-1 rounded-xl" size={50}/>}/>
+          
+        </section>
+      
+        <section className="grid grid-cols-3 items-start">
+          <div className="overflow-y-auto">
+            <PostLists container={data?data:[]}/>
+          </div>
+        </section>
+      </>:"Loading..."}
+
+
 
     </section>)}
 

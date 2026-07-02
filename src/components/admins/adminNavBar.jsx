@@ -29,7 +29,9 @@ export default function NavigationBar({tapFunc}) {
 
       <div className="rounded-2xl shadow shadow-green-500 bg-green-950 flex flex-col p-2 mt-4">
         {admin?<div className="gap-4">
-          <img src="photo.png" alt="photo.png" />
+          <img 
+            className="w-20 h-20 border-2 p-2 rounded-full"
+            src="photo.png" alt="admin" />
             <p>{admin.username}</p>
             <p>{admin.role}</p>
             <LogOutIcon onClick={Logout}/>

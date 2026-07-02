@@ -1,4 +1,5 @@
 
+import { Link } from "react-router-dom"
 import { Button } from "../ui/Buttons"
 
 export default function MarketTable(){
@@ -35,6 +36,6 @@ export default function MarketTable(){
                 </tr>
             </tbody>
         </table>
-        <button className="m-2 bg-green-50 rounded p-1 text-green-700 transition active:scale-105">view in full</button>
+        <Link to="/market" className="m-2 bg-green-50 rounded p-1 text-green-700 transition active:scale-105">View All</Link>
         </div>)
 }

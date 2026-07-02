@@ -70,17 +70,17 @@ export default function SearchBar() {
               <div
                 key={blog.slug}
                 onMouseDown={() => {
-                  navigate(`/blog/${blog.slug}`);
+                  navigate(`/post/${blog.slug}`);
                   setShow(false);
                 }}
                 className="cursor-pointer border-b p-3 hover:bg-gray-100"
               >
-                <p className="font-semibold">
+                <p className="font-semibold text-black">
                   {blog.title}
                 </p>
 
                 {blog.category && (
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-black">
                     {blog.category}
                   </p>
                 )}

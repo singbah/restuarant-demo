@@ -1,4 +1,6 @@
+import axios from "axios";
 import { useState } from "react";
+import {API_URL} from "../../../libs/api.js"
 
 export default function NewsLetter() {
   const [userData, setUserData] = useState({
@@ -25,8 +27,17 @@ export default function NewsLetter() {
 
     console.log(data);
 
-    // TODO:
-    // await subscribeUser(data)
+    try{
+      const response = await axios.post(`${API_URL}user/create`, data);
+      const result = response.data;
+      console.log(result);
+      alert("Thanks", result)
+      setUserData({name:'', email:''})
+      return;
+    }catch(error){
+      console.log(error.response.data.detail)
+      alert("An error Occur, Try using the Contact Form instead")
+    }
   }
 
   return (

@@ -6,15 +6,22 @@ export default function useFetch(url){
     const [data, setData] = useState(null);
     const [error, setError] = useState('')
 
-    useEffect(() =>{
-        if(loading){
-            fetch(url)
-            .then(res => res.json())
-            .then(setData)
-            .catch(setError)
-            .finally(() => setLoading(false))
+
+    async function getData(){
+        try{
+            const resp = await axios.get(url);
+            const result = resp.data;
+            setData(result);
+            setLoading(false)
+        }catch(error){
+            setError(error.response.data)
+            setLoading(false)
         }
+    }
+
+    useEffect(() =>{
+        getData()
     },[url])
 
-    return {data, loading, error}
+    return {data, loading, error, refetch:getData}
 }

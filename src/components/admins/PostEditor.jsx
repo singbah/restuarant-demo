@@ -9,20 +9,22 @@ import { AdminContext } from "./adminContext";
 import PostLists from "../blog/PostLists";
 import { API_URL, postBlog, getBlogs } from "../../../libs/api";
 import { postDataFunc } from "../hooks/UsePost";
+import dateFormator from "../../../libs/DateFormating";
 
 
 
-export default function PostEditors({ menu_item }) {
+export default function PostEditors({ postToEdit }) {
 
   const [postData, setPostData] = useState({photo:null, title:'', excert:'', content:'', published_at:'', published_time:'' });
   const {admin, adminFetch} = useContext(AdminContext)
   const [prevPic, setPrevPic] = useState(null);
   const [blogPost, setBlogPost] = useState([]);
-  const [state, setState] = useState(false)
-  
-  const reqKey = useRef()
+  const [isloading, setIsLoading] = useState(false)
+  const [msg, setMsg] = useState('')
 
-  const {data, loading, error} = useFetch(`${API_URL}posts/posts`)
+
+  const {data, loading, error, refetch} = useFetch(`${API_URL}posts/posts`)
+
 
   function handelForm(e) {
     const { name, value} = e.target;
@@ -30,30 +32,47 @@ export default function PostEditors({ menu_item }) {
     return;
   };
 
-  function submitMenuItem(e){
+  const deleteItem = async(data) =>{
+    try{
+      const resp = await axios.delete(`${API_URL}posts/delete?post_id=${data}`)
+      const result = resp.data;
+      refetch()
+      return;
+    }catch(error){
+      console.log(error)
+    }
+  }
+
+  async function submitMenuItem(e){
+    setIsLoading(true)
     e.preventDefault();
     const formData = new FormData()
 
     for(let da in postData){
       formData.append(da, postData[da])
     }
-
-    const {data, success, status} = postDataFunc("/posts/create_post",formData)
-    alert(data)
-    console.log(data)
-    if(success){
-      alert("Posted")
-    }else{
-      alert(data)
+    try{
+      const response = await axios.post(`${API_URL}posts/create_post`,formData)
+      const result = response.data;
+      refetch()
+      setIsLoading(false)
+      setMsg(data.detail)
       console.log(data)
+      return;
+    }catch(error){
+      console.log(error.response.data.detail)
+      setIsLoading(false)
+      setMsg(error.response.data.detail)
     }
   }
+
+  if(isloading || loading) return(<div>Loading...</div>)
 
   return (<div className="flex flex-row m-2 w-full relative">
     
     <section className="overflow-y-auto m-2 w-2/3 flex flex-col items-center p-4">
-      {(<AlertCard props={{message:"Hello, message", state:state}} action={setState}/>)}
-      <button onChange={() =>setState(true)}>Try something</button>
+      {msg&& (<AlertCard props={{message:msg}}/>)}
+
       <form
         onSubmit={submitMenuItem}
         className="flex flex-col p-2 border w-4/5 rounded-2xl">
@@ -63,7 +82,7 @@ export default function PostEditors({ menu_item }) {
           items-center bg-green-100 relative cursor-pointer">
           <img
             className="rounded-2xl w-fit"
-            src={menu_item?menu_item.photo:prevPic?prevPic:null} alt="photo" />
+            src={postToEdit?postToEdit.photo:prevPic?prevPic:null} alt="photo" />
           <input
             style={{ display: "none" }}
             onChange={(e) => {
@@ -84,7 +103,7 @@ export default function PostEditors({ menu_item }) {
             onChange={handelForm}
             required
             placeholder="headline of the post"
-            value={menu_item?menu_item.title:postData.title}
+            value={postToEdit?postToEdit.title:postData.title}
             className="border mx-20 p-2 rounded-2xl text-2xl mb-6"
             type="text"
             name="title"
@@ -96,7 +115,7 @@ export default function PostEditors({ menu_item }) {
             required
             placeholder="short paragrah about the post"
             className="border mx-20 p-2 rounded-2xl h-35 text-2xl mb-6"
-            value={menu_item?menu_item.excert:postData.excert}
+            value={postToEdit?postToEdit.excert:postData.excert}
             name="excert">
           </textarea>
 
@@ -106,7 +125,7 @@ export default function PostEditors({ menu_item }) {
             onChange={handelForm}
             placeholder="main content of the post"
             className="border mx-8 p-2 rounded-2xl h-45 text-2xl mb-6"
-            value={menu_item?menu_item.content:postData.content}
+            value={postToEdit?postToEdit.content:postData.content}
             name="content">
           </textarea>
 
@@ -142,7 +161,19 @@ export default function PostEditors({ menu_item }) {
     <section className="m-2 w-1/3 overflow-y-auto bg-white p-2 rounded-2xl shadow">
 
       <div className="w-full overflow-y-auto">
-        <PostLists container={data}/>
+        {data && data.map((blog, index) => 
+        <li 
+          className="p-2 m-4 list-none rounded-xl shadow shadow-black hover:scale-103 transition relative"
+          onClick={() => setPostData({title:blog.title, excert:blog.excert, 
+            published_at:blog.published_at,
+            content:blog.content, photo:blog.featured_image})}
+          key={blog.id}>
+          <h4>{blog.title}</h4>
+            <button 
+              onClick={() => deleteItem(blog.id)}
+              className="px-2 m-2 rounded text-white font-bold hover:scale-105 transition active:bg-red-900 bg-red-600">Delete</button>
+          <p className="text-[10px] text-right bottom-0 text-gray-600 ">{dateFormator(blog.created_at)}</p>
+        </li>)}
       </div>
     </section>
 

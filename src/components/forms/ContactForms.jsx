@@ -1,4 +1,6 @@
+import axios from "axios";
 import { useState } from "react";
+import { API_URL } from "../../../libs/api";
 
 export default function ContactForm() {
   const [form, setForm] = useState({
@@ -18,13 +20,21 @@ export default function ContactForm() {
     }));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
-    console.log(form);
-
-    // TODO:
-    // sendContactForm(form)
+    const data = {...form, source:window.location.href}
+   try{
+    const resp = await axios.post(`${API_URL}user/contact`, data)
+    const result = resp.data;
+    alert(result.detail)
+    setForm({name:'', email:'', subject:'', source:'', newsletter:false, message:''})
+    return;
+   }catch(error){
+    const errData = error.response.data.detail;
+    console.error(errData)
+    alert("error: ", errData)
+   }
   }
 
   return (
@@ -114,7 +124,7 @@ export default function ContactForm() {
             name="newsletter"
             checked={form.newsletter}
             onChange={handleChange}
-            className="h-4 w-4"
+            className="h-6 w-6"
           />
 
           <span>

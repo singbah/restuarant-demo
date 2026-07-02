@@ -6,7 +6,7 @@ import dateFormator from '../../../libs/DateFormating'
 export default function PostLists({container, action}){
     const [display, setDisplay] = useState(true)
 
-    return(<div className="p-2 overflow-y-auto">
+    return(<div className="p-2 overflow-y-auto self-start">
         <button>See All</button>
         {container?container.map((blog, index) =><div 
         onClick={() => action(blog)}
