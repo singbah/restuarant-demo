@@ -7,10 +7,13 @@ import HomePage from "./components/pages/Home"
 import Blogs from "./components/pages/Blog"
 import PostsDetails from "./components/blog/PostDetails"
 import ContactPage from "./components/pages/Contact"
-import Dashboard from "./components/admins/dashboard"
+import Analytics from "./components/admins/Analytics"
 import { AdminLogin } from "./components/admins/auths"
 import PostEditors from "./components/admins/PostEditor"
 import ProductTable from "./components/layouts/ProductTable"
+import Dashboard from "./components/admins/dashboard"
+import Settings from "./components/admins/Settings"
+import ContactMessage from "./components/admins/ContactMessages"
 
 
 const navAStyle = "px-3 p-1 rounded-2xl text-sm font-bold focus:text-red-500 cursor-pointer"
@@ -27,9 +30,12 @@ export default function App() {
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/post/:postSlug" element={<PostsDetails />} />
       <Route path="/market" element={<ProductTable />} />
-      <Route path="/admin/dashboard" element={<Dashboard />} />
+
+      <Route path="/admin/analytics" element={<Analytics />} />
+      <Route path="/admin/settings" element={<Settings />} />
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/admin/post/editor" element={<PostEditors />} />
+      <Route path="/admin/messages" element={<ContactMessage />} />
     </Routes>
   </div>)
 }

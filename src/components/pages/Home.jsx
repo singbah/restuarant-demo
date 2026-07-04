@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { GiFoodTruck } from "react-icons/gi";
 import { FuelIcon } from "lucide-react";
 
-import { getBlogs } from "../../../libs/api";
+import { API_URL, getBlogs } from "../../../libs/api";
 
 import NavBar from "../layouts/navbar";
 import Footer from "../layouts/Footer";
@@ -15,22 +15,37 @@ import CurrencyConvertor from "../layouts/CurrencyConvert";
 import BudgetHelper from "../layouts/BudgetTracker";
 import PostCard from "../blog/PostCards";
 import SearchBars from "../forms/SearchBar";
+import LoadingEffect from "../layouts/LoadingEffect";
+import axios from "axios";
 
 export default function HomePage() {
   const [blogs, setBlogs] = useState([]);
+  const [cursor, setCursor] = useState(null);
+  const [hasMore, setHasMore] = useState(true);
+  const [msg, setMsg] = useState({ open: false, title: "", message: "" });
+  const [loading, setLoading] = useState(false);
+
+  async function fetchBlogs(){
+    setLoading(true)
+    try {
+      const data = await axios.get(API_URL + `?cursor=${Number(cursor) || 0}&limit=20`);
+      setBlogs((prev) => ([...prev, ...data.data.posts]));
+      console.log(data.data.posts)
+      setCursor(data.data.last_id);
+      setHasMore(data.data.has_more);
+      setLoading(false);
+    } catch (error) {
+      console.error("Failed to fetch blogs:", error.response?.data || error.message);
+      setMsg({ open: true, title: "Error", message: "Failed to fetch blogs" });
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
-    async function fetchBlogs() {
-      try {
-        const res = await getBlogs();
-        setBlogs(res || []);
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
     fetchBlogs();
   }, []);
+
+  if(loading) return <LoadingEffect/>;
 
   return (
     <div className="min-h-dvh flex flex-col">
@@ -115,14 +130,14 @@ export default function HomePage() {
         </section>
 
         {/* Latest Articles */}
-        {blogs.length > 0 && (
+        {blogs &&blogs.length > 0 && (
           <section className="max-w-7xl mx-auto px-6 py-12">
             <h2 className="text-3xl font-bold mb-8">
               Latest Articles
             </h2>
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {blogs.slice(0, 6).map((blog) => (
+              {blogs && blogs.slice(0, 6).map((blog) => (
                 <PostCard
                   key={blog.id}
                   content={blog}

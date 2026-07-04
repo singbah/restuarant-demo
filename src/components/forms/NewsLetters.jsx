@@ -1,13 +1,18 @@
 import axios from "axios";
 import { useState } from "react";
 import {API_URL} from "../../../libs/api.js"
+import LoadingEffect from "../layouts/LoadingEffect.jsx";
+import { set } from "date-fns";
+import AlertCard from "../layouts/AlertCard.jsx";
 
 export default function NewsLetter() {
+  const [msg, setMsg] = useState({open:false, title:'', message:''});
+  const [loading, setLoading] = useState(false)
+  
   const [userData, setUserData] = useState({
     name: "",
     email: "",
   });
-
   function handleForm(e) {
     const { name, value } = e.target;
 
@@ -18,6 +23,7 @@ export default function NewsLetter() {
   }
 
   async function submit(e) {
+    setLoading(true)
     e.preventDefault();
 
     const data = {
@@ -31,17 +37,27 @@ export default function NewsLetter() {
       const response = await axios.post(`${API_URL}user/create`, data);
       const result = response.data;
       console.log(result);
-      alert("Thanks", result)
+      setLoading(false)
+      setMsg({title:"success", message:data.detail, open:true})
       setUserData({name:'', email:''})
+
       return;
     }catch(error){
       console.log(error.response.data.detail)
-      alert("An error Occur, Try using the Contact Form instead")
+      setLoading(false)
+      setMsg({title:"Error", message:error.response?.data.detail || "An error Occur", open:true})
     }
   }
 
+  if(loading) return <LoadingEffect/>
   return (
     <section className="mx-auto w-full max-w-2xl rounded-3xl bg-gradient-to-r from-blue-600 to-green-600 p-8 text-white shadow-xl">
+      <AlertCard
+        open={msg.open}
+        title={msg.title}
+        message={msg.message}
+        onClose={() => setMsg({open:false, title:'', message:''})}
+      />
       <div className="text-center">
         <h2 className="text-3xl font-bold">
           Stay Ahead of Market Prices

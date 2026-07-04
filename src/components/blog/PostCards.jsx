@@ -21,11 +21,11 @@ export default function PostCard({content}){
         <img src={`${API_URL}posts/send_file?filename=${content.featured_image}`} alt="" />
         <h4>{content.excert}</h4>
         <article className="prose max-w-none">
-            {/* <ReactMarkDown
+            <ReactMarkDown
                 remarkPlugins={[remarkGfm]}
                 >
                 {content.content}
-                </ReactMarkDown> */}
+                </ReactMarkDown>
         </article>
         <p>{dateFormator(content.created_at)}</p>
         <Link

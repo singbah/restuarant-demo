@@ -41,7 +41,7 @@ async function postBlog(url, postData) {
 
 async function GetData(url) {
     try{
-        const response = await axios.post(`${API_URL}${url}`, postData);
+        const response = await axios.post(`${API_URL}${url}`);
         const data = response.data;
         console.log(data);
         return data

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { API_URL } from "../../../libs/api";
+import AlertCard from "../layouts/AlertCard";
 
 export default function ContactForm() {
   const [form, setForm] = useState({
@@ -10,6 +11,7 @@ export default function ContactForm() {
     message: "",
     newsletter: false,
   });
+  const [msg, setMsg] = useState({open:false, title:'', message:''})
 
   function handleChange(e) {
     const { name, value, type, checked } = e.target;
@@ -27,18 +29,24 @@ export default function ContactForm() {
    try{
     const resp = await axios.post(`${API_URL}user/contact`, data)
     const result = resp.data;
-    alert(result.detail)
+    setMsg({open:true, title:'Success', message:result.detail})
     setForm({name:'', email:'', subject:'', source:'', newsletter:false, message:''})
     return;
    }catch(error){
     const errData = error.response.data.detail;
     console.error(errData)
-    alert("error: ", errData)
+    setMsg({open:true, title:'Error', message:errData||"Failed to send message"})
    }
   }
 
   return (
     <section className="mx-auto w-full max-w-3xl rounded-3xl bg-white p-8 shadow-lg">
+      <AlertCard
+        open={msg.open}
+        title={msg.title}
+        message={msg.message}
+        onClose={() => setMsg({open:false, title:'', message:''})}
+      />
       <div className="text-center">
         <h2 className="text-3xl font-bold text-gray-900">
           Get in Touch

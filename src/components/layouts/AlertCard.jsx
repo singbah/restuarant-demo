@@ -1,28 +1,33 @@
-import { useState } from "react"
+export default function AlertCard({
+    open,
+    title = "Notice",
+    message,
+    onClose,
+}) {
+    if (!open) return null;
 
+    return (
+        <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs`}>
 
-export default function AlertCard({props, action}){
-    const [display, setDisplay] = useState(false)
+            <div className={`w-full max-w-md ${title === 'Success' ? 'bg-green-500/40' : 'bg-red-500/40'} rounded-2xl bg-white p-6 shadow-xl`}>
 
-    return(<div 
-            // style={{display:props&&props.state?"block":"none"}}
-            className="absolute justify-center 
-            bg-white z-50 rounded-2xl p-4 flex w-100 h-60 
-            items-center shadow shadow-green-500 right-1/2 bottom-1/2">
-        {props?
-        <div className="justify-center items-center flex flex-col">
-            <h1 className="text-xl text-center font-bold my-4">{props.message}</h1>
-            <button
-                onClick={action?action:() => console.log("error occur")}
-                className="bg-blue-600 px-6 py-2 rounded-lg text-2xl my-2 text-white font-black shadow-2xl active:scale-105"
-            >Close</button>
-        </div>:
-            
-        <div className="justify-center items-center flex flex-col">
-            <h1 className="text-xl text-center font-bold my-4">This the first message of the card</h1>
-            <button
-                className="bg-blue-600 px-6 py-2 rounded-lg text-2xl my-2 text-white font-black shadow-2xl active:scale-105"
-            >Close</button>
-        </div>}
-    </div>)
+                <h2 className="text-2xl font-bold">
+                    {title}
+                </h2>
+
+                <p className="mt-4 text-gray-600">
+                    {message}
+                </p>
+
+                <button
+                    onClick={onClose}
+                    className="mt-6 w-full rounded-lg bg-blue-600 py-3 font-bold text-white hover:bg-blue-700"
+                >
+                    Close
+                </button>
+
+            </div>
+
+        </div>
+    );
 }

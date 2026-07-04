@@ -21,7 +21,7 @@ export default function AdminProvider({ children }) {
       const resp = await axios.post(`${API_URL}auths/login`, params);
       const data = resp.data;
       console.log(data)
-      navigate("/admin/dashboard")
+      navigate("/admin/analytics")
       setAdmin(data)
     }catch(err){
       console.log(err.response.data)
@@ -34,7 +34,7 @@ export default function AdminProvider({ children }) {
       const resp = await axios.post(`${API_URL}auths/refresh`)
       const data = resp.data;
       setAdmin(data)
-      navigate("/admin/dashboard")
+      // navigate("/admin/analytics")
       console.log(data)
       return;
     } catch (error) {

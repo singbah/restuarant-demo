@@ -10,6 +10,7 @@ import LayoutScreen from "../layouts/Layout";
 import { API_URL } from "../../../libs/api";
 import logo from '../../logo.jpg'
 import Tagbadges from "./TagBadges";
+import { formatDistanceToNow } from "date-fns";
 
 
 export default function PostsDetails({}){
@@ -21,10 +22,6 @@ export default function PostsDetails({}){
     const {data, loading, error} = useFetch(`${API_URL}posts${pathname}`)
 
     const postUrl = `${API_URL}${postSlug}`
-
-    const tableTry = `
-    The heading is gonna work
-    SECOND ITEM`
     
     if(!data) return <div>'loading ...'</div>
 
@@ -59,6 +56,7 @@ export default function PostsDetails({}){
         </Helmet>
 
         <article className="p-2 prose prose-slate">
+            <p>{data.created_at}</p>
             <h1 className="text-3xl font-bold p-2">{data.title}</h1>
             <img 
                 className="rounded"
