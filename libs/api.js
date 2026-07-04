@@ -51,5 +51,11 @@ async function GetData(url) {
     }
 }
 
+const api = axios.create({
+    baseURL: import.meta.env.VITE_API_URL,
+    withCredentials:true
+});
 
-export {getBlogs, API_URL, postBlog, deleteStuff}
+export default api;
+
+export {getBlogs, API_URL, api, postBlog, deleteStuff}

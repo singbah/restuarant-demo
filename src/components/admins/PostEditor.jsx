@@ -7,9 +7,9 @@ import useFetch from "../hooks/UseFetch";
 import AlertCard from "../layouts/AlertCard";
 import { AdminContext } from "./adminContext";
 import PostLists from "../blog/PostLists";
-import { API_URL, postBlog, getBlogs } from "../../../libs/api";
+import { api, postBlog, getBlogs } from "../../../libs/api";
 import { postDataFunc } from "../hooks/UsePost";
-import dateFormator from "../../../libs/DateFormating";
+import { formatDistanceToNow } from "date-fns";
 import Dashboard from "./dashboard";
 import LoadingEffect from "../layouts/LoadingEffect";
 
@@ -26,13 +26,14 @@ export default function PostEditors({ postToEdit }) {
   const [loading, setIsLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
   const [lastId, setLastId] = useState(null);
+
   const [msg, setMsg] = useState({open:false, title:'', message:''})
 
 
   async function fetchBlogs() {
     setIsLoading(true)
     try {
-      const resp = await axios.get(`${API_URL}posts/posts?cursor=${Number(lastId) || 0}&limit=20`)
+      const resp = await api.get(`/posts/posts?cursor=${Number(lastId) || 0}&limit=20`)
       const data = resp.data;
       setBlogPost((prev) => ([...prev, ...data.posts]))
       console.log(lastId)
@@ -60,7 +61,7 @@ export default function PostEditors({ postToEdit }) {
 
   const deleteItem = async(data) =>{
     try{
-      const resp = await axios.delete(`${API_URL}posts/delete?post_id=${data}`)
+      const resp = await api.delete(`posts/delete?post_id=${data}`)
       const result = resp.data;
       setMsg({open:true, title:'Success', message:'Post deleted successfully'})
       setBlogPost((prev) => prev.filter((post) => post.id !== data))
@@ -76,20 +77,39 @@ export default function PostEditors({ postToEdit }) {
     e.preventDefault();
     const formData = new FormData()
 
-    for(let da in postData){
-      formData.append(da, postData[da])
+    formData.append("title", postData.title);
+    formData.append("excert", postData.excert);
+    formData.append("content", postData.content);
+    formData.append("published_at", postData.published_at);
+    formData.append("published_time", postData.published_time);
+    formData.append("tags", postData.tags);
+
+    if (postData.photo instanceof File) {
+      formData.append("photo", postData.photo);
     }
+
+
     try{
-      const response = await axios.post(`${API_URL}posts/create_post`,formData)
+      const response = await api.post(`/posts/create_post`,formData)
       const result = response.data;
       setIsLoading(false)
       setMsg({open:true, title:'Success', message:'Post created successfully'})
       fetchBlogs()
+      setPostData({
+        photo: null,
+        title: "",
+        excert: "",
+        tags: "",
+        content: "",
+        published_at: "",
+        published_time: ""
+      });
+      setPrevPic(null);
       return;
     }catch(error){
       console.log(error)
       setIsLoading(false)
-      setMsg({open:true, title:'Error', message:error.response.data.detail||"Failed to create post"})
+      setMsg({open:true, title:'Error', message:"Failed to create post"})
     }
   }
 
@@ -111,13 +131,19 @@ export default function PostEditors({ postToEdit }) {
         <label className="border-2 border-green-400 
           m-4 rounded-2xl p-1 flex justify-center 
           items-center bg-green-100 relative cursor-pointer">
-          <img
+         <img
             className="rounded-2xl w-fit"
-            src={postToEdit?postToEdit.photo:prevPic?prevPic:null} alt="photo" />
+            src={
+              prevPic ||
+              postToEdit?.featured_image ||
+              null
+            }
+            alt="photo"
+            />
           <input
             style={{ display: "none" }}
             onChange={(e) => {
-              setPostData((prev) => ({ ...prev, photo: e.target.files[0] }));
+              setPostData((prev) => ({ ...prev, photo: e.target.files[0]}));
               setPrevPic(URL.createObjectURL(e.target.files[0]))
             }}
             type="file"
@@ -187,22 +213,22 @@ export default function PostEditors({ postToEdit }) {
           </select>
         </label>
 
+        <h1 className="text-3xl font-bold text-center m-8">Add Post Tags</h1>
+          <input
+          className='border'
+            onChange={handelForm}
+            required
+            placeholder="Add tags for the post separated by commas"
+            className="border mx-20 p-2 rounded-2xl text-2xl mb-6"
+            type="text"
+            name="tags"
+          />
+
         <button
           className="bg-green-400 mx-30 my-4 p-2 text-xl font-bold text-white rounded-2xl shadow"
           type="submit">Publish Now</button>
       </form>
 
-      <div className="flex flex-col items-center justify-center border rounded-2xl shadow p-4 m-4">
-        <h1 className="text-3xl font-bold text-center m-8">Add Post Tags</h1>
-        <input
-          onChange={handelForm}
-          required
-          placeholder="Add tags for the post separated by commas"
-          className="border mx-20 p-2 rounded-2xl text-2xl mb-6"
-          type="text"
-          name="tags"
-        />
-      </div>
     </section>
 
     <section className="m-2 w-1/3 overflow-y-auto bg-white p-2 rounded-2xl shadow">
@@ -219,7 +245,7 @@ export default function PostEditors({ postToEdit }) {
             <button 
               onClick={() => deleteItem(blog.id)}
               className="px-2 m-2 rounded text-white font-bold hover:scale-105 transition active:bg-red-900 bg-red-600">Delete</button>
-          <p className="text-[10px] text-right bottom-0 text-gray-600 ">{dateFormator(blog.created_at)}</p>
+          <p className="text-[10px] text-right bottom-0 text-gray-600 ">{formatDistanceToNow(blog.created_at)}</p>
         </li>)}
         <button
           onClick={fetchBlogs}

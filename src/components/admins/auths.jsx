@@ -1,18 +1,26 @@
 import { useContext, useState } from "react"
 import { AdminContext } from "./adminContext"
 import { useNavigate } from "react-router-dom";
+import AlertCard from "../layouts/AlertCard";
+import { api } from "../../../libs/api"
 
 function AdminLogin() {
-  const { loginRoute, rrorMsg, setErrorMsg } = useContext(AdminContext);
+  const { loginRoute, setAdmin } = useContext(AdminContext);
   const [loginData, setLoginData] = useState({phone:'', password:""})
+  const [msg, setMsg] = useState({message:'', open:false, title:'', status:null})
 
   const navigate = useNavigate()
   
   async function signIn(e) {
-    console.log(loginData)
-    e.preventDefault();
-    // navigate("/admin/dashboard")
-    loginRoute(loginData)
+    e.preventDefault()
+    try{
+      const resp = await api.post("/auths/login", loginData);
+      setAdmin(resp.data)
+      navigate("/admin/analytics")
+    }catch(error){
+      const errData = error.response?.data.detail || "An Error Occur";
+      setMsg({message:errData, open:true, title:"Login", status:"error"})
+    }
     
   }
 
@@ -21,6 +29,7 @@ function AdminLogin() {
     setLoginData((prev) => ({...prev, [name]:value}))
   }
   return (<div className="h-screen flex flex-col justify-center items-center bg-green-50 relative">
+    <AlertCard message={msg.message} title={msg.title} open={msg.open} onClose={() => setMsg((prev) =>({...prev, open:false}))}/>
     <form
       onSubmit={signIn}
       className="border-white p-4 flex flex-col lg:w-1/2 justify-center text-2xl rounded-2xl shadow shadow-green-500">
@@ -54,14 +63,18 @@ function AdminLogin() {
   </div>)
 };
 
+
 function AdminSignUp() {
-  const { login, adminSignUp, errorMsg, setErrorMsg } = useContext(AdminContext);
-  const [loginData, setLoginData] = useState({username:'', password:""})
+  const { login, } = useContext(AdminContext);
+  const [loginData, setLoginData] = useState({username:'', password:""});
+  
   
   async function signUp(e) {
     console.log(loginData)
     e.preventDefault();
     adminSignUp(loginData)
+    .then(res => console.log(res))
+    .catch(() => setMsg({message:"An error occur!!", title:"Login Error", open:true}))
   }
 
   const handelForm = (e) => {

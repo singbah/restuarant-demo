@@ -64,7 +64,7 @@ export default function Footer() {
           </h3>
 
           <div className="flex gap-4 text-2xl">
-            <a href="#" className="hover:text-blue-500">
+            <a href="https://www.facebook.com/profile.php?id=61591098313601" className="hover:text-blue-500">
               <FaFacebook />
             </a>
 

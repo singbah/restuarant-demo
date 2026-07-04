@@ -3,12 +3,12 @@ import Dashboard from "./dashboard";
 import { useContext } from "react";
 import { AdminContext } from "./adminContext";
 import useFetch from "../hooks/UseFetch";
-import { API_URL } from "../../../libs/api";
+import { api } from "../../../libs/api";
 
 export default function Settings(){
     const {admin, refreshAdmin} = useContext(AdminContext)
 
-    const {data, loading, error, refetch} = useFetch(`${API_URL}admin/settings`)
+    const {data, loading, error, refetch} = useFetch(`/admin/settings`)
 
     useEffect(() =>{
         refreshAdmin()

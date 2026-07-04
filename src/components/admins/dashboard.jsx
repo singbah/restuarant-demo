@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom"
 import { AdminContext } from "./adminContext"
 import NavigationBar from "./adminNavBar"
 import { useContext, useEffect } from "react"
+import { AdminLogin } from "./auths"
 
 export default function Dashboard({component}) {
   const {admin, refreshAdmin} = useContext(AdminContext)
@@ -12,10 +13,7 @@ export default function Dashboard({component}) {
     refreshAdmin()
   },[])
 
-  if (!admin) {
-    return (<div>
-          <a href="/admin/login">You Must Login</a>
-        </div>) }
+  if (!admin) return <AdminLogin/>
       
   return (<div className="h-dvh flex bg-gray-100">
     <NavigationBar/>

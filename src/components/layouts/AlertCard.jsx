@@ -3,13 +3,15 @@ export default function AlertCard({
     title = "Notice",
     message,
     onClose,
+    status='success'
 }) {
     if (!open) return null;
 
     return (
         <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs`}>
 
-            <div className={`w-full max-w-md ${title === 'Success' ? 'bg-green-500/40' : 'bg-red-500/40'} rounded-2xl bg-white p-6 shadow-xl`}>
+            <div 
+                className={`w-full max-w-md ${status === 'success' ? 'bg-green-500/40' : 'bg-red-500/40'} rounded-2xl bg-white p-6 shadow-xl`}>
 
                 <h2 className="text-2xl font-bold">
                     {title}

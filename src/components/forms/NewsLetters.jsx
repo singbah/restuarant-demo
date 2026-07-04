@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
-import {API_URL} from "../../../libs/api.js"
+import {API_URL, api} from "../../../libs/api.js"
 import LoadingEffect from "../layouts/LoadingEffect.jsx";
 import { set } from "date-fns";
 import AlertCard from "../layouts/AlertCard.jsx";
@@ -34,11 +34,11 @@ export default function NewsLetter() {
     console.log(data);
 
     try{
-      const response = await axios.post(`${API_URL}user/create`, data);
+      const response = await api.post(`/user/create`, data);
       const result = response.data;
       console.log(result);
       setLoading(false)
-      setMsg({title:"success", message:data.detail, open:true})
+      setMsg({title:"success", message:data.detail || "Thanks for reaching out I will response soon...", open:true})
       setUserData({name:'', email:''})
 
       return;

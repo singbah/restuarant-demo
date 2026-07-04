@@ -1,5 +1,5 @@
 import KyiCard from "../layouts/KYICard"
-import { API_URL } from "../../../libs/api"
+import { api } from "../../../libs/api"
 import PostEditors from "./PostEditor"
 
 import {formatDistanceToNow} from "date-fns"
@@ -23,8 +23,8 @@ export default function Analytics(){
     const [activeTap, setActiveTap] = useState(null)
 
 
-    const {data, loading, error, refetch} = useFetch(`${API_URL}admin/analytics`)
-    console.log(data)
+    const {data, loading, error, refetch} = useFetch(`/admin/analytics`)
+    
     useEffect(() =>{
         refreshAdmin()
         refetch()

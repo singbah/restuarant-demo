@@ -1,6 +1,6 @@
 
 import { useState } from 'react'
-import { API_URL, deleteStuff } from '../../../libs/api'
+import { API_URL, api } from '../../../libs/api'
 import dateFormator from '../../../libs/DateFormating'
 
 export default function PostLists({container, action}){

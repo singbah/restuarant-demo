@@ -2,7 +2,7 @@ import { useReducer, useState, useEffect } from "react";
 import Dashboard from "./dashboard";
 import AlertCard from "../layouts/AlertCard";
 import axios from "axios";
-import { API_URL } from "../../../libs/api";
+import { api } from "../../../libs/api";
 import { formatDistanceToNow} from "date-fns";
 import LoadingEffect from "../layouts/LoadingEffect";
 
@@ -23,7 +23,7 @@ export default function ContactMessage(){
     async function getMessages(){
         setLoading(true)
         try{
-            const response = await axios.get(API_URL + `admin/all-contacts?cursor=${Number(cursor)|| 0}&limit=${Number(hasMore)}`) 
+            const response = await api.get(`/admin/all-contacts?cursor=${Number(cursor)|| 0}&limit=${Number(hasMore)}`) 
             const data = response.data;
             setMessage(data.contacts)
             setCursor(data.cursor)
@@ -45,7 +45,7 @@ export default function ContactMessage(){
         console.log(mailTo)
 
         try{
-            const response = await axios.post(`${API_URL}admin/send_newsletter`, user_data);
+            const response = await api.post(`/admin/send_newsletter`, user_data);
             const data = response.data;
             setMsg({message:data.detail, title:"Success", open:true})
             setLoading(false)
@@ -54,7 +54,7 @@ export default function ContactMessage(){
         }catch(error){
             setMsg({message:"An error occur, check your internet connection", title:"Error", open:true})
             setLoading(false)
-            console.log(error.response.data.detail)
+            console.log(error.response.data.detail  )
         }
     }
 

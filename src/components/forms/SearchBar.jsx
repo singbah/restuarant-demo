@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+import {api} from '../../../libs/api'
+
 export default function SearchBar() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
@@ -20,8 +22,8 @@ export default function SearchBar() {
     try {
       setLoading(true);
 
-      const res = await axios.get(
-        `http://127.0.0.1:8000/posts/search/blog?q=${search}`
+      const res = await api.get(
+        `/posts/search/blog?q=${search}`
       );
 
       setResults(res.data || []);

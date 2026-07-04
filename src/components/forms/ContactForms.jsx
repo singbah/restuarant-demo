@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
-import { API_URL } from "../../../libs/api";
+import { api } from "../../../libs/api";
 import AlertCard from "../layouts/AlertCard";
 
 export default function ContactForm() {
@@ -27,7 +27,7 @@ export default function ContactForm() {
 
     const data = {...form, source:window.location.href}
    try{
-    const resp = await axios.post(`${API_URL}user/contact`, data)
+    const resp = await api.post(`/user/contact`, data)
     const result = resp.data;
     setMsg({open:true, title:'Success', message:result.detail})
     setForm({name:'', email:'', subject:'', source:'', newsletter:false, message:''})

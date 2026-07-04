@@ -9,7 +9,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom"
 
 export default function NavigationBar() {
   const navStyle = "font-bold cursor-pointer hover:scale-105 transition"
-  const { admin, Logout, errorMsg, setErrorMsg, successMsg, setSuccessMsg, refreshAdmin } = useContext(AdminContext)
+  const { admin, Logout } = useContext(AdminContext)
   const iconStyle = "inline mx-2"
   const navAstyle = 'my-2 p-1 rounded hover:bg-green-500 focus:bg-green-500 cursor-pointer transition active:bg-green-300'
 
@@ -34,7 +34,7 @@ export default function NavigationBar() {
             src="photo.png" alt="admin" />
             <p>{admin.username}</p>
             <p>{admin.role}</p>
-            <LogOutIcon onClick={Logout}/>
+            <LogOutIcon onClick={Logout} />
         </div>:<LogInIcon onClick={Logout} />}
         <h1 className="font-bold p-2 text-green-500">Monrovia Money</h1>
         <p className="text-gray-500 font-semibold text-sm">Paynesville City, Liberia</p>
