@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { GiFoodTruck } from "react-icons/gi";
 import { FuelIcon } from "lucide-react";
 
-import { API_URL, getBlogs } from "../../../libs/api";
+import { API_URL, getBlogs, api } from "../../../libs/api";
 
 import NavBar from "../layouts/navbar";
 import Footer from "../layouts/Footer";
@@ -28,7 +28,7 @@ export default function HomePage() {
   async function fetchBlogs(){
     setLoading(true)
     try {
-      const data = await axios.get(API_URL + `home?cursor=${Number(cursor) || 0}&limit=20`);
+      const data = await api.get(`home?cursor=${Number(cursor) || 0}&limit=20`);
       setBlogs((prev) => ([...prev, ...data.data.posts]));
       console.log(data.data.posts)
       setCursor(data.data.last_id);
