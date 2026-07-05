@@ -1,7 +1,7 @@
 import LayoutScreen from "../layouts/Layout"
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom"
 import { use, useEffect, useState } from "react"
-import { API_URL, getBlogs } from "../../../libs/api"
+import { API_URL, getBlogs, api } from "../../../libs/api"
 import PostCard from "../blog/PostCards"
 import PageNotFound from "./NotFound"
 import LoadingEffect from "../layouts/LoadingEffect"
@@ -19,7 +19,7 @@ export default function Blogs(){
     async function fetchBlogs() {
         setLoading(true)
         try {
-            const resp = await axios.get(API_URL + `home?cursor=${Number(cursor) || 0}&limit=20`)
+            const resp = await api.get(`/home?cursor=${Number(cursor) || 0}&limit=20`)
             const data = resp.data;
             setBlogs((prev) => ([...prev, ...data.posts]))
             setCursor(data.last_id)
