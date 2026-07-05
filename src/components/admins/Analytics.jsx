@@ -42,13 +42,13 @@ export default function Analytics(){
             <KyiCard title={"Comments"} color={'green'} value={"50"} percentage={-5} icon={<PhoneOutgoingIcon 
             className="text-green-700 bg-green-200 p-1 rounded-xl" size={50}/>}/>
 
-            <KyiCard title={"Total Posts"} color={'green'} value={data.posts_count?data.posts_count:0} percentage={-5} icon={<GiPhotoCamera 
+            <KyiCard title={"Total Posts"} color={'green'} value={data?data.posts_count:0} percentage={-5} icon={<GiPhotoCamera 
             className="text-purple-700 bg-purple-200 p-1 rounded-xl" size={50}/>}/>
 
-            <KyiCard title={"Contact Messages"} color={'green'} value={data.contacts_count||0} percentage={5} icon={<MessageCircle 
+            <KyiCard title={"Contact Messages"} color={'green'} value={data?data.contacts_count:0} percentage={5} icon={<MessageCircle 
             className="text-green-700 bg-green-200 p-1 rounded-xl" size={50}/>}/>
 
-            <KyiCard title={"Subscribers"} color={'green'} value={data.newsletters_count||0} percentage={5} icon={<FcNews 
+            <KyiCard title={"Subscribers"} color={'green'} value={data?data.newsletters_count:0} percentage={5} icon={<FcNews 
             className="text-green-700 bg-green-200 p-1 rounded-xl" size={50}/>}/>
             
             </section>
