@@ -23,7 +23,7 @@ export default function LayoutScreen({compo}){
     async function fetchBlogs(){
         setLoading(true)
         try {
-        const data = await axios.get(API_URL + `?cursor=${Number(cursor) || 0}&limit=20`);
+        const data = await axios.get(API_URL + `home?cursor=${Number(cursor) || 0}&limit=20`);
         setBlogs((prev) => ([...prev, ...data.data.posts]));
         console.log(data.data.posts)
         setCursor(data.data.last_id);
