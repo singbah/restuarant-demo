@@ -14,7 +14,7 @@ export default function Footer() {
         {/* Brand */}
         <div>
           <h2 className="text-2xl font-bold text-white">
-            Monrovia Money
+            Easi Tech Lr.
           </h2>
 
           <p className="mt-4 text-sm leading-6">
@@ -72,7 +72,7 @@ export default function Footer() {
               <BsYoutube />
             </a>
 
-            <a href="#" className="hover:text-green-500">
+            <a href="https://www.wa.me/+231777322000" className="hover:text-green-500">
               <FaWhatsapp />
             </a>
 

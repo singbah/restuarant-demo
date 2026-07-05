@@ -10,7 +10,7 @@ export default function PostLists({container, action}){
         <button>See All</button>
         {container?container.map((blog, index) =><div 
         onClick={() => action(blog)}
-        className="p-2 border-white m-2 my-6 border-2 rounded-xl shadow shadow-black"
+        className="p-2 border-white m-2 my-6 border-2 rounded-xl shadow shadow-black list-none"
         key={index}>
             <p className="text-right">{blog.status}</p>
             <h1 className="text-xl font-bold">{blog.title}</h1>

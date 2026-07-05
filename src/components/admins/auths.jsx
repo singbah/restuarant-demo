@@ -3,22 +3,29 @@ import { AdminContext } from "./adminContext"
 import { useNavigate } from "react-router-dom";
 import AlertCard from "../layouts/AlertCard";
 import { api } from "../../../libs/api"
+import LoadingEffect from "../layouts/LoadingEffect";
+import SectionLoading from "../layouts/SectionLoadingEffect";
 
 function AdminLogin() {
   const { loginRoute, setAdmin } = useContext(AdminContext);
   const [loginData, setLoginData] = useState({phone:'', password:""})
+  const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState({message:'', open:false, title:'', status:null})
 
   const navigate = useNavigate()
   
   async function signIn(e) {
     e.preventDefault()
+    setMsg({message:"Please wait while we check your credentails", open:true, title:"Login",})
     try{
       const resp = await api.post("/auths/login", loginData);
       setAdmin(resp.data)
+      setLoading(false)
+      setMsg({open:false})
       navigate("/admin/analytics")
     }catch(error){
       const errData = error.response?.data.detail || "An Error Occur";
+      setLoading(false)
       setMsg({message:errData, open:true, title:"Login", status:"error"})
     }
     
@@ -28,6 +35,8 @@ function AdminLogin() {
     const { name, value } = e.target;
     setLoginData((prev) => ({...prev, [name]:value}))
   }
+
+  if(loading) return <SectionLoading open={msg.open} message={msg.message} title={msg.title} onClose={() => setMsg({open:false})}/>
   return (<div className="h-screen flex flex-col justify-center items-center bg-green-50 relative">
     <AlertCard message={msg.message} title={msg.title} open={msg.open} onClose={() => setMsg((prev) =>({...prev, open:false}))}/>
     <form

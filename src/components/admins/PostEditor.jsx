@@ -26,6 +26,7 @@ export default function PostEditors({ postToEdit }) {
   const [loading, setIsLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
   const [lastId, setLastId] = useState(null);
+  const [activeTap, setActiveTap] = useState(null)
 
   const [msg, setMsg] = useState({open:false, title:'', message:''})
 
@@ -86,7 +87,7 @@ export default function PostEditors({ postToEdit }) {
 
     if (postData.photo instanceof File) {
       formData.append("photo", postData.photo);
-    }
+      }
 
 
     try{
@@ -102,7 +103,8 @@ export default function PostEditors({ postToEdit }) {
         tags: "",
         content: "",
         published_at: "",
-        published_time: ""
+        published_time: "",
+        action:""
       });
       setPrevPic(null);
       return;
@@ -124,7 +126,7 @@ export default function PostEditors({ postToEdit }) {
       />
     <section className="overflow-y-auto my-2 w-2/3 flex flex-col items-center">
       
-      <form
+      {activeTap === 'create-post' && (<form
         onSubmit={submitMenuItem}
         className="flex flex-col p-2 border rounded-2xl">
           <h1 className="text-3xl font-bold text-center m-8">Add New Posts</h1>
@@ -227,7 +229,27 @@ export default function PostEditors({ postToEdit }) {
         <button
           className="bg-green-400 mx-30 my-4 p-2 text-xl font-bold text-white rounded-2xl shadow"
           type="submit">Publish Now</button>
-      </form>
+      </form>)}
+
+      {activeTap === null && (<div className="p-4 border">
+        <div>
+          <article className="m-4 relative">
+            <img className="border w-80 h-80 rounded-2x" src={postData.photo} alt="" />
+            <input type="file" name="" id="" />
+            <PencilIcon/>
+          </article>
+          <p>{postData.author}</p>
+          <article className="m-4 text-lg p-4">
+            <h1 className="font-bold text-3xl px-8">{postData.title}</h1>
+            <h4>{postData.excert}</h4>
+            <p>{postData.content}</p>
+          </article>
+          {/* <p>Created {formatDistanceToNow(new Date(postData.published_at))}</p> */}
+          <p className="m-4">status: {postData.status === 'draft'?<button className="bg-green-400 px-8 rounded-lg py-2 font-bold text-white">Go Live Now</button>:postData.status}</p>
+          <p>{postData.slug}</p>
+          {postData?<button className="bg-blue-600 px-8 rounded-lg py-2 font-bold text-white" onClick={() => setActiveTap("create-post")}>Edit</button>:<button className="bg-blue-600 px-8 rounded-lg py-2 font-bold text-white" onClick={() => setActiveTap("create-post")}>Create New</button>}
+        </div>
+      </div>)}
 
     </section>
 
@@ -237,9 +259,11 @@ export default function PostEditors({ postToEdit }) {
         {blogPost && blogPost.map((blog, index) => 
         <li 
           className="p-2 m-4 list-none rounded-xl shadow shadow-black hover:scale-103 transition relative"
-          onClick={() => setPostData({title:blog.title, excert:blog.excert, 
-            published_at:blog.published_at,
-            content:blog.content, photo:blog.featured_image})}
+          onClick={() => {
+            setActiveTap(null)
+            setPostData({title:blog.title, excert:blog.excert, post:blog.slug,
+            published_at:blog.published_at, status:blog.status, author:blog.author,
+            content:blog.content, photo:blog.featured_image, view:blog.view})}}
           key={index}>
           <h4>{blog.title}</h4>
             <button 
