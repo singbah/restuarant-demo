@@ -28,7 +28,7 @@ export default function HomePage() {
   async function fetchBlogs(){
     setLoading(true)
     try {
-      const data = await api.get(`home?cursor=${Number(cursor) || 0}&limit=20`);
+      const data = await api.get(`/home?cursor=${Number(cursor) || 0}&limit=20`);
       setBlogs((prev) => ([...prev, ...data.data.posts]));
       console.log(data.data.posts)
       setCursor(data.data.last_id);
