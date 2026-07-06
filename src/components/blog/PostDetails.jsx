@@ -13,6 +13,7 @@ import Tagbadges from "./TagBadges";
 import logo from "../../logo.jpg";
 import { formatDistanceToNow } from "date-fns";
 import RelatedPosts from "./RelatedPosts";
+import ShareButtons from "../ui/ShareButton";
 
 export default function PostDetails() {
     const { postSlug } = useParams();
@@ -143,6 +144,10 @@ export default function PostDetails() {
                                 {data.content}
                             </ReactMarkdown>
                             <p>Viws {data.views}</p>
+                        </div>
+
+                        <div>
+                            <ShareButtons/>
                         </div>
 
                         <div className="mt-10 border-t pt-6">

@@ -17,6 +17,7 @@ import PostCard from "../blog/PostCards";
 import SearchBars from "../forms/SearchBar";
 import LoadingEffect from "../layouts/LoadingEffect";
 import axios from "axios";
+import ShareButtons from "../ui/ShareButton";
 
 export default function HomePage() {
   const [blogs, setBlogs] = useState([]);
