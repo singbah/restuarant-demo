@@ -17,9 +17,7 @@ import RelatedPosts from "./RelatedPosts";
 export default function PostDetails() {
     const { postSlug } = useParams();
 
-    const { data, loading, error } = useFetch(
-        `${API_URL}/posts/post/${postSlug}`
-    );
+    const { data, loading, error } = useFetch(`/posts/post/${postSlug}`);
 
 
     useEffect(() => {
