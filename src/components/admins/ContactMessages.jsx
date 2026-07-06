@@ -5,6 +5,7 @@ import axios from "axios";
 import { api } from "../../../libs/api";
 import { formatDistanceToNow} from "date-fns";
 import LoadingEffect from "../layouts/LoadingEffect";
+import Fdate from '../../../libs/utilities'
 
 
 
@@ -76,9 +77,8 @@ export default function ContactMessage(){
             console.log(data);
             return;
         }catch(error){
-            setMsg({message:"An error occur, check your internet connection", title:"Error", open:true})
+            setMsg({message:"Email didn't go.", status:"error", title:"Error", open:true})
             setLoading(false)
-            console.log(error.response.data.detail  )
         }
     }
 
@@ -157,8 +157,8 @@ export default function ContactMessage(){
                 <p className="text-sm font-bold ">{subscriber.email}</p>
                 <p className="text-sm">{subscriber.subject}</p>
                 <p className="text-sm absolute top-2 right-2 text-green-700 bg-green-200 p-1 rounded-xl">{subscriber.status}</p>
-                <p className='text-gray-400 text-[10px] italic p-1'>{formatDistanceToNow(new Date(subscriber.created_at), { addSuffix: true })}</p>
-                <p className='text-gray-400 text-[10px] italic p-1'>{formatDistanceToNow(new Date(subscriber.last_open), { addSuffix: true })}</p>
+                <p className='text-gray-400 text-[10px] italic p-1'>{Fdate(subscriber.created_at)}</p>
+                <p className='text-gray-400 text-[10px] italic p-1'>{Fdate(subscriber.last_open)}</p>
             </div>
             )}
 
@@ -172,7 +172,7 @@ export default function ContactMessage(){
                 <p className="text-sm font-bold ">{contact.email}</p>
                 <p className="text-sm">{contact.subject}</p>
                 <p className="text-sm absolute top-2 right-2 text-green-700 bg-green-200 p-1 rounded-xl">{contact.status}</p>
-                <p className='text-gray-400 text-[10px] italic p-1'>{formatDistanceToNow(new Date(contact.created_at), { addSuffix: true })}</p>
+                <p className='text-gray-400 text-[10px] italic p-1'>{Fdate(contact.created_at)}</p>
             </div>
             )}
             <button>see more</button>

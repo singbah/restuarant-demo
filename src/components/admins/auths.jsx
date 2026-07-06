@@ -38,7 +38,11 @@ function AdminLogin() {
 
   if(loading) return <SectionLoading open={msg.open} message={msg.message} title={msg.title} onClose={() => setMsg({open:false})}/>
   return (<div className="h-screen flex flex-col justify-center items-center bg-green-50 relative">
-    <AlertCard message={msg.message} title={msg.title} open={msg.open} onClose={() => setMsg((prev) =>({...prev, open:false}))}/>
+    <AlertCard 
+      message={msg.message} 
+      title={msg.title} open={msg.open} 
+      onClose={() => setMsg((prev) =>({...prev, open:false}))} 
+        />
     <form
       onSubmit={signIn}
       className="border-white p-4 flex flex-col lg:w-1/2 justify-center text-2xl rounded-2xl shadow shadow-green-500">

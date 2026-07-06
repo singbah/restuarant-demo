@@ -57,7 +57,7 @@ export default function Analytics(){
             {/* RECENT CONTACTS */}
             <div className="overflow-y-auto border-2 border-gray-200 rounded-xl shadow shadow-black p-2 m-2 h-96">
                 <h1 className="font-bold text-xl p-2">Recent Contacts</h1>
-                {data.contacts.map((contact, index) => <div key={index} 
+                {data && data.contacts.map((contact, index) => <div key={index} 
                 className="p-2 m-2 border-2 rounded-xl shadow shadow-black relative overflow-y-auto hover:scale-102 transition cursor-pointer">
                 <p className="text-sm font-bold ">{contact.name}</p>
                 <p className="text-sm">{contact.email}</p>
@@ -69,7 +69,7 @@ export default function Analytics(){
             {/* RECENT POSTS */}
             <div className="overflow-y-auto border-2 border-gray-200 rounded-xl shadow shadow-black p-2 m-2 h-96">
                 <h1 className="font-bold text-xl p-2">Recent Posts</h1>
-                {data.posts?data.posts.map((blog, index) => <div key={index} 
+                {data && data.posts.map((blog, index) => <div key={index} 
                 onClick={() => {
                     <PostEditors postToEdit={blog}/>
                     // setActiveTap('edit-post')
@@ -79,17 +79,17 @@ export default function Analytics(){
                 <p className="text-sm">{blog.excert}</p>
                 <p className='text-gray-400 text-[10px] italic p-1'>{formatDistanceToNow(new Date(blog.created_at), { addSuffix: true })}</p>
                 {blog.status === "published"?<p className="text-sm absolute top-2 right-2 text-green-700 bg-green-200 p-1 rounded-xl">{blog.status}</p>:<p className="text-sm absolute top-2 right-2 text-red-700 bg-red-200 p-1 rounded-xl">{blog.status}</p>}
-                </div>):''}
+                </div>)}
             </div>
 
             {/* RECENT NEWSLETTER SUBSCRIBERS */}
             <div className="overflow-y-auto border-2 border-gray-200 rounded-xl shadow shadow-black p-2 m-2 h-96">
                 <h1 className="font-bold text-xl p-2">Recent Newsletter Subscribers</h1>
-                {data.newsletter?data.newsletter.map((subscriber, index) => <div key={index} 
+                {data && data.newsletter.map((subscriber, index) => <div key={index} 
                 className="p-2 m-2 border-2 rounded-xl shadow shadow-black relative overflow-y-auto hover:scale-102 transition cursor-pointer">
                 <p className="text-sm font-bold ">{subscriber.email}</p>
                 <p className='text-gray-400 text-[10px] italic p-1'>{formatDistanceToNow(new Date(subscriber.created_at), { addSuffix: true })}</p>
-                </div>):''}
+                </div>)}
             </div>
             </section>
         </>:<LoadingEffect/>}
