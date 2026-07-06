@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
     FaWhatsapp,
     FaFacebook,
@@ -6,11 +7,12 @@ import {
     FaLink,
     FaShareNodes
 } from "react-icons/fa6";
+import AlertCard from "../layouts/AlertCard";
 
 export default function ShareButtons({ title }) {
 
     const url = window.location.href;
-
+    const [msg, setMsg] = useState({message:'', open:false, title:""})
     const encodedUrl = encodeURIComponent(url);
     const encodedTitle = encodeURIComponent(title);
 
@@ -35,7 +37,8 @@ export default function ShareButtons({ title }) {
     const copyLink = async () => {
         try {
             await navigator.clipboard.writeText(url);
-            alert("Link copied to clipboard!");
+            // alert("Link copied to clipboard!");
+            setMsg({message:"Link copied to clipboard!", title:"Copy", open:true})
         } catch (err) {
             console.log(err);
         }
@@ -43,6 +46,7 @@ export default function ShareButtons({ title }) {
 
     return (
         <section className="my-10 border-t border-b py-6">
+            <AlertCard message={msg.message} title={msg.title} open={msg.open} onClose={() => setMsg({open:false})}/>
 
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                 <FaShareNodes />
