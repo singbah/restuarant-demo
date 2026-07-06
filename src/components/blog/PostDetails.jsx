@@ -147,7 +147,7 @@ export default function PostDetails() {
                         </div>
 
                         <div>
-                            <ShareButtons/>
+                            <ShareButtons title={data.title}/>
                         </div>
 
                         <div className="mt-10 border-t pt-6">

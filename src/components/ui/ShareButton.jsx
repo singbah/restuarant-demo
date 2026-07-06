@@ -37,7 +37,6 @@ export default function ShareButtons({ title }) {
     const copyLink = async () => {
         try {
             await navigator.clipboard.writeText(url);
-            // alert("Link copied to clipboard!");
             setMsg({message:"Link copied to clipboard!", title:"Copy", open:true})
         } catch (err) {
             console.log(err);
