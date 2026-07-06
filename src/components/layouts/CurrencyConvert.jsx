@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
 
 export default function CurrencyConvertor() {
-  const [exchangeRate, setExchangeRate] = useState(194);
+  const [exchangeRate, setExchangeRate] = useState(184);
 
   const [usd, setUsd] = useState(1);
   const [lrd, setLrd] = useState(exchangeRate);
 
   useEffect(() => {
     // Later replace this with your API call
-    const rate = 194;
-
+    const rate = 184;
     setExchangeRate(rate);
     setLrd(rate);
   }, []);

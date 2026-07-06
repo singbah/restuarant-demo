@@ -1,7 +1,7 @@
 
 import { useState } from 'react'
 import { API_URL, api } from '../../../libs/api'
-import dateFormator from '../../../libs/DateFormating'
+import { formatDistanceToNow } from 'date-fns'
 
 export default function PostLists({container, action}){
     const [display, setDisplay] = useState(true)
@@ -15,7 +15,7 @@ export default function PostLists({container, action}){
             <p className="text-right">{blog.status}</p>
             <h1 className="text-xl font-bold">{blog.title}</h1>
             <p className="text-sm">{blog.excert}</p>
-            <p className='text-gray-400 text-[10px] italic p-1'>{dateFormator(blog.created_at)}</p>
+            <p className='text-gray-400 text-[10px] italic p-1'>{formatDistanceToNow(new Date(blog.created_at))}</p>
             {action?<article className='flex gap-20 justify-center items-center'>
                 <button 
                 

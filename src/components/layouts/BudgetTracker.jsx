@@ -1,8 +1,11 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom";
 
 export default function BudgetHelper(){
     const [budget, setBudget] = useState('');
     const [result, setResult] = useState('');
+
+    const navigate = useNavigate()
 
     const calculate = () =>{
         if(!budget) return;
@@ -41,6 +44,8 @@ export default function BudgetHelper(){
 
             </div>)}
         </div>
-        <button className="m-2 bg-green-50 rounded p-1 text-green-700 transition active:scale-105">view in full</button>
+        <button 
+            onClick={() => navigate('/budget/planer')}
+            className="m-2 bg-green-50 rounded p-1 text-green-700 transition active:scale-105">view in full</button>
     </div>)
 }

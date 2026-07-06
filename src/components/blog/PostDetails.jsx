@@ -7,7 +7,6 @@ import {useEffect} from "react"
 import LayoutScreen from "../layouts/Layout";
 import useFetch from "../hooks/UseFetch";
 import { API_URL, api } from "../../../libs/api";
-import dateFormator from "../../../libs/DateFormating";
 import markdowncomponents from "./MarkdownComponents"
 import Tagbadges from "./TagBadges";
 import logo from "../../logo.jpg";

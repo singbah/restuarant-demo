@@ -45,8 +45,6 @@ export default function LayoutScreen({compo}){
     },[])
     
     if(loading) return <LoadingEffect/>;
-        // const [currentBlog, setCurrentBlog] = useState({})
-
 
     return(<div className="flex-1">
                 <NavBar/>
@@ -57,7 +55,7 @@ export default function LayoutScreen({compo}){
                 </main>
 
                 <aside 
-                    style={{display:blogs.length>0?"block":"none"}}
+                    // style={{display:blogs.length>0?"block":"none"}}
                     className="w-full lg:w-80 shrink-0 lg:mt-20">
                 <NewsLetter />
                 </aside>

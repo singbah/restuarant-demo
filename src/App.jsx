@@ -14,6 +14,7 @@ import ProductTable from "./components/layouts/ProductTable"
 import Dashboard from "./components/admins/dashboard"
 import Settings from "./components/admins/Settings"
 import ContactMessage from "./components/admins/ContactMessages"
+import FullBudgetPlaner from "./components/utilities/FullBudgetPlaner"
 
 
 const navAStyle = "px-3 p-1 rounded-2xl text-sm font-bold focus:text-red-500 cursor-pointer"
@@ -30,6 +31,7 @@ export default function App() {
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/post/:postSlug" element={<PostsDetails />} />
       <Route path="/market" element={<ProductTable />} />
+      <Route path="/budget/planer" element={<FullBudgetPlaner />} />
 
       <Route path="/admin/analytics" element={<Analytics />} />
       <Route path="/admin/settings" element={<Settings />} />
