@@ -51,12 +51,12 @@ export default function NewsLetter() {
 
   if(loading) return <LoadingEffect/>
   return (
-    <section className="mx-auto w-full max-w-2xl rounded-3xl bg-gradient-to-r from-blue-600 to-green-600 p-8 text-white shadow-xl">
+    <section className="mx-auto w-full max-w-2xl rounded-3xl bg-gradient-to-r from-black to-blue-500 p-8 text-white shadow-xl">
       <AlertCard
         open={msg.open}
         title={msg.title}
         message={msg.message}
-        onClose={() => setMsg({open:false, title:'', message:''})}
+        onClose={() => setMsg({open:false})}
       />
       <div className="text-center">
         <h2 className="text-3xl font-bold">

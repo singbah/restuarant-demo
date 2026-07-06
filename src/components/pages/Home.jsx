@@ -54,10 +54,10 @@ export default function HomePage() {
 
       <main className="flex-1">
         {/* Hero */}
-        <section className="bg-gradient-to-b from-blue-400 to-green-500 text-white">
+        <section className="bg-gradient-to-b from-black to-blue-500 text-white">
           <div className="max-w-7xl mx-auto px-6 py-20">
             <SearchBars/>
-            <h1 className="text-4xl md:text-6xl font-bold">
+            <h1 className="text-4xl md:text-6xl font-bold animate-bounce pt-10">
               Easi Tech Lr.
             </h1>
 
