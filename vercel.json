@@ -1,8 +1,16 @@
 {
-    "rewrites":[
-        {
-            "source":"/(.*)",
-            "destination":"/index.html"
-        }
-    ]
+  "rewrites": [
+    {
+      "source": "/sitemap.xml",
+      "destination": "https://blog-api-production-b909.up.railway.app/sitemap.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "destination": "https://blog-api-production-b909.up.railway.app/robots.txt"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
