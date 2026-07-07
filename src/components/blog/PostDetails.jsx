@@ -71,7 +71,7 @@ export default function PostDetails() {
         "@type": "Article",
         headline: data.title,
         description: data.excert,
-        image: `${API_URL}posts/send_file?filename=${data.featured_image}`,
+        image: data.featured_image,
         datePublished: data.created_at,
         author: {
             "@type": "Person",
