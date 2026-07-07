@@ -3,7 +3,7 @@ export default function AlertCard({
     title = "Notice",
     message,
     onClose,
-    status='success',
+    status,
     action,
 }) {
     if (!open) return null;
@@ -11,8 +11,8 @@ export default function AlertCard({
     return (
         <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs`}>
 
-            <div 
-                className={`w-full max-w-md rounded-2xl bg-${status==='error'?'red':'green'}-200 p-6 shadow-xl`}>
+            <div
+                className={`w-full max-w-md rounded-2xl bg-white p-6 shadow-xl`}>
 
                 <h2 className="text-2xl font-bold">
                     {title}
@@ -30,13 +30,13 @@ export default function AlertCard({
                     Close
                 </button>
                 {action && (<button
+                    style={{backgroundColor: status==="success"?"green":"red"}}
                     onClick={action}
                     className="mt-6 w-full rounded-lg bg-green-600 py-3 font-bold text-white hover:bg-greeb-700"
                 >
-                    Done
+                    Yes
                 </button>)}
                 </article>
-
             </div>
 
         </div>

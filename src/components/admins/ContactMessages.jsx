@@ -5,7 +5,7 @@ import axios from "axios";
 import { api } from "../../../libs/api";
 import { formatDistanceToNow} from "date-fns";
 import LoadingEffect from "../layouts/LoadingEffect";
-import Fdate from '../../../libs/utilities'
+import {Fdate, viewFormater } from '../../../libs/utilities'
 
 
 

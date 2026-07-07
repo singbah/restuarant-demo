@@ -17,6 +17,6 @@ export default function Dashboard({component}) {
       
   return (<div className="h-dvh flex bg-gray-100">
     <NavigationBar/>
-    {component?component:""}
+    {component}
   </div>)
 }

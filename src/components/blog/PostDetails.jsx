@@ -85,7 +85,7 @@ export default function PostDetails() {
                 url: logo,
             },
         },
-        mainEntityOfPage: `https://monroviamoney.com/post/${postSlug}`,
+        mainEntityOfPage: `https://easitechlr.com/post/${postSlug}`,
     };
 
     return (
@@ -102,7 +102,7 @@ export default function PostDetails() {
 
                         <link
                             rel="canonical"
-                            href={`${API_URL}/post/${postSlug}`}
+                            href={`https//easitechlr.com/post/${postSlug}`}
                         />
 
                         <script type="application/ld+json">

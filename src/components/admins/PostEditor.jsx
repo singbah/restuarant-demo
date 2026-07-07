@@ -244,10 +244,11 @@ export default function PostEditors({ postToEdit }) {
             <h4>{postData.excert}</h4>
             <p>{postData.content}</p>
           </article>
-          {/* <p>Created {formatDistanceToNow(new Date(postData.published_at))}</p> */}
           <p className="m-4">status: {postData.status === 'draft'?<button className="bg-green-400 px-8 rounded-lg py-2 font-bold text-white">Go Live Now</button>:postData.status}</p>
           <p>{postData.slug}</p>
-          {postData?<button className="bg-blue-600 px-8 rounded-lg py-2 font-bold text-white" onClick={() => setActiveTap("create-post")}>Edit</button>:<button className="bg-blue-600 px-8 rounded-lg py-2 font-bold text-white" onClick={() => setActiveTap("create-post")}>Create New</button>}
+          {postData.title?
+            <button className="bg-blue-600 px-8 rounded-lg py-2 font-bold text-white" onClick={() => setActiveTap("create-post")}>Edit</button>
+            :<button className="bg-blue-600 px-8 rounded-lg py-2 font-bold text-white" onClick={() => setActiveTap("create-post")}>Create New</button>}
         </div>
       </div>)}
 
@@ -256,6 +257,8 @@ export default function PostEditors({ postToEdit }) {
     <section className="m-2 w-1/3 overflow-y-auto bg-white p-2 rounded-2xl shadow">
 
       <div className="w-full overflow-y-auto">
+
+        {/* VIEW POST BEFORE EDIT */}
         {blogPost && blogPost.map((blog, index) => 
         <li 
           className="p-2 m-4 list-none rounded-xl shadow shadow-black hover:scale-103 transition relative"
@@ -275,6 +278,7 @@ export default function PostEditors({ postToEdit }) {
           onClick={fetchBlogs}
           className="bg-green-400 mx-30 my-4 p-2 font-bold text-white rounded-2xl shadow">More</button>
       </div>
+
     </section>
 
   </div>}/>)
