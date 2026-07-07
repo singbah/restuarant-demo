@@ -15,6 +15,7 @@ import Dashboard from "./components/admins/dashboard"
 import Settings from "./components/admins/Settings"
 import ContactMessage from "./components/admins/ContactMessages"
 import FullBudgetPlaner from "./components/utilities/FullBudgetPlaner"
+import PrivacyPolicy from "./components/pages/Policy"
 
 
 const navAStyle = "px-3 p-1 rounded-2xl text-sm font-bold focus:text-red-500 cursor-pointer"
@@ -30,6 +31,7 @@ export default function App() {
       <Route path="/blog" element={<Blogs />} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/post/:postSlug" element={<PostsDetails />} />
+      <Route path="/policy" element={<PrivacyPolicy />} />
       <Route path="/market" element={<ProductTable />} />
       <Route path="/budget/planer" element={<FullBudgetPlaner />} />
 

@@ -54,6 +54,12 @@ export default function Footer() {
                 Contact
               </Link>
             </li>
+
+            <li>
+              <Link to="/policy" className="hover:text-white">
+                Privacy Policy
+              </Link>
+            </li>
           </ul>
         </div>
 
