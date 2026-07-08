@@ -183,7 +183,7 @@ export default function PostEditors({ postToEdit }) {
             required
             onChange={handelForm}
             placeholder="main content of the post"
-            className="border mx-8 p-2 rounded-2xl h-45 text-2xl mb-6"
+            className="border mx-8 p-2 rounded-2xl h-100 text-2xl mb-6"
             value={postToEdit?postToEdit.content:postData.content}
             name="content">
           </textarea>

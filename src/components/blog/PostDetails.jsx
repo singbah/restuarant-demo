@@ -1,8 +1,8 @@
 import { Helmet } from "react-helmet";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import {useEffect} from "react"
+import {useEffect, useState} from "react"
 
 import LayoutScreen from "../layouts/Layout";
 import useFetch from "../hooks/UseFetch";
@@ -10,15 +10,28 @@ import { API_URL, api } from "../../../libs/api";
 import markdowncomponents from "./MarkdownComponents"
 import Tagbadges from "./TagBadges";
 import logo from "../../logo.jpg";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, setSeconds } from "date-fns";
 import RelatedPosts from "./RelatedPosts";
 import ShareButtons from "../ui/ShareButton";
 import { ArrowBigUpDash, ArrowUp, ArrowUp10Icon } from "lucide-react";
 
 export default function PostDetails() {
     const { postSlug } = useParams();
+    const [commentObj, setCommentObj] = useState({source:'', comment:'', })
 
     const { data, loading, error } = useFetch(`/posts/post/${postSlug}`);
+
+    function handelComment(e){
+        const {name, value} = e.target;
+        setCommentObj((prev) => ({[name]:value}))
+    }
+
+    function sendComment(e){
+        e.preventDefault();
+        let source = window.location.href
+        const data = {...commentObj, source:source}
+        console.log(data)
+    }
 
 
     useEffect(() => {
@@ -34,6 +47,8 @@ export default function PostDetails() {
 
         doView();
     }, [postSlug]);
+
+    
 
     if (loading) {
         return (
@@ -149,8 +164,11 @@ export default function PostDetails() {
                                         className="border w-full p-4 rounded-2xl"
                                         placeholder="Comment prices in your local community"
                                         required
+                                        onChange={handelComment}
                                         name="comments"/>
-                                    <ArrowUp className="absolute right-0 bottom-0 text-blue-700 active:scale-101 cursor-pointer rounded-3xl m-2" size={35}/>
+                                    <ArrowUp 
+                                        onClick={sendComment}
+                                        className="absolute right-0 bottom-0 text-blue-700 active:scale-101 cursor-pointer rounded-3xl m-2" size={35}/>
                                 </article>
                                 <p>Viws {data.views}</p>
                                 <p className="text-sm italic">Author: {data.author}</p>
