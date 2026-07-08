@@ -53,6 +53,7 @@ export default function HomePage() {
       <NavBar />
 
       <main className="flex-1">
+
         {/* Hero */}
         <section className="bg-gradient-to-b from-black to-blue-500 text-white">
           <div className="max-w-7xl mx-auto px-6 py-20">
@@ -131,7 +132,7 @@ export default function HomePage() {
         </section>
 
         {/* Latest Articles */}
-        {blogs &&blogs.length > 0 && (
+        {blogs && blogs.length > 0 && (
           <section className="max-w-7xl mx-auto px-6 py-12">
             <h2 className="text-3xl font-bold mb-8">
               Latest Articles

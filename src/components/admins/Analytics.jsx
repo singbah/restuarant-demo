@@ -50,7 +50,7 @@ export default function Analytics(){
         }
     }
 
-    return(<Dashboard component={<div className="w-full">
+    return(<Dashboard component={<div className="w-full overflow-y-auto">
         {admin?(<section className="p-2 w-full overflow-x-hidden">
         {/* HEADER HERE */}
         {!loading?<>
@@ -70,6 +70,12 @@ export default function Analytics(){
 
                 <KyiCard title={"Subscribers"} color={'green'} value={data?data.newsletters_count:0} percentage={5} icon={<FcNews 
                 className="text-green-700 bg-green-200 p-1 rounded-xl" size={50}/>}/>
+            </section>
+
+            <section className="p-4 flex justify-center items-center">
+                <div>
+                    most view posts
+                </div>
             </section>
         
             <section className="grid grid-cols-3 items-start">
@@ -124,6 +130,7 @@ export default function Analytics(){
                         onClick={() => setMsg({title:"Delete contact", msg:"You will delete this contact", open:true, status:"error", action:() => deleteContact(subscriber)})}
                         className="px-4 bg-red-600 rounded-lg font-bold text-white absolute right-2 bottom-2 shadow shadow-black active:scale-105 active:bg-red-800 transition"> Delete </button>
                     </div>)}
+                
                 </div>
             </section>
         </>:<LoadingEffect/>}

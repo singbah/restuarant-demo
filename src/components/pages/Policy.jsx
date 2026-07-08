@@ -202,9 +202,9 @@ export default function PrivacyPolicy() {
                                     <strong>Easi Tech Lr</strong>
                                 </p>
 
-                                <p>Website: https://www.easitechlr.com</p>
+                                <p>Website: https://www.easitechlr.com/contact</p>
 
-                                <p>Email: hello@easitechlr.com</p>
+                                <p>Email: @easitechlr.com</p>
                             </div>
                         </section>
 

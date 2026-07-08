@@ -13,6 +13,7 @@ import logo from "../../logo.jpg";
 import { formatDistanceToNow } from "date-fns";
 import RelatedPosts from "./RelatedPosts";
 import ShareButtons from "../ui/ShareButton";
+import { ArrowBigUpDash, ArrowUp, ArrowUp10Icon } from "lucide-react";
 
 export default function PostDetails() {
     const { postSlug } = useParams();
@@ -142,7 +143,18 @@ export default function PostDetails() {
                             >
                                 {data.content}
                             </ReactMarkdown>
-                            <p>Viws {data.views}</p>
+                            <div>
+                                <article className="w-full border-2 rounded-2xl relative flex">
+                                    <textarea 
+                                        className="border w-full p-4 rounded-2xl"
+                                        placeholder="Comment prices in your local community"
+                                        required
+                                        name="comments"/>
+                                    <ArrowUp className="absolute right-0 bottom-0 text-blue-700 active:scale-101 cursor-pointer rounded-3xl m-2" size={35}/>
+                                </article>
+                                <p>Viws {data.views}</p>
+                                <p className="text-sm italic">Author: {data.author}</p>
+                            </div>
                         </div>
 
                         <div>

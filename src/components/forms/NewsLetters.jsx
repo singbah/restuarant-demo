@@ -103,6 +103,14 @@ export default function NewsLetter() {
             required
             className="w-full rounded-xl border border-white/20 bg-white px-4 py-3 text-gray-800 outline-none focus:ring-2 focus:ring-yellow-300"
           />
+
+          <p className="mt-8 text-sm"> 
+            <input type="checkbox" />
+            By signing up you agree that you have 
+            <a 
+              href="/policy"
+              className="underline text-blue-500 italic ">read and agreed with our privacy policy</a>
+            </p>
         </div>
 
         <button
