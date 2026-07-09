@@ -48,6 +48,16 @@ export default function Analytics(){
             console.log(error)
             setMsg({open:true, title:"error", status:"success", msg:error.response?.data.detail || "An error Occur while  deleting"})
         }
+    };
+
+    async function publishPost(post_id){
+        try{
+            const resp = await api.patch(`/admin/publish_post?post_id=${post_id}`)
+            const result = resp.data;
+            refetch()
+        }catch(error){
+            console.log(error)
+        }
     }
 
     return(<Dashboard component={<div className="w-full overflow-y-auto">
@@ -94,7 +104,13 @@ export default function Analytics(){
                     <p className="text-sm font-bold ">{blog.title}</p>
                     <p className="text-sm">{blog.excert}</p>
                     <p className='text-gray-400 text-[10px] italic p-1'>{formatDistanceToNow(new Date(blog.created_at), { addSuffix: true })}</p>
-                    {blog.status === "published"?<p className="text-sm absolute top-2 right-2 text-green-700 bg-green-200 p-1 rounded-xl">{blog.status}</p>:<p className="text-sm absolute top-2 right-2 text-red-700 bg-red-200 p-1 rounded-xl">{blog.status}</p>}
+                    {blog.status === "true"?
+                    <p 
+                        onClick={() => publishPost(blog.id)}
+                        className="text-sm absolute top-2 right-2 text-green-700 bg-green-200 p-1 rounded-xl">{blog.status}</p>:
+                    <p 
+                        onClick={() => publishPost(blog.id)}
+                        className="text-sm absolute top-2 right-2 text-red-700 bg-red-200 p-1 rounded-xl">{blog.status}</p>}
                     </div>):<button 
                         onClick={() => navigate("/admin/post/editor")}  
                         className="m-4 p-4 bg-green-600 rounded-2xl font-black text-white text-2xl cursor-pointer hover:bg-green-800 active:scale-110 transition"> Add New Post <PlusIcon className="inline" size={35}/></button>}

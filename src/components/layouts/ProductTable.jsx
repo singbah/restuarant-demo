@@ -7,25 +7,25 @@ const products = [
     id: "1",
     name: "Rice",
     market: "Red Light Market",
-    unit: "50kg bag",
-    price: 45,
-    updatedAt: "2026-07-01",
+    unit: "25kg bag",
+    price: 19.5,
+    updatedAt: new Date().toDateString(),
   },
   {
     id: "2",
-    name: "Palm Oil",
+    name: "Rice",
     market: "Waterside Market",
-    unit: "1 gallon",
-    price: 12.5,
-    updatedAt: "2026-07-01",
+    unit: "25kg bag",
+    price: 17.5,
+    updatedAt: new Date().toDateString(),
   },
   {
     id: "3",
-    name: "Palm Oil",
+    name: "Rice",
     market: "Duala Market",
-    unit: "1 gallon",
-    price: 1500.5,
-    updatedAt: "2026-07-01",
+    unit: "25kg bag",
+    price: 18,
+    updatedAt: new Date().toDateString(),
   },
   
 ];
@@ -65,7 +65,10 @@ export default function ProductTable() {
           ))}
         </tbody>
       </table>
-      <Link className="bg-blue-600 px-2 py-2 m-8 shadow-blue-200 shadow-lg rounded-2xl active:scale-105 text-white font-bold hover:bg-blue-800 cursor-pointer transition">View More</Link>
+      <Link className="bg-blue-600 px-2 py-2 m-8 shadow-blue-200 
+        shadow-lg rounded-2xl active:scale-105 text-white font-bold
+       hover:bg-blue-800 cursor-pointer transition">View More</Link>
+      
     </div>
   }/>);
 }
