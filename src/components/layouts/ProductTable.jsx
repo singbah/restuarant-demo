@@ -1,6 +1,9 @@
 
 import { Link } from "react-router-dom";
 import LayoutScreen from "./Layout";
+import { PhoneCallIcon } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
+import photo from "../../assets/logo.jpg"
 
 const products = [
   {
@@ -35,6 +38,21 @@ export default function ProductTable() {
   return (<LayoutScreen compo={
     <div className="overflow-x-auto my-2 p-2">
       <h1 className="text-3xl text-center m-8 font-bold">Today Market Prices in Monrovia</h1>
+      <div className="flex mb-1 flex-col">
+            <img 
+                className="h-8 w-8"
+                src={photo} alt="" />
+            <p className="text-lg text-blue-500 italic font-bold">Today prices is brought to you by Easi Tech Lr.</p>
+            <a className="font-black" href="#">
+                <PhoneCallIcon className="text-green-600 inline"
+                    size={20}/> 0777322000
+            </a>
+            <a href="https://www.wa.me/+213777233000">
+                <FaWhatsapp 
+                    className="text-green-600 inline"
+                    size={20}/> 0777322000
+            </a>
+        </div>
       <table className="min-w-full border border-gray-200 dark:border-gray-700">
         <thead className="bg-gray-100 dark:bg-gray-800 text-white">
           <tr>

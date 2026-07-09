@@ -90,7 +90,7 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-gray-700 py-4 text-center text-sm text-gray-400">
-        © {new Date().getFullYear()} Monrovia Money. All rights reserved.
+        © {new Date().getFullYear()} Easi Tech Lr. All rights reserved.
       </div>
     </footer>
   );

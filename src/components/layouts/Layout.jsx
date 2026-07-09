@@ -57,7 +57,7 @@ export default function LayoutScreen({compo}){
                 <aside 
                     // style={{display:blogs.length>0?"block":"none"}}
                     className="w-full lg:w-80 shrink-0 lg:mt-20">
-                <NewsLetter />
+                    <div>Sponsors Banners</div>
                 </aside>
 
             </div>

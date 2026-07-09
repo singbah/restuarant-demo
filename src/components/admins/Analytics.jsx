@@ -66,7 +66,7 @@ export default function Analytics(){
         {!loading?<>
             <AlertCard message={msg.msg} title={msg.title} open={msg.open} onClose={() => setMsg({open:false})} action={msg.action}/>
             <section className="flex gap-4 justify-center items-center">
-                <KyiCard title={"Visitors"} color={'blue'} value={viewFormater(10)} percentage={10} icon={<BsPeople 
+                <KyiCard title={"Visitors"} color={'blue'} value={viewFormater(data && data.visitor_count)} percentage={10} icon={<BsPeople 
                 className="text-blue-700 bg-blue-200 p-1 rounded-xl" size={50}/>}/>
 
                 <KyiCard title={"Posts Views"} color={'green'} value={viewFormater(data && data.views)} percentage={+10} icon={<ViewIcon 
@@ -75,23 +75,47 @@ export default function Analytics(){
                 <KyiCard title={"Total Posts"} color={'green'} value={data?data.posts_count:0} percentage={-5} icon={<GiPhotoCamera 
                 className="text-purple-700 bg-purple-200 p-1 rounded-xl" size={50}/>}/>
 
-                <KyiCard title={"Contact Messages"} color={'green'} value={data?data.contacts_count:0} percentage={5} icon={<MessageCircle 
+                <KyiCard title={"Contact Messages"} color={'yellow'} value={data?data.contacts_count:0} percentage={5} icon={<MessageCircle 
+                className="text-yellow-700 bg-yellow-200 p-1 rounded-xl" size={50}/>}/>
+
+                <KyiCard title={"Comments"} color={'green'} value={data?data.comments_count:0} percentage={5} icon={<MessageCircle 
                 className="text-green-700 bg-green-200 p-1 rounded-xl" size={50}/>}/>
 
-                <KyiCard title={"Subscribers"} color={'green'} value={data?data.newsletters_count:0} percentage={5} icon={<FcNews 
-                className="text-green-700 bg-green-200 p-1 rounded-xl" size={50}/>}/>
+                <KyiCard title={"Subscribers"} color={'orange'} value={data?data.newsletters_count:0} percentage={5} icon={<FcNews 
+                className="text-orange-700 bg-orange-200 p-1 rounded-xl" size={50}/>}/>
             </section>
 
-            <section className="p-4 flex justify-center items-center">
-                <div>
-                    most view posts
+            <section className="grid grid-cols-3 items-start">
+                {/* RECENT COMMENTS */}
+                <div className="overflow-y-auto border-2 bg-green-100 border-gray-200 rounded-xl shadow shadow-black p-2 m-2 h-96">
+                    <h1 
+                        onClick={() => navigate("/admin/post/editor")}
+                        className="font-bold text-xl p-2 cursor-pointer">Recent Comments</h1>
+                    {data && data.comments.map((comment) => <div
+                        className="p-2 m-2 border-2 rounded-xl shadow bg-white shadow-black relative overflow-y-auto hover:scale-102 transition cursor-pointer">
+                        <p className="font-bold px-4 py-2">{comment.user_email}</p>
+                        <p>{comment.comment}</p>
+                    </div>)}
                 </div>
+
+                {/* RECENT VISITORS */}
+                <div className="overflow-y-auto border-2 bg-blue-100 border-gray-200 rounded-xl shadow shadow-black p-2 m-2 h-96">
+                    <h1 
+                        onClick={() => navigate("/admin/post/editor")}
+                        className="font-bold text-xl p-2 cursor-pointer">Recent visitors</h1>
+                    {data && data.visitors.map((visitor) => <div
+                        className="p-2 m-2 border-2 rounded-xl shadow bg-white shadow-black relative overflow-y-auto hover:scale-102 transition cursor-pointer">
+                        <p className="font-bold px-4 py-2">{visitor.ip_address}</p>
+                        <p>{visitor.path}</p>
+                    </div>)}
+                </div>
+
             </section>
         
             <section className="grid grid-cols-3 items-start">
                 
                 {/* RECENT POSTS */}
-                <div className="overflow-y-auto border-2 border-gray-200 rounded-xl shadow shadow-black p-2 m-2 h-96">
+                <div className="overflow-y-auto border-2 bg-purple-100 border-gray-200 rounded-xl shadow shadow-black p-2 m-2 h-96">
                     <h1 
                         onClick={() => navigate("/admin/post/editor")}
                         className="font-bold text-xl p-2 cursor-pointer">Recent Posts</h1>
@@ -100,7 +124,7 @@ export default function Analytics(){
                         <PostEditors postToEdit={blog}/>
                         // setActiveTap('edit-post')
                     }}
-                    className="p-2 m-2 border-2 rounded-xl shadow shadow-black relative overflow-y-auto hover:scale-102 transition cursor-pointer">
+                    className="p-2 m-2 border-2 rounded-xl bg-white shadow shadow-black relative overflow-y-auto hover:scale-102 transition cursor-pointer">
                     <p className="text-sm font-bold ">{blog.title}</p>
                     <p className="text-sm">{blog.excert}</p>
                     <p className='text-gray-400 text-[10px] italic p-1'>{formatDistanceToNow(new Date(blog.created_at), { addSuffix: true })}</p>
@@ -117,15 +141,15 @@ export default function Analytics(){
                 </div>
 
                 {/* RECENT CONTACTS */}
-                <div className="overflow-y-auto border-2 border-gray-200 rounded-xl shadow shadow-black p-2 m-2 h-96">
+                <div className="overflow-y-auto bg-yellow-100 border-2 border-gray-200 rounded-xl shadow shadow-black p-2 m-2 h-96">
                     <h1 
                         onClick={() => navigate("/admin/messages")}
                         className="font-bold text-xl p-2 cursor-pointer">Recent Contacts</h1>
                     {data && data.contacts.map((contact, index) => <div key={index} 
-                    className="p-2 m-2 border-2 rounded-xl shadow shadow-black relative hover:scale-102 transition cursor-pointer">
+                    className="p-2 m-2 border-2 rounded-xl bg-white shadow shadow-black relative hover:scale-102 transition cursor-pointer">
                     <p className="text-sm font-bold ">{contact.name}</p>
                     <p className="text-sm">{contact.email}</p>
-                    <p className="text-sm absolute top-2 right-2 text-green-700 bg-green-200 p-1 rounded-xl">{contact.status}</p>
+                    <p className="text-sm absolute top-2 right-2 text-yellow-700 bg-yellow-200 p-1 rounded-xl">{contact.status}</p>
                     <p className='text-gray-400 text-[10px] italic p-1'>{formatDistanceToNow(new Date(contact.created_at), { addSuffix: true })}</p>
                     <button 
                         onClick={() => setMsg({title:"Delete contact", msg:"You will delete this contact", open:true, status:"error", action:() => deleteContact(contact, "contact")})}
@@ -134,12 +158,12 @@ export default function Analytics(){
                 </div>
 
                 {/* RECENT NEWSLETTER SUBSCRIBERS */}
-                <div className="overflow-y-auto border-2 border-gray-200 rounded-xl shadow shadow-black p-2 m-2 h-96">
+                <div className="overflow-y-auto border-2 bg-orange-100 border-gray-200 rounded-xl shadow shadow-black p-2 m-2 h-96">
                     <h1 
                         onClick={() => navigate("/admin/messages")}
                         className="font-bold text-xl p-2 cursor-pointer">Recent Newsletter Subscribers</h1>
                     {data && data.newsletter.map((subscriber, index) => <div key={index} 
-                    className="p-2 m-2 border-2 rounded-xl shadow shadow-black relative overflow-y-auto hover:scale-102 transition cursor-pointer">
+                    className="p-2 m-2 border-2 rounded-xl bg-white shadow shadow-black relative overflow-y-auto hover:scale-102 transition cursor-pointer">
                     <p className="text-sm font-bold ">{subscriber.email}</p>
                     <p className='text-gray-400 text-[10px] italic p-1'>{formatDistanceToNow(new Date(subscriber.created_at), { addSuffix: true })}</p>
                     <button 
@@ -149,6 +173,7 @@ export default function Analytics(){
                 
                 </div>
             </section>
+
         </>:<LoadingEffect/>}
         </section>):<PageNotFound/>}
     </div>}/>)

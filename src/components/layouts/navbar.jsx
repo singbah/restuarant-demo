@@ -9,11 +9,11 @@ export default function NavBar() {
   const navigate = useNavigate()
   return (<div>
     <header className="bg-black text-white sticky top-0 flex flex-col lg:flex-row justify-center items-center py-3 lg:gap-10 gap-2 z-50">
-      <nav className="flex justify-center items-center gap-4">
-        <NavLink to={'/'}>Home</NavLink>
-        <NavLink to={'/blog'} >Blog</NavLink>
-        <NavLink to={'/contact'} >Contact</NavLink>
-        <NavLink to={'/market'} >Market Stat</NavLink>
+      <nav className="flex justify-center items-center gap-4 lg:text-2xl font-bold">
+        <NavLink to={'/'} className="active:text-red-500 active:scale-110 transition">Home</NavLink>
+        <NavLink to={'/blog'} className="active:text-red-500 active:scale-110 transition">Blog</NavLink>
+        <NavLink to={'/contact'} className="active:text-red-500 active:scale-110 transition">Contact</NavLink>
+        <NavLink to={'/market'} className="active:text-red-500 active:scale-110 transition">Market Stat</NavLink>
       </nav>
     </header>
   </div>)

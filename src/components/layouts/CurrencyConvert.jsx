@@ -34,6 +34,9 @@ export default function CurrencyConvertor() {
       </h2>
 
       <p className="mt-2 text-center text-gray-500">
+        Today's Rate
+      </p>
+      <p className="mt-2 text-center text-gray-500">
         1 USD = {exchangeRate} LRD
       </p>
 
@@ -63,6 +66,7 @@ export default function CurrencyConvertor() {
             className="w-full rounded-lg border px-4 py-2 focus:border-blue-500 focus:outline-none"
           />
         </div>
+        <p className="bg-black text-white font-bold text-center p-2 rounded">Brought To You By Easi Tech Lr.</p>
       </div>
     </div>
   );
