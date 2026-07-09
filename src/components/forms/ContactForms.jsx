@@ -136,7 +136,7 @@ export default function ContactForm() {
           />
 
           <span>
-            Subscribe me to the Monrovia Money newsletter.
+            Subscribe me to the Easi Tech Lr. newsletter.
           </span>
         </label>
 

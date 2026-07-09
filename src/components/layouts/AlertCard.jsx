@@ -1,10 +1,11 @@
 export default function AlertCard({
     open,
-    title = "Notice",
+    title,
     message,
     onClose,
     status,
     action,
+    linkTo
 }) {
     if (!open) return null;
 
@@ -34,7 +35,7 @@ export default function AlertCard({
                     onClick={action}
                     className="mt-6 w-full rounded-lg bg-green-600 py-3 font-bold text-white hover:bg-greeb-700"
                 >
-                    Yes
+                    {linkTo?linkTo:"Yes"}
                 </button>)}
                 </article>
             </div>

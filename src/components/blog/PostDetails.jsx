@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {useEffect, useState} from "react"
@@ -14,23 +14,34 @@ import { formatDistanceToNow, setSeconds } from "date-fns";
 import RelatedPosts from "./RelatedPosts";
 import ShareButtons from "../ui/ShareButton";
 import { ArrowBigUpDash, ArrowUp, ArrowUp10Icon } from "lucide-react";
+import CommentsBlock from "../ui/CommentInput";
+import AlertCard from "../layouts/AlertCard";
 
 export default function PostDetails() {
     const { postSlug } = useParams();
-    const [commentObj, setCommentObj] = useState({source:'', comment:'', })
+    const [commentObj, setCommentObj] = useState({comment:'', })
+    const [msg, setMsg] = useState({message:'', open:false, title:'', status:'', linkTo:''})
 
     const { data, loading, error } = useFetch(`/posts/post/${postSlug}`);
+    const navigate = useNavigate()
 
     function handelComment(e){
         const {name, value} = e.target;
         setCommentObj((prev) => ({[name]:value}))
     }
 
-    function sendComment(e){
+    async function sendComment(e){
         e.preventDefault();
-        let source = window.location.href
-        const data = {...commentObj, source:source}
-        console.log(data)
+        // let source = window.location.href
+        const commentData = {...commentObj, post_id:data.id}
+        try{
+            const resp = await api.post("/user/comment", commentData);
+            const result = resp.data;
+            setMsg({title:"Comment Received", message:result.detail, status:"success", open:true, linkTo:"Contact Us"})
+        }catch(error){
+            console.log(error)
+            setMsg({title:"Error", message:"An error occur, we didn't receive your comment please refresh this page and try again", status:"error", open:true})
+        }   
     }
 
 
@@ -46,7 +57,7 @@ export default function PostDetails() {
         }
 
         doView();
-    }, [postSlug]);
+    }, []);
 
     
 
@@ -127,6 +138,18 @@ export default function PostDetails() {
                     </Helmet>
 
                     <article className="bg-white rounded-2xl shadow-lg p-6 lg:p-10">
+                        <AlertCard
+                            onClose={() => setMsg({open:false})}
+                            open={msg.open}
+                            message={msg.message}
+                            title={msg.title}
+                            status={msg.status}
+                            linkTo={msg.linkTo}
+                            action={()=> {
+                                navigate("/contact")
+                                setMsg({open:false})
+                            }}
+                        />
 
                         <p className="text-sm text-gray-500 mb-2">
                             Published {formatDistanceToNow(new Date((data.created_at)))}
@@ -159,17 +182,7 @@ export default function PostDetails() {
                                 {data.content}
                             </ReactMarkdown>
                             <div>
-                                <article className="w-full border-2 rounded-2xl relative flex">
-                                    <textarea 
-                                        className="border w-full p-4 rounded-2xl"
-                                        placeholder="Comment prices in your local community"
-                                        required
-                                        onChange={handelComment}
-                                        name="comments"/>
-                                    <ArrowUp 
-                                        onClick={sendComment}
-                                        className="absolute right-0 bottom-0 text-blue-700 active:scale-101 cursor-pointer rounded-3xl m-2" size={35}/>
-                                </article>
+                                <CommentsBlock handelComment={handelComment} sendComment={sendComment} />
                                 <p>Viws {data.views}</p>
                                 <p className="text-sm italic">Author: {data.author}</p>
                             </div>
