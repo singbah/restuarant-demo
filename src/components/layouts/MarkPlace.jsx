@@ -148,21 +148,19 @@ export default function MarketPlace() {
         </button>
       </div>
 
-      {data && (
-        <div className="mt-10 mb-2 flex justify-between items-center">
-          <h1 className="text-3xl font-bold">Market Prices</h1>
-          <select
-            className=" p-2 text-green-600 rounded-lg border-2 border-blue-400"
-            onChange={(e) => categoryFileter(e.target.value)}
-          >
-            <option value="">Categories</option>
-            <option value="food">Food</option>
-            <option value="fasion">Frasion</option>
-            <option value="eletronic">Electronic</option>
-            <option value="phone">Phone</option>
-          </select>
-        </div>
-      )}
+      <div className="mt-10 mb-2 flex justify-between items-center">
+        <h1 className="text-3xl font-bold">Market Prices</h1>
+        <select
+          className=" p-2 text-green-600 rounded-lg border-2 border-blue-400"
+          onChange={(e) => categoryFileter(e.target.value)}
+        >
+          <option value="">Categories</option>
+          <option value="food">Food</option>
+          <option value="fasion">Frasion</option>
+          <option value="eletronic">Electronic</option>
+          <option value="phone">Phone</option>
+        </select>
+      </div>
 
       <div className="max-w-6xl mx-auto p-4">
         {loading && "Loading...."}
