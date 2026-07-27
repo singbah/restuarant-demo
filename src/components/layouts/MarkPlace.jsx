@@ -32,7 +32,7 @@ export default function MarketPlace() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate(null);
   const fileInputRef = useRef(null);
-  const { data, refetch } = useFetch(`${API_URL}user/me`);
+  const { data, refetch } = useFetch(`/user/me`);
 
   const openCamera = async () => {
     fileInputRef.current.click();

@@ -34,7 +34,7 @@ export default function ProductListing() {
   });
   const navigate = useNavigate(null);
   const [loading, setLoading] = useState(false);
-  const { data, refetch } = useFetch(`${API_URL}user/me`);
+  const { data, refetch } = useFetch(`/user/me`);
   //   start camera
   async function startCamera() {
     const stream = await navigator.mediaDevices.getUserMedia({
