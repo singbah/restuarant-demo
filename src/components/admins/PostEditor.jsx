@@ -12,71 +12,83 @@ import { postDataFunc } from "../hooks/UsePost";
 import { formatDistanceToNow } from "date-fns";
 import Dashboard from "./dashboard";
 import LoadingEffect from "../layouts/LoadingEffect";
-
-
+import PageNotFound from "../pages/NotFound";
 
 export default function PostEditors({ postToEdit }) {
-
   const [postData, setPostData] = useState({
-    photo:null, title:'', excert:'', tags:'',
-    content:'', published_at:'', published_time:'' });
-  const {admin, adminFetch} = useContext(AdminContext)
+    photo: null,
+    title: "",
+    excert: "",
+    tags: "",
+    content: "",
+    published_at: "",
+    published_time: "",
+  });
+  const { admin, refreshAdmin } = useContext(AdminContext);
   const [prevPic, setPrevPic] = useState(null);
   const [blogPost, setBlogPost] = useState([]);
-  const [loading, setIsLoading] = useState(false)
-  const [hasMore, setHasMore] = useState(true)
+  const [loading, setIsLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const [lastId, setLastId] = useState(null);
-  const [activeTap, setActiveTap] = useState(null)
+  const [activeTap, setActiveTap] = useState(null);
 
-  const [msg, setMsg] = useState({open:false, title:'', message:''})
-
+  const [msg, setMsg] = useState({ open: false, title: "", message: "" });
 
   async function fetchBlogs() {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const resp = await api.get(`/posts/posts?cursor=${Number(lastId) || 0}&limit=20`)
+      const resp = await api.get(
+        `/posts/posts?cursor=${Number(lastId) || 0}&limit=20`,
+      );
       const data = resp.data;
-      setBlogPost((prev) => ([...prev, ...data.posts]))
-      console.log(lastId)
-      setLastId(data.last_id)
-      setHasMore(data.has_more)
-      setIsLoading(false)
+      setBlogPost((prev) => [...prev, ...data.posts]);
+      console.log(lastId);
+      setLastId(data.last_id);
+      setHasMore(data.has_more);
+      setIsLoading(false);
       return;
     } catch (error) {
-      console.log(error)
-      setMsg({open:true, title:'Error', message:error.response.data.detail||"Failed to fetch posts"})
-      setIsLoading(false)
+      console.log(error);
+      setMsg({
+        open: true,
+        title: "Error",
+        message: error.response.data.detail || "Failed to fetch posts",
+      });
+      setIsLoading(false);
     }
   }
 
   useEffect(() => {
-    fetchBlogs()
-  }, [])
-
+    fetchBlogs();
+  }, []);
 
   function handelForm(e) {
-    const { name, value} = e.target;
-    setPostData((prev) => ({ ...prev, [name]: value }))
+    const { name, value } = e.target;
+    setPostData((prev) => ({ ...prev, [name]: value }));
     return;
-  };
-
-  const deleteItem = async(data) =>{
-    try{
-      const resp = await api.delete(`posts/delete?post_id=${data}`)
-      const result = resp.data;
-      setMsg({open:true, title:'Success', message:'Post deleted successfully'})
-      setBlogPost((prev) => prev.filter((post) => post.id !== data))
-      return;
-    }catch(error){
-      console.log(error)
-      setMsg({open:true, title:'Error', message:'Failed to delete post'})
-    }
   }
 
-  async function submitMenuItem(e){
-    setIsLoading(true)
+  const deleteItem = async (data) => {
+    try {
+      const resp = await api.delete(`posts/delete?post_id=${data}`);
+      const result = resp.data;
+      setMsg({
+        open: true,
+        title: "Success",
+        message: "Post deleted successfully",
+      });
+      setBlogPost((prev) => prev.filter((post) => post.id !== data));
+      return;
+    } catch (error) {
+      console.log(error);
+      setMsg({ open: true, title: "Error", message: "Failed to delete post" });
+    }
+  };
+
+  async function submitMenuItem(e) {
+    setIsLoading(true);
     e.preventDefault();
-    const formData = new FormData()
+    const formData = new FormData();
 
     formData.append("title", postData.title);
     formData.append("excert", postData.excert);
@@ -87,15 +99,18 @@ export default function PostEditors({ postToEdit }) {
 
     if (postData.photo instanceof File) {
       formData.append("photo", postData.photo);
-      }
+    }
 
-
-    try{
-      const response = await api.post(`/posts/create_post`,formData)
+    try {
+      const response = await api.post(`/posts/create_post`, formData);
       const result = response.data;
-      setIsLoading(false)
-      setMsg({open:true, title:'Success', message:'Post created successfully'})
-      fetchBlogs()
+      setIsLoading(false);
+      setMsg({
+        open: true,
+        title: "Success",
+        message: "Post created successfully",
+      });
+      fetchBlogs();
       setPostData({
         photo: null,
         title: "",
@@ -104,182 +119,238 @@ export default function PostEditors({ postToEdit }) {
         content: "",
         published_at: "",
         published_time: "",
-        action:""
+        action: "",
       });
       setPrevPic(null);
       return;
-    }catch(error){
-      console.log(error)
-      setIsLoading(false)
-      setMsg({open:true, title:'Error', message:"Failed to create post"})
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+      setMsg({ open: true, title: "Error", message: "Failed to create post" });
     }
   }
 
-  if(loading) return(<LoadingEffect/>)
-
-  return (<Dashboard component={<div className="flex flex-row m-2 w-full relative">
-      <AlertCard
-        open={msg.open}
-        title={msg.title}
-        message={msg.message}
-        onClose={() => setMsg({open:false, title:'', message:''})}
-      />
-    <section className="overflow-y-auto my-2 w-2/3 flex flex-col items-center">
-      
-      {activeTap === 'create-post' && (<form
-        onSubmit={submitMenuItem}
-        className="flex flex-col p-2 border rounded-2xl">
-          <h1 className="text-3xl font-bold text-center m-8">Add New Posts</h1>
-        <label className="border-2 border-green-400 
+  if (loading) return <LoadingEffect />;
+  if (!admin || admin.role !== "admin") return <PageNotFound />;
+  return (
+    <Dashboard
+      component={
+        <div className="flex flex-row m-2 w-full relative">
+          <AlertCard
+            open={msg.open}
+            title={msg.title}
+            message={msg.message}
+            onClose={() => setMsg({ open: false, title: "", message: "" })}
+          />
+          <section className="overflow-y-auto my-2 w-2/3 flex flex-col items-center">
+            {activeTap === "create-post" && (
+              <form
+                onSubmit={submitMenuItem}
+                className="flex flex-col p-2 border rounded-2xl"
+              >
+                <h1 className="text-3xl font-bold text-center m-8">
+                  Add New Posts
+                </h1>
+                <label
+                  className="border-2 border-green-400 
           m-4 rounded-2xl p-1 flex justify-center 
-          items-center bg-green-100 relative cursor-pointer">
-         <img
-            className="rounded-2xl w-fit"
-            src={
-              prevPic ||
-              postToEdit?.featured_image ||
-              null
-            }
-            alt="photo"
-            />
-          <input
-            style={{ display: "none" }}
-            onChange={(e) => {
-              setPostData((prev) => ({ ...prev, photo: e.target.files[0]}));
-              setPrevPic(URL.createObjectURL(e.target.files[0]))
-            }}
-            type="file"
-            name="photo"
-            className="" />
-          <PencilIcon className="absolute bottom-0 right-0"/>
-        </label>
+          items-center bg-green-100 relative cursor-pointer"
+                >
+                  <img
+                    className="rounded-2xl w-fit"
+                    src={prevPic || postToEdit?.featured_image || null}
+                    alt="photo"
+                  />
+                  <input
+                    style={{ display: "none" }}
+                    onChange={(e) => {
+                      setPostData((prev) => ({
+                        ...prev,
+                        photo: e.target.files[0],
+                      }));
+                      setPrevPic(URL.createObjectURL(e.target.files[0]));
+                    }}
+                    type="file"
+                    name="photo"
+                    className=""
+                  />
+                  <PencilIcon className="absolute bottom-0 right-0" />
+                </label>
 
-        <label
-          className="text-2xl font-bold"
-        >Post Headline
-        </label>
-        <textarea 
-            onChange={handelForm}
-            required
-            placeholder="headline of the post"
-            value={postToEdit?postToEdit.title:postData.title}
-            className="border mx-20 p-2 rounded-2xl text-2xl mb-6"
-            type="text"
-            name="title"
-        ></textarea>
+                <label className="text-2xl font-bold">Post Headline</label>
+                <textarea
+                  onChange={handelForm}
+                  required
+                  placeholder="headline of the post"
+                  value={postToEdit ? postToEdit.title : postData.title}
+                  className="border mx-20 p-2 rounded-2xl text-2xl mb-6"
+                  type="text"
+                  name="title"
+                ></textarea>
 
-        <label className="text-2xl font-bold">Excert</label>
-          <textarea 
-            onChange={handelForm}
-            required
-            placeholder="short paragrah about the post"
-            className="border mx-20 p-2 rounded-2xl h-35 text-2xl mb-6"
-            value={postToEdit?postToEdit.excert:postData.excert}
-            name="excert">
-          </textarea>
+                <label className="text-2xl font-bold">Excert</label>
+                <textarea
+                  onChange={handelForm}
+                  required
+                  placeholder="short paragrah about the post"
+                  className="border mx-20 p-2 rounded-2xl h-35 text-2xl mb-6"
+                  value={postToEdit ? postToEdit.excert : postData.excert}
+                  name="excert"
+                ></textarea>
 
-        <label className="text-2xl font-bold"> Content </label>
-          <textarea 
-            required
-            onChange={handelForm}
-            placeholder="main content of the post"
-            className="border mx-8 p-2 rounded-2xl h-100 text-2xl mb-6"
-            value={postToEdit?postToEdit.content:postData.content}
-            name="content">
-          </textarea>
+                <label className="text-2xl font-bold"> Content </label>
+                <textarea
+                  required
+                  onChange={handelForm}
+                  placeholder="main content of the post"
+                  className="border mx-8 p-2 rounded-2xl h-100 text-2xl mb-6"
+                  value={postToEdit ? postToEdit.content : postData.content}
+                  name="content"
+                ></textarea>
 
-        <label
-          className="text-2xl font-bold"
-        >Post Date
-          <input
-            onChange={handelForm}
-            required
-            className="border m-2 rounded p-0.5 text-xl font-normal"
-            type="date"
-            name="published_at"
-          />
-        </label>
+                <label className="text-2xl font-bold">
+                  Post Date
+                  <input
+                    onChange={handelForm}
+                    required
+                    className="border m-2 rounded p-0.5 text-xl font-normal"
+                    type="date"
+                    name="published_at"
+                  />
+                </label>
 
-        <label
-          className="text-2xl font-bold"
-        >Post Time
-          <select
-            onChange={handelForm}
-            required
-            className="border m-2 rounded p-0.5 text-xl font-normal"
-            name="published_time"
-          >
-            <option value="">Select Time</option>
-            <option value="publish">Publish Now</option>
-            <option value="draft">Schedule for Later</option>
-          </select>
-        </label>
+                <label className="text-2xl font-bold">
+                  Post Time
+                  <select
+                    onChange={handelForm}
+                    required
+                    className="border m-2 rounded p-0.5 text-xl font-normal"
+                    name="published_time"
+                  >
+                    <option value="">Select Time</option>
+                    <option value="publish">Publish Now</option>
+                    <option value="draft">Schedule for Later</option>
+                  </select>
+                </label>
 
-        <h1 className="text-3xl font-bold text-center m-8">Add Post Tags</h1>
-          <input
-          className='border'
-            onChange={handelForm}
-            required
-            placeholder="Add tags for the post separated by commas"
-            className="border mx-20 p-2 rounded-2xl text-2xl mb-6"
-            type="text"
-            name="tags"
-          />
+                <h1 className="text-3xl font-bold text-center m-8">
+                  Add Post Tags
+                </h1>
+                <input
+                  className="border"
+                  onChange={handelForm}
+                  required
+                  placeholder="Add tags for the post separated by commas"
+                  className="border mx-20 p-2 rounded-2xl text-2xl mb-6"
+                  type="text"
+                  name="tags"
+                />
 
-        <button
-          className="bg-green-400 mx-30 my-4 p-2 text-xl font-bold text-white rounded-2xl shadow"
-          type="submit">Publish Now</button>
-      </form>)}
+                <button
+                  className="bg-green-400 mx-30 my-4 p-2 text-xl font-bold text-white rounded-2xl shadow"
+                  type="submit"
+                >
+                  Publish Now
+                </button>
+              </form>
+            )}
 
-      {activeTap === null && (<div className="p-4 border">
-        <div>
-          <article className="m-4 relative">
-            <img className="border w-80 h-80 rounded-2x" src={postData.photo} alt="" />
-            <input type="file" name="" id="" />
-            <PencilIcon/>
-          </article>
-          <p>{postData.author}</p>
-          <article className="m-4 text-lg p-4">
-            <h1 className="font-bold text-3xl px-8">{postData.title}</h1>
-            <h4>{postData.excert}</h4>
-            <p>{postData.content}</p>
-          </article>
-          <p className="m-4">status: {postData.status === 'draft'?<button className="bg-green-400 px-8 rounded-lg py-2 font-bold text-white">Go Live Now</button>:postData.status}</p>
-          <p>{postData.slug}</p>
-          {postData.title?
-            <button className="bg-blue-600 px-8 rounded-lg py-2 font-bold text-white" onClick={() => setActiveTap("create-post")}>Edit</button>
-            :<button className="bg-blue-600 px-8 rounded-lg py-2 font-bold text-white" onClick={() => setActiveTap("create-post")}>Create New</button>}
+            {activeTap === null && (
+              <div className="p-4 border">
+                <div>
+                  <article className="m-4 relative">
+                    <img
+                      className="border w-80 h-80 rounded-2x"
+                      src={postData.photo}
+                      alt=""
+                    />
+                    <input type="file" name="" id="" />
+                    <PencilIcon />
+                  </article>
+                  <p>{postData.author}</p>
+                  <article className="m-4 text-lg p-4">
+                    <h1 className="font-bold text-3xl px-8">
+                      {postData.title}
+                    </h1>
+                    <h4>{postData.excert}</h4>
+                    <p>{postData.content}</p>
+                  </article>
+                  <p className="m-4">
+                    status:{" "}
+                    {postData.status === "draft" ? (
+                      <button className="bg-green-400 px-8 rounded-lg py-2 font-bold text-white">
+                        Go Live Now
+                      </button>
+                    ) : (
+                      postData.status
+                    )}
+                  </p>
+                  <p>{postData.slug}</p>
+                  {postData.title ? (
+                    <button
+                      className="bg-blue-600 px-8 rounded-lg py-2 font-bold text-white"
+                      onClick={() => setActiveTap("create-post")}
+                    >
+                      Edit
+                    </button>
+                  ) : (
+                    <button
+                      className="bg-blue-600 px-8 rounded-lg py-2 font-bold text-white"
+                      onClick={() => setActiveTap("create-post")}
+                    >
+                      Create New
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+          </section>
+
+          <section className="m-2 w-1/3 overflow-y-auto bg-white p-2 rounded-2xl shadow">
+            <div className="w-full overflow-y-auto">
+              {/* VIEW POST BEFORE EDIT */}
+              {blogPost &&
+                blogPost.map((blog, index) => (
+                  <li
+                    className="p-2 m-4 list-none rounded-xl shadow shadow-black hover:scale-103 transition relative"
+                    onClick={() => {
+                      setActiveTap(null);
+                      setPostData({
+                        title: blog.title,
+                        excert: blog.excert,
+                        post: blog.slug,
+                        published_at: blog.published_at,
+                        status: blog.status,
+                        author: blog.author,
+                        content: blog.content,
+                        photo: blog.featured_image,
+                        view: blog.view,
+                      });
+                    }}
+                    key={index}
+                  >
+                    <h4>{blog.title}</h4>
+                    <button
+                      onClick={() => deleteItem(blog.id)}
+                      className="px-2 m-2 rounded text-white font-bold hover:scale-105 transition active:bg-red-900 bg-red-600"
+                    >
+                      Delete
+                    </button>
+                    <p className="text-[10px] text-right bottom-0 text-gray-600 ">
+                      {formatDistanceToNow(blog.created_at)}
+                    </p>
+                  </li>
+                ))}
+              <button
+                onClick={fetchBlogs}
+                className="bg-green-400 mx-30 my-4 p-2 font-bold text-white rounded-2xl shadow"
+              >
+                More
+              </button>
+            </div>
+          </section>
         </div>
-      </div>)}
-
-    </section>
-
-    <section className="m-2 w-1/3 overflow-y-auto bg-white p-2 rounded-2xl shadow">
-
-      <div className="w-full overflow-y-auto">
-
-        {/* VIEW POST BEFORE EDIT */}
-        {blogPost && blogPost.map((blog, index) => 
-        <li 
-          className="p-2 m-4 list-none rounded-xl shadow shadow-black hover:scale-103 transition relative"
-          onClick={() => {
-            setActiveTap(null)
-            setPostData({title:blog.title, excert:blog.excert, post:blog.slug,
-            published_at:blog.published_at, status:blog.status, author:blog.author,
-            content:blog.content, photo:blog.featured_image, view:blog.view})}}
-          key={index}>
-          <h4>{blog.title}</h4>
-            <button 
-              onClick={() => deleteItem(blog.id)}
-              className="px-2 m-2 rounded text-white font-bold hover:scale-105 transition active:bg-red-900 bg-red-600">Delete</button>
-          <p className="text-[10px] text-right bottom-0 text-gray-600 ">{formatDistanceToNow(blog.created_at)}</p>
-        </li>)}
-        <button
-          onClick={fetchBlogs}
-          className="bg-green-400 mx-30 my-4 p-2 font-bold text-white rounded-2xl shadow">More</button>
-      </div>
-
-    </section>
-
-  </div>}/>)
+      }
+    />
+  );
 }

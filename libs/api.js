@@ -39,18 +39,6 @@ async function postBlog(url, postData) {
     }
 }
 
-async function GetData(url) {
-    try{
-        const response = await axios.post(`${API_URL}${url}`);
-        const data = response.data;
-        console.log(data);
-        return data
-    }catch(error){
-        console.log(error);
-        return error
-    }
-}
-
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
     withCredentials:true
