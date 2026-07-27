@@ -5,18 +5,24 @@ import {
   Home,
   Tags,
   ShoppingBag,
+  Camera,
+  Upload,
+  CameraOff,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import AlertCard from "./AlertCard";
 import { useNavigate } from "react-router-dom";
-import { api, API_URL } from "../../../libs/api";
+import { api } from "../../../libs/api";
 import useFetch from "../hooks/UseFetch";
 import { BsWhatsapp } from "react-icons/bs";
 
 export default function ProductListing() {
   //   const [postListing, PostListing] = useState([]);
   const videoRef = useRef(null);
+  const fileRef = useRef(null);
+  const [cameraRef, setCameraRef] = useState(false);
   const [photo, setPhoto] = useState(null);
+
   const [preview, setPreview] = useState(null);
   const [form, setForm] = useState({
     productName: "",
@@ -37,11 +43,15 @@ export default function ProductListing() {
   const { data, refetch } = useFetch(`/user/me`);
   //   start camera
   async function startCamera() {
+    setPreview(null);
+    setPhoto(null);
+    setCameraRef(true);
     const stream = await navigator.mediaDevices.getUserMedia({
       video: { facingMode: "environment" },
     });
     videoRef.current.srcObject = stream;
   }
+
   async function takePhoto() {
     const canvas = document.createElement("canvas");
     canvas.width = 720;
@@ -49,6 +59,7 @@ export default function ProductListing() {
     canvas.getContext("2d").drawImage(videoRef.current, 0, 0);
     canvas.toBlob((blob) => setPhoto(blob), "image/jpeg");
     setPreview(canvas.toDataURL(videoRef.current));
+    setCameraRef(false);
   }
 
   const handleSubmit = async (e) => {
@@ -109,29 +120,47 @@ export default function ProductListing() {
         />
         <h1 className="text-2xl font-bold mb-4">Post to Market</h1>
       </div>
-      <video
-        src=""
-        ref={videoRef}
-        autoPlay
-        className="w-full rounded-lg bg-black mb-2"
-      ></video>
-      <div className="flex gap-2 mb-4">
-        <button className="bg-gray-200 px-4 py-2 rounded" onClick={startCamera}>
-          Start Camera
-        </button>
-        <button
-          onClick={takePhoto}
-          className="bg-blue-600 text-white px-4 py-2 rounded"
-        >
-          Take Photo
-        </button>
-      </div>
-      {photo && (
-        <img
-          className="h-50 border rounded-2xl mb-2 object-cover"
-          src={preview}
-        />
+      {photo ? (
+        <img className="w-100 rounded-lg bg-black mb-2 h-80" src={preview} />
+      ) : (
+        <div className="relative">
+          <video
+            src=""
+            ref={videoRef}
+            autoPlay
+            className="w-full rounded-lg bg-black mb-2"
+          ></video>
+          <button
+            onClick={takePhoto}
+            style={{ display: cameraRef ? "block" : "none" }}
+            className=" absolute bg-transparent text-red-700 border-4 p-4 rounded-full bottom-4 right-35"
+          >
+            <Camera />
+          </button>
+        </div>
       )}
+      <div className="flex gap-2 mb-4">
+        <button
+          className="bg-blue-600 text-white px-4 py-2 rounded"
+          onClick={startCamera}
+        >
+          <Camera />
+        </button>
+
+        <label className="border justify-center items-center flex px-2 rounded-lg bg-green-500 text-white">
+          <Upload />
+          <input
+            ref={fileRef}
+            type="file"
+            className="hidden"
+            onChange={(e) => {
+              setPreview(URL.createObjectURL(e.target.files[0]));
+              setPhoto(e.target.files[0]);
+            }}
+          />
+        </label>
+      </div>
+
       <form onSubmit={handleSubmit} className="space-y-3">
         <label className="border p-2 rounded-lg flex justify-between items-center gap-2 mb-4">
           <User />
