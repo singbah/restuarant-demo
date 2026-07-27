@@ -188,12 +188,11 @@ export default function MarketPlace() {
           onClick={() => navigate("/vendor-signup")}
           className="cursor-pointer hover:scale-103 transition hover:text-blue-600"
         />
-        {data && (
-          <PlusIcon
-            onClick={() => navigate("/addItem")}
-            className="cursor-pointer hover:scale-103 transition hover:text-green-600"
-          />
-        )}
+
+        <PlusIcon
+          onClick={() => navigate("/addItem")}
+          className="cursor-pointer hover:scale-103 transition hover:text-green-600"
+        />
       </div>
     </div>
   );
