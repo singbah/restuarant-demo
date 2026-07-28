@@ -7,17 +7,20 @@ import {
   ShoppingBag,
   Camera,
   Upload,
-  CameraOff,
+  Bell,
+  ShoppingBasket,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import AlertCard from "./AlertCard";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../../libs/api";
 import useFetch from "../hooks/UseFetch";
 import { BsWhatsapp } from "react-icons/bs";
+import LoadingEffect from "./LoadingEffect";
+import BottomNav from "../ui/BottomNav";
 
 export default function ProductListing() {
-  //   const [postListing, PostListing] = useState([]);
+  // const [postListing, PostListing] = useState([]);
   const videoRef = useRef(null);
   const fileRef = useRef(null);
   const [cameraRef, setCameraRef] = useState(false);
@@ -31,6 +34,7 @@ export default function ProductListing() {
     price: "",
     category: "",
   });
+
   const [msg, setMsg] = useState({
     isOpen: false,
     title: "",
@@ -38,10 +42,13 @@ export default function ProductListing() {
     action: "",
     message: "",
   });
+
   const navigate = useNavigate(null);
-  const [loading, setLoading] = useState(false);
-  const { data, refetch } = useFetch(`/user/me`);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { data, loading, error, refetch } = useFetch(`/user/me`);
   //   start camera
+
   async function startCamera() {
     setPreview(null);
     setPhoto(null);
@@ -64,7 +71,7 @@ export default function ProductListing() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setIsLoading(true);
     const fd = new FormData();
     const slug = form.productName.toLocaleLowerCase().replace(" ", "_");
     const vendor_phone = form.vendor_phone || data.phone;
@@ -80,9 +87,18 @@ export default function ProductListing() {
       const result = response.data;
       console.log(result);
     } catch (error) {
-      console.error(error.response?.data?.detail || "An error occur!!");
+      let errData = "An error occur!!";
+      if (error.response) {
+        errData = error.response?.data?.detail || "An error occur!!";
+      }
+      setMsg({
+        isOpen: true,
+        message: "Uploading failed please try again",
+        title: "Upload failed",
+        status: "error",
+      });
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -97,142 +113,141 @@ export default function ProductListing() {
     });
   }
 
-  useEffect(() => {
+  useMemo(() => {
     refetch();
   }, []);
 
-  if (!data) return null;
+  if (loading) return <LoadingEffect />;
+
+  if (error || !data) return <div></div>;
+
   return (
     <div className="max-w-lg mx-auto p-4 h-screen">
-      <AlertCard
-        open={msg.isOpen}
-        status={msg.status}
-        title={msg.title}
-        message={msg.message}
-        action={msg.action}
-        linkTo={msg.linkTo}
-        onClose={() => setMsg({ isOpen: false })}
-      />
-      <div className="flex justify-between items-center mb-4 mt-4">
-        <ArrowLeftCircle
-          onClick={goBackHome}
-          className="text-blue-600 cursor-pointer active:scale-105 transition"
+      <div className="h-screen">
+        {isLoading && <LoadingEffect />}
+        <AlertCard
+          open={msg.isOpen}
+          status={msg.status}
+          title={msg.title}
+          message={msg.message}
+          action={msg.action}
+          linkTo={msg.linkTo}
+          onClose={() => setMsg({ isOpen: false })}
         />
-        <h1 className="text-2xl font-bold mb-4">Post to Market</h1>
-      </div>
-      {photo ? (
-        <img className="w-100 rounded-lg bg-black mb-2 h-80" src={preview} />
-      ) : (
-        <div className="relative">
-          <video
-            src=""
-            ref={videoRef}
-            autoPlay
-            className="w-full rounded-lg bg-black mb-2"
-          ></video>
+        <div className="flex justify-between items-center mb-4 mt-4">
+          <ArrowLeftCircle
+            onClick={goBackHome}
+            className="text-blue-600 cursor-pointer active:scale-105 transition"
+          />
+          <h1 className="text-2xl font-bold mb-4">Post to Market</h1>
+        </div>
+        {photo ? (
+          <img className="w-100 rounded-lg bg-black mb-2 h-80" src={preview} />
+        ) : (
+          <div className="relative">
+            <video
+              src=""
+              ref={videoRef}
+              autoPlay
+              className="w-full rounded-lg bg-black mb-2"
+            ></video>
+            <button
+              onClick={takePhoto}
+              style={{ display: cameraRef ? "block" : "none" }}
+              className=" absolute bg-transparent text-red-700 border-4 p-4 rounded-full bottom-4 right-35"
+            >
+              <Camera />
+            </button>
+          </div>
+        )}
+        <div className="flex gap-2 mb-4">
           <button
-            onClick={takePhoto}
-            style={{ display: cameraRef ? "block" : "none" }}
-            className=" absolute bg-transparent text-red-700 border-4 p-4 rounded-full bottom-4 right-35"
+            className="bg-blue-600 text-white px-4 py-2 rounded"
+            onClick={startCamera}
           >
             <Camera />
           </button>
+
+          <label className="border justify-center items-center flex px-2 rounded-lg bg-green-500 text-white">
+            <Upload />
+            <input
+              ref={fileRef}
+              type="file"
+              className="hidden"
+              onChange={(e) => {
+                setPreview(URL.createObjectURL(e.target.files[0]));
+                setPhoto(e.target.files[0]);
+              }}
+            />
+          </label>
         </div>
-      )}
-      <div className="flex gap-2 mb-4">
-        <button
-          className="bg-blue-600 text-white px-4 py-2 rounded"
-          onClick={startCamera}
-        >
-          <Camera />
-        </button>
 
-        <label className="border justify-center items-center flex px-2 rounded-lg bg-green-500 text-white">
-          <Upload />
-          <input
-            ref={fileRef}
-            type="file"
-            className="hidden"
-            onChange={(e) => {
-              setPreview(URL.createObjectURL(e.target.files[0]));
-              setPhoto(e.target.files[0]);
-            }}
-          />
-        </label>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <label className="border p-2 rounded-lg flex justify-between items-center gap-2 mb-4">
+            <ShoppingBasket />
+            <input
+              type="text"
+              name="productName"
+              className="outline-none w-full"
+              placeholder="Product Name"
+              onChange={(e) =>
+                setForm({ ...form, productName: e.target.value })
+              }
+            />
+          </label>
+          <label className="border p-2 rounded-lg flex justify-between items-center gap-2 mb-4">
+            <DollarSign />
+            <input
+              type="number"
+              className="outline-none w-full"
+              placeholder="Product Price"
+              required
+              onChange={(e) => setForm({ ...form, price: e.target.value })}
+            />
+          </label>
+
+          <label className="border p-2 rounded-lg flex justify-between items-center gap-2 mb-4">
+            <BsWhatsapp className="text-green-600" />
+            <input
+              className="outline-none w-full"
+              type="phone"
+              defaultValue={(data && data.phone) || ""}
+              placeholder="WhatsApp Number 077..."
+              onChange={(e) =>
+                setForm({ ...form, vendor_phone: e.target.value })
+              }
+            />
+          </label>
+          <select
+            onChange={(e) => setForm({ ...form, market: e.target.value })}
+            className="border w-full p-2 rounded"
+          >
+            <option value="redlight">Red Light Market</option>
+            <option value="duala">Duala Market</option>
+            <option value="waterside">Water Side Market</option>
+            <option value="oldroad">Old Road Market</option>
+          </select>
+
+          <select
+            onChange={(e) => setForm({ ...form, category: e.target.value })}
+            className="border w-full p-2 rounded"
+          >
+            <option value="">Coose Category</option>
+            <option value="food">Food</option>
+            <option value="fasion">Frasion</option>
+            <option value="eletronic">Electronic</option>
+          </select>
+          <button
+            disabled={isLoading}
+            className="bg-green-600 py-3 rounded text-white w-full font-bold"
+            type="submit"
+          >
+            Submit
+          </button>
+          {isLoading ? "Posting" : null}
+        </form>
       </div>
-
-      <form onSubmit={handleSubmit} className="space-y-3">
-        <label className="border p-2 rounded-lg flex justify-between items-center gap-2 mb-4">
-          <User />
-          <input
-            type="text"
-            name="productName"
-            className="outline-none w-full"
-            placeholder="Product Name"
-            onChange={(e) => setForm({ ...form, productName: e.target.value })}
-          />
-        </label>
-        <label className="border p-2 rounded-lg flex justify-between items-center gap-2 mb-4">
-          <DollarSign />
-          <input
-            type="number"
-            className="outline-none w-full"
-            placeholder="Product Price"
-            required
-            onChange={(e) => setForm({ ...form, price: e.target.value })}
-          />
-        </label>
-
-        <label className="border p-2 rounded-lg flex justify-between items-center gap-2 mb-4">
-          <BsWhatsapp className="text-green-600" />
-          <input
-            className="outline-none w-full"
-            type="phone"
-            defaultValue={(data && data.phone) || ""}
-            placeholder="WhatsApp Number 077..."
-            onChange={(e) => setForm({ ...form, vendor_phone: e.target.value })}
-          />
-        </label>
-        <select
-          onChange={(e) => setForm({ ...form, market: e.target.value })}
-          className="border w-full p-2 rounded"
-        >
-          <option value="redlight">Red Light Market</option>
-          <option value="duala">Duala Market</option>
-          <option value="waterside">Water Side Market</option>
-          <option value="oldroad">Old Road Market</option>
-        </select>
-
-        <select
-          onChange={(e) => setForm({ ...form, category: e.target.value })}
-          className="border w-full p-2 rounded"
-        >
-          <option value="">Coose Category</option>
-          <option value="food">Food</option>
-          <option value="fasion">Frasion</option>
-          <option value="eletronic">Electronic</option>
-        </select>
-        <button
-          disabled={loading}
-          className="bg-green-600 py-3 rounded text-white w-full font-bold"
-          type="submit"
-        >
-          Submit
-        </button>
-        {loading ? "Posting" : null}
-      </form>
-      <div className="z-20 sticky bottom-0 flex justify-around items-center border-t-2 pt-2 inset-0 border-gray-400 bg-white">
-        <Home
-          className="cursor-pointer hover:scale-103 transition hover:text-blue-500 "
-          onClick={() => navigate("/market")}
-        />
-        <Tags className="cursor-pointer hover:scale-103 transition hover:text-blue-600" />
-        <ShoppingBag className="cursor-pointer hover:scale-103 transition hover:text-blue-600" />
-        <User
-          onClick={() => navigate("/vendor-signup")}
-          className="cursor-pointer hover:scale-103 transition hover:text-blue-600"
-        />
-      </div>
+      <BottomNav />
     </div>
   );
 }

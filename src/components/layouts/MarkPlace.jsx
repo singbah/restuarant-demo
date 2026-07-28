@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { api, API_URL } from "../../../libs/api";
+import { api } from "../../../libs/api";
 import {
   Camera,
   Home,
@@ -12,8 +12,8 @@ import {
 import ListingCard from "../ui/ProductCard";
 import LoadingEffect from "./LoadingEffect";
 import AlertCard from "./AlertCard";
-import useFetch from "../hooks/UseFetch";
 import { useNavigate } from "react-router-dom";
+import BottomNav from "../ui/BottomNav";
 
 export default function MarketPlace() {
   const [listings, setListings] = useState([]);
@@ -32,7 +32,6 @@ export default function MarketPlace() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate(null);
   const fileInputRef = useRef(null);
-  const { data, refetch } = useFetch(`/user/me`);
 
   const openCamera = async () => {
     fileInputRef.current.click();
@@ -68,7 +67,6 @@ export default function MarketPlace() {
   }, [search, listings]);
 
   useEffect(() => {
-    refetch();
     const _ = async () => {
       setLoading(true);
       try {
@@ -110,90 +108,76 @@ export default function MarketPlace() {
 
   return (
     <div className="max-w-6xl mx-auto p-4">
-      {loading ? <LoadingEffect /> : null}
-      <AlertCard
-        open={msg.isOpen}
-        message={msg.message}
-        title={msg.title}
-        status={msg.status}
-        onClose={() => setMsg({ isOpen: false })}
-      />
-      <div className="max-w-2xl mx-auto bg-white rounded-full shadow-lg flex items-center p-2 sticky top-0 z-20 border border-blue-300">
-        <Search
-          className="text-gray-400 ml-3"
-          size={20}
-          onClick={handelCameraSearch}
+      <div className="h-screen">
+        {loading ? <LoadingEffect /> : null}
+        <AlertCard
+          open={msg.isOpen}
+          message={msg.message}
+          title={msg.title}
+          status={msg.status}
+          onClose={() => setMsg({ isOpen: false })}
         />
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          type="text"
-          placeholder="Search rice, oil, chicken..."
-          className="flex-1 px-4 py-2 text-gray-800 outline-none bg-transparent"
-        />
-        {/* CAMERA ICON FOR IMAGE SEARCH */}
-        <button
-          onClick={openCamera}
-          className="bg-blue-500 p-3 rounded-full hover:bg-blue-700 transition"
-        >
-          <input
-            type="file"
-            accept="image/*"
-            capture="environment"
-            ref={fileInputRef}
-            style={{ display: "none" }}
-            onChange={handelCameraSearch}
+        <div className="max-w-2xl mx-auto bg-white rounded-full shadow-lg flex items-center p-2 sticky top-0 z-20 border border-blue-300">
+          <Search
+            className="text-gray-400 ml-3"
+            size={20}
+            onClick={handelCameraSearch}
           />
-          <Camera className="text-white" size={20} />
-        </button>
-      </div>
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            type="text"
+            placeholder="Search rice, oil, chicken..."
+            className="flex-1 px-4 py-2 text-gray-800 outline-none bg-transparent"
+          />
+          {/* CAMERA ICON FOR IMAGE SEARCH */}
+          <button
+            onClick={openCamera}
+            className="bg-blue-500 p-3 rounded-full hover:bg-blue-700 transition"
+          >
+            <input
+              type="file"
+              accept="image/*"
+              capture="environment"
+              ref={fileInputRef}
+              style={{ display: "none" }}
+              onChange={handelCameraSearch}
+            />
+            <Camera className="text-white" size={20} />
+          </button>
+        </div>
 
-      <div className="mt-10 mb-2 flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Market Prices</h1>
-        <select
-          className=" p-2 text-green-600 rounded-lg border-2 border-blue-400"
-          onChange={(e) => categoryFileter(e.target.value)}
-        >
-          <option value="">Categories</option>
-          <option value="food">Food</option>
-          <option value="fasion">Frasion</option>
-          <option value="eletronic">Electronic</option>
-          <option value="phone">Phone</option>
-        </select>
-      </div>
+        <div className="mt-10 mb-2 flex justify-between items-center">
+          <h1 className="text-3xl font-bold">Market Prices</h1>
+          <select
+            className=" p-2 text-green-600 rounded-lg border-2 border-blue-400"
+            onChange={(e) => categoryFileter(e.target.value)}
+          >
+            <option value="">Categories</option>
+            <option value="food">Food</option>
+            <option value="fasion">Frasion</option>
+            <option value="eletronic">Electronic</option>
+            <option value="phone">Phone</option>
+          </select>
+        </div>
 
-      <div className="max-w-6xl mx-auto p-4">
-        {loading && "Loading...."}
-        <h1 className="text-2xl font-bold mb-4">
-          {search ? `Results for ${search}` : "Latest Prices Today"}
-        </h1>
-        {filtered.length === 0 ? (
-          <p>No Items Found</p>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {filtered.map((item, index) => (
-              <ListingCard key={index} item={item} />
-            ))}
-          </div>
-        )}
+        <div className="max-w-6xl mx-auto p-4">
+          {loading && "Loading...."}
+          <h1 className="text-2xl font-bold mb-4">
+            {search ? `Results for ${search}` : "Latest Prices Today"}
+          </h1>
+          {filtered.length === 0 ? (
+            <p>No Items Found</p>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {filtered.map((item, index) => (
+                <ListingCard key={index} item={item} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-      <div className="z-20 sticky bottom-0 flex justify-around items-center border-t-2 pt-2 inset-0 border-gray-400 bg-white">
-        <Home
-          className="cursor-pointer hover:scale-103 transition hover:text-blue-500 "
-          onClick={() => navigate("/market")}
-        />
-        <Tags className="cursor-pointer hover:scale-103 transition hover:text-blue-600" />
-        <ShoppingBag className="cursor-pointer hover:scale-103 transition hover:text-blue-600" />
-        <User
-          onClick={() => navigate("/vendor-signup")}
-          className="cursor-pointer hover:scale-103 transition hover:text-blue-600"
-        />
-
-        <PlusIcon
-          onClick={() => navigate("/addItem")}
-          className="cursor-pointer hover:scale-103 transition hover:text-green-600"
-        />
-      </div>
+      <BottomNav />
     </div>
   );
 }

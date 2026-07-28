@@ -16,10 +16,12 @@ import MarketPlace from "./components/layouts/MarkPlace";
 import {
   ForgotPassword,
   OTPConfirmation,
+  PasswordReset,
   VendorSignIn,
   VendorSignUp,
 } from "./components/vendors/VendorsAuths";
 import Product from "./components/ui/SingleProduct";
+import VendorProfile from "./components/vendors/Profile";
 
 export default function App() {
   return (
@@ -44,6 +46,8 @@ export default function App() {
         <Route path="/vendor-signup" element={<VendorSignUp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/otp-confirm" element={<OTPConfirmation />} />
+        <Route path="/password-reset" element={<PasswordReset />} />
+        <Route path="/profile" element={<VendorProfile />} />
       </Routes>
     </div>
   );

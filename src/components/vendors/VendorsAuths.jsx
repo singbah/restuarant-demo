@@ -1,15 +1,23 @@
-import { BookOpen, Phone, Lock, User, Mail, ArrowRight } from "lucide-react";
-import { api, API_URL } from "../../../libs/api";
+import {
+  BookOpen,
+  Phone,
+  Lock,
+  User,
+  Mail,
+  ArrowRight,
+  Eye,
+} from "lucide-react";
+import { api } from "../../../libs/api";
 import AlertCard from "../layouts/AlertCard";
-import { useNavigate } from "react-router-dom";
-import useFetch from "../hooks/UseFetch";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import LoadingEffect from "../layouts/LoadingEffect";
 
 function VendorSignIn() {
   const navigate = useNavigate(null);
   const [form, setForm] = useState({ password: "", phone: "" });
-  const { data } = useFetch(`${API_URL}user/me`);
-  console.log(data);
+  const [loading, setLoading] = useState(false);
+
   const [msg, setMsg] = useState({
     title: "",
     message: "",
@@ -19,6 +27,7 @@ function VendorSignIn() {
 
   const handelSubmitForm = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const response = await api.post("/auths/signin", form);
       const request = response.data;
@@ -33,10 +42,13 @@ function VendorSignIn() {
         status: "error",
         isOpen: true,
       });
+    } finally {
+      setLoading(false);
     }
   };
   return (
     <div className="flex flex-col h-screen bg-black text-blue-600 justify-center items-center">
+      {loading && <LoadingEffect />}
       <AlertCard
         message={msg.message}
         open={msg.isOpen}
@@ -109,8 +121,10 @@ function VendorSignUp() {
     linkTo: "",
   });
   const navigate = useNavigate(null);
+  const [loading, setLoading] = useState(false);
   const handelSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     // do some data eiter and clean up
     try {
       const response = await api.post("/auths/signup", form);
@@ -135,10 +149,13 @@ function VendorSignUp() {
         message: errData || "An error occur",
         status: "error",
       });
+    } finally {
+      setLoading(false);
     }
   };
   return (
     <div className="flex flex-col h-screen bg-black text-blue-600 justify-center items-center">
+      {loading && <LoadingEffect />}
       <AlertCard
         open={msg.isOpen}
         onClose={() => setMsg({ isOpen: false })}
@@ -195,7 +212,10 @@ function VendorSignUp() {
             />
           </label>
 
-          <button className="text-2xl py-1 rounded-lg w-full bg-blue-800 text-white font-bold">
+          <button
+            disabled={loading}
+            className="text-2xl py-1 rounded-lg w-full bg-blue-800 text-white font-bold"
+          >
             Sign Up
           </button>
         </form>
@@ -213,9 +233,51 @@ function VendorSignUp() {
 }
 
 function ForgotPassword() {
+  const [form, setForm] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [msg, setMsg] = useState({
+    title: "",
+    message: "",
+    isOpen: false,
+    status: "",
+  });
+  const navigate = useNavigate(null);
+  async function submitForm(e) {
+    setLoading(true);
+    e.preventDefault();
+
+    try {
+      const response = await api.post(`/auths/forgot_password?email=${form}`);
+      const request = response.data;
+      console.log(request);
+      navigate("/otp-confirm", { state: request });
+    } catch (error) {
+      let errMsg = "Acount failed";
+      if (error.response) {
+        errMsg = error.response?.data?.detail;
+      }
+      setMsg({
+        title: "Recovery Failed",
+        message: errMsg,
+        status: "error",
+        isOpen: true,
+      });
+      setForm("");
+    } finally {
+      setLoading(false);
+    }
+  }
   return (
     <div className="flex justify-center items-center flex-col h-screen bg-black text-blue-600">
-      <form>
+      {loading && <LoadingEffect />}
+      <AlertCard
+        message={msg.message}
+        open={msg.isOpen}
+        title={msg.title}
+        status={msg.status}
+        onClose={() => setMsg({ isOpen: false })}
+      />
+      <form onSubmit={submitForm}>
         <p className="mb-6 font-black text-red-500 text-2xl text-center">
           account recovery
         </p>
@@ -226,10 +288,12 @@ function ForgotPassword() {
             type="email"
             className="outline-none text-gray-200"
             placeholder="your@email.com"
+            value={form}
+            onChange={(e) => setForm(e.target.value)}
           />
         </label>
         <button
-          disabled={true}
+          // disabled={true}
           className="px-4  py-1 mt-2 rounded-lg text-white font-bold border-2 border-blue-600 active:scale-104"
         >
           Submit
@@ -240,9 +304,61 @@ function ForgotPassword() {
 }
 
 function OTPConfirmation() {
+  const [form, setForm] = useState("");
+  const [msg, setMsg] = useState({
+    isOpen: false,
+    message: "",
+    title: "",
+    status: "",
+  });
+  const location = useLocation();
+  const navigate = useNavigate(null);
+  const email = location.state.email;
+  console.log(location.state.code);
+  const [loading, setLoading] = useState(false);
+
+  const handelFormSubmit = async (e) => {
+    setLoading(true);
+    e.preventDefault();
+    try {
+      const response = await api.get(
+        `auths/confirm_opt?otp=${form}&email=${email}`,
+      );
+      const result = response.data;
+      navigate("/password-reset", { state: { email: email } });
+      setMsg({
+        isOpen: true,
+        message: result.detail,
+        status: "success",
+        title: "Account Recovered",
+      });
+    } catch (error) {
+      let errData = "A error occur";
+      if (error.response) {
+        errData = error.response?.data?.detail || "An error occur!!";
+      }
+      setMsg({
+        isOpen: true,
+        message: errData,
+        status: "error",
+        title: "OTP Error!!",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex justify-center items-center flex-col h-screen bg-black text-blue-600">
-      <form>
+      {loading && <LoadingEffect />}
+      <AlertCard
+        open={msg.isOpen}
+        onClose={() => setMsg({ isOpen: false })}
+        title={msg.title}
+        message={msg.message}
+        status={msg.status}
+      />
+      <form onSubmit={handelFormSubmit}>
         <p className="mb-6 font-black text-red-500 text-2xl">
           OTP Confirmation
         </p>
@@ -255,14 +371,19 @@ function OTPConfirmation() {
             type="text"
             className="outline-none text-gray-200"
             placeholder="ENTER CODE"
+            value={form}
+            onChange={(e) => setForm(e.target.value)}
           />
-          <button className="rounded-lg text-white font-bold active:scale-104 cursor-pointer">
+          <button
+            disabled={loading}
+            className="rounded-lg text-white font-bold active:scale-104 cursor-pointer"
+          >
             <ArrowRight />
           </button>
         </label>
       </form>
       <a
-        href="#"
+        href="/forgot-password"
         className="text-left mt-4 active:scale-105 focus:text-red-600 transition"
       >
         Resend Code
@@ -271,4 +392,123 @@ function OTPConfirmation() {
   );
 }
 
-export { VendorSignIn, VendorSignUp, ForgotPassword, OTPConfirmation };
+function PasswordReset() {
+  const location = useLocation();
+  const [seePass, setSeePass] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(null);
+  const [msg, setMsg] = useState({
+    isOpen: false,
+    message: "",
+    status: "",
+    title: "",
+  });
+  const [newPassword, setNewPassword] = useState({
+    password: "",
+    confirmPassword: "",
+  });
+
+  const submitFormData = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    let password;
+    if (newPassword.password !== newPassword.confirmPassword) {
+      setMsg({
+        isOpen: true,
+        title: "Password Missmatch",
+        message: "Confirm password not match",
+        status: "error",
+      });
+      setLoading(false);
+      return;
+    }
+    password = newPassword.password;
+    try {
+      const request = await api.get(
+        `/auths/password-reset?new_password=${password}&email=${location.state.email}`,
+      );
+      navigate("/market");
+    } catch (error) {
+      let errData = "Couldn't reset password";
+      if (error.response) {
+        errData = error.response?.data?.detail || "An error occur";
+      }
+      setMsg({
+        isOpen: true,
+        title: "Password Reset Failed",
+        message: errData,
+        status: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+  return (
+    <div className="flex flex-col justify-center items-center h-screen">
+      {loading && <LoadingEffect />}
+      <AlertCard
+        open={msg.isOpen}
+        message={msg.message}
+        title={msg.title}
+        status={msg.status}
+        onClose={() => setMsg({ isOpen: false })}
+      />
+      <h1 className="text-2xl font-bold mb-4">
+        Create New Password (Optional){" "}
+      </h1>
+      <form onSubmit={submitFormData}>
+        <p>Enter New Password</p>
+        <label className="border p-2 rounded flex justify-around items-center mb-4">
+          <Lock />
+          <input
+            className="outline-none ml-2"
+            type={seePass ? "text" : "password"}
+            placeholder="create new password"
+            value={newPassword.password}
+            required
+            onChange={(e) =>
+              setNewPassword({ ...newPassword, password: e.target.value })
+            }
+          />
+          <Eye onClick={() => setSeePass(seePass == true ? false : true)} />
+        </label>
+        <p>Confirm Password</p>
+        <label
+          className={`border p-2 rounded flex justify-around items-center mb-4`}
+        >
+          <Lock />
+          <input
+            className="outline-none ml-2"
+            type={seePass ? "text" : "password"}
+            placeholder="Confirm password"
+            required
+            onChange={(e) =>
+              setNewPassword({
+                ...newPassword,
+                confirmPassword: e.target.value,
+              })
+            }
+          />
+          <Eye onClick={() => setSeePass(seePass == true ? false : true)} />
+        </label>
+        <button
+          disabled={loading}
+          className="border rounded py-2 px-6 font-bold text-blue-600 border-blue-600 active:scale-105 transition mb-4"
+        >
+          Submit
+        </button>
+      </form>
+      <a href="/market" className="font-bold underline text-blue-600 ">
+        Skip
+      </a>
+    </div>
+  );
+}
+
+export {
+  VendorSignIn,
+  VendorSignUp,
+  ForgotPassword,
+  OTPConfirmation,
+  PasswordReset,
+};

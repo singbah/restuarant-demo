@@ -7,13 +7,19 @@ export default function AlertCard({
   action,
   linkTo,
 }) {
+  const styleContent = {
+    error:
+      "w-full max-w-md rounded-2xl bg-white p-6 shadow-xl bolder border-red-500 text-red-500",
+    success:
+      "w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-green-500 text-blue-500",
+  };
   if (!open) return null;
 
   return (
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs`}
     >
-      <div className={`w-full max-w-md rounded-2xl bg-white p-6 shadow-xl`}>
+      <div className={styleContent[status]}>
         <h2 className="text-2xl font-bold">{title}</h2>
 
         <p className="mt-4 text-gray-600">{message}</p>
