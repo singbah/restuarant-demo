@@ -1,16 +1,12 @@
 import {
   ArrowLeftCircle,
-  User,
   DollarSign,
-  Home,
-  Tags,
-  ShoppingBag,
   Camera,
   Upload,
-  Bell,
   ShoppingBasket,
+  Info,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import AlertCard from "./AlertCard";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../../libs/api";
@@ -33,6 +29,7 @@ export default function ProductListing() {
     vendor_phone: "",
     price: "",
     category: "",
+    details: "",
   });
 
   const [msg, setMsg] = useState({
@@ -61,8 +58,8 @@ export default function ProductListing() {
 
   async function takePhoto() {
     const canvas = document.createElement("canvas");
-    canvas.width = 720;
-    canvas.height = 720;
+    canvas.width = 600;
+    canvas.height = 490;
     canvas.getContext("2d").drawImage(videoRef.current, 0, 0);
     canvas.toBlob((blob) => setPhoto(blob), "image/jpeg");
     setPreview(canvas.toDataURL(videoRef.current));
@@ -72,8 +69,20 @@ export default function ProductListing() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+
+    if (!Number(form.price)) {
+      setMsg({
+        isOpen: true,
+        message: "Price Cant't contain letter",
+        title: "Post Failed",
+        status: "error",
+      });
+      setIsLoading(false);
+      return;
+    }
+
     const fd = new FormData();
-    const slug = form.productName.toLocaleLowerCase().replace(" ", "_");
+    const slug = form.productName.replaceAll(" ", "-");
     const vendor_phone = form.vendor_phone || data.phone;
     fd.append("photo", photo);
     fd.append("product_name", form.productName);
@@ -82,10 +91,23 @@ export default function ProductListing() {
     fd.append("market", form.market);
     fd.append("category", form.category);
     fd.append("slug", slug);
+    fd.append("details", form.details);
+    console.log(slug.toLocaleLowerCase());
+    setIsLoading(false);
     try {
       const response = await api.post("/products/upload", fd);
       const result = response.data;
       console.log(result);
+      setMsg({
+        isOpen: true,
+        message: result.detail,
+        status: "success",
+        title: "Posted",
+      });
+      setForm({ price: 0, productName: "", details: "" });
+      URL.revokeObjectURL(preview);
+      setPreview(null);
+      setPhoto(null);
     } catch (error) {
       let errData = "An error occur!!";
       if (error.response) {
@@ -119,7 +141,20 @@ export default function ProductListing() {
 
   if (loading) return <LoadingEffect />;
 
-  if (error || !data) return <div></div>;
+  if (error || !data)
+    return (
+      <div className="h-screen flex flex-col justify-center items-center ">
+        <h1 className="font-bold text-2xl text-center mb-4">
+          You must login to access this page
+        </h1>
+        <a
+          href="/vendor-signin"
+          className="text-blue-600 font-bold active:scale-105 cursor-pointer transition border px-4 rounded"
+        >
+          Sign In
+        </a>
+      </div>
+    );
 
   return (
     <div className="max-w-lg mx-auto p-4 h-screen">
@@ -147,9 +182,10 @@ export default function ProductListing() {
           <div className="relative">
             <video
               src=""
+
               ref={videoRef}
               autoPlay
-              className="w-full rounded-lg bg-black mb-2"
+              className="w-100 h-80 rounded-lg bg-black mb-2 "
             ></video>
             <button
               onClick={takePhoto}
@@ -188,6 +224,8 @@ export default function ProductListing() {
             <input
               type="text"
               name="productName"
+              required
+              value={form.productName}
               className="outline-none w-full"
               placeholder="Product Name"
               onChange={(e) =>
@@ -198,7 +236,8 @@ export default function ProductListing() {
           <label className="border p-2 rounded-lg flex justify-between items-center gap-2 mb-4">
             <DollarSign />
             <input
-              type="number"
+              type="text"
+              value={form.price}
               className="outline-none w-full"
               placeholder="Product Price"
               required
@@ -207,11 +246,22 @@ export default function ProductListing() {
           </label>
 
           <label className="border p-2 rounded-lg flex justify-between items-center gap-2 mb-4">
+            <Info className="text-green-600" />
+            <textarea
+              className="outline-none w-full"
+              required
+              value={form.details}
+              onChange={(e) => setForm({ ...form, details: e.target.value })}
+              placeholder="Please provide a details description about your product"
+            ></textarea>
+          </label>
+          <label className="border p-2 rounded-lg flex justify-between items-center gap-2 mb-4">
             <BsWhatsapp className="text-green-600" />
             <input
               className="outline-none w-full"
               type="phone"
               defaultValue={(data && data.phone) || ""}
+              readOnly
               placeholder="WhatsApp Number 077..."
               onChange={(e) =>
                 setForm({ ...form, vendor_phone: e.target.value })
@@ -222,10 +272,11 @@ export default function ProductListing() {
             onChange={(e) => setForm({ ...form, market: e.target.value })}
             className="border w-full p-2 rounded"
           >
-            <option value="redlight">Red Light Market</option>
-            <option value="duala">Duala Market</option>
-            <option value="waterside">Water Side Market</option>
-            <option value="oldroad">Old Road Market</option>
+            <option value="redlight">Select Market place</option>
+            <option value="Red Light Market">Red Light Market</option>
+            <option value="Duala Market">Duala Market</option>
+            <option value="Water Side">Water Side Market</option>
+            <option value="Old Road">Old Road Market</option>
           </select>
 
           <select
@@ -234,8 +285,10 @@ export default function ProductListing() {
           >
             <option value="">Coose Category</option>
             <option value="food">Food</option>
-            <option value="fasion">Frasion</option>
+            <option value="fashion">Fashion</option>
+            <option value="phone">Phone</option>
             <option value="eletronic">Electronic</option>
+            <option value="sports">Sports</option>
           </select>
           <button
             disabled={isLoading}

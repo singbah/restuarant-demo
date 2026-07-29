@@ -1,17 +1,17 @@
 import { useNavigate } from "react-router-dom";
-import { API_URL } from "../../../libs/api";
 
 export default function ListingCard({ key, item }) {
   const navigate = useNavigate(null);
+
   return (
     <div
       key={key}
       className="bg-white rounded-xl shadow hover:shadow-lg overflow-hidden hover:scale-102 transition"
-      onClick={() => navigate(`/product/${item.slug}`, { state: item })}
     >
       <img
+        onClick={() => navigate(`/product/${item.slug}`, { state: item })}
         className="w-full h-40 object-cover"
-        src={`${API_URL}products/photo?filename=${item.photo}`}
+        src={item.featured_image}
         alt="product image"
       />
       <div className="p-3">

@@ -164,13 +164,10 @@ function VendorSignUp() {
         linkTo={msg.linkTo}
         action={msg.action}
       />
-      <div className="p-4 rounded-2xl border-2 flex-col justify-center items-center">
-        <h1 className="text-2xl font-bold mb-6">
-          <BookOpen className="inline mr-5 text-white" size={50} /> Vindor Sign
-          Up
-        </h1>
-        <form className="space-y-3" onSubmit={handelSubmit}>
-          <label className="border p-2 rounded-lg flex justify-between items-center gap-2 mb-4">
+      <div className="p-4 rounded-2xl  flex-col  items-center">
+        <h1 className="text-2xl font-bold mb-6 text-center">Sign Up</h1>
+        <form className="space-y-3 " onSubmit={handelSubmit}>
+          <label className="border p-2 rounded-lg flex justify-around gap-2 mb-4">
             <User />
             <input
               type="text"
@@ -218,6 +215,33 @@ function VendorSignUp() {
           >
             Sign Up
           </button>
+          <label className="text-white">
+            <p className="mb-4">
+              <input className="m-2" type="checkbox" required />
+              By signing up you show that you agreed with our{" "}
+              <a
+                href="/conditions"
+                className="underline italic text-red-400 cursor-pointer"
+              >
+                terms and conditions
+              </a>{" "}
+              and have read our{" "}
+              <a
+                href="/policy"
+                className="underline italic text-red-400 cursor-pointer"
+              >
+                privacy policy{" "}
+              </a>
+              and
+              <a
+                href="/policy"
+                className="underline italic text-red-400 cursor-pointer"
+              >
+                {" "}
+                agrements do{" "}
+              </a>
+            </p>
+          </label>
         </form>
       </div>
       <div>

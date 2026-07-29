@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/:path*",
+      "destination": "https://blog-api-production-b909.up.railway.app/:path*"
+    },
+    {
       "source": "/sitemap.xml",
       "destination": "https://blog-api-production-b909.up.railway.app/sitemap.xml"
     },

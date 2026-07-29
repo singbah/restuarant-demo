@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 export default function BottomNav() {
   const navigate = useNavigate(null);
   return (
-    <div className="z-50 sticky bottom-0 flex justify-around items-center border-t-2 pt-2 border-gray-400 bg-white">
+    <div className="z-20 sticky bottom-0 flex justify-around items-center border-t-2 pt-2 border-gray-400 bg-white insert-0">
       <Home
         className="cursor-pointer hover:scale-103 transition hover:text-blue-500 "
         onClick={() => navigate("/market")}

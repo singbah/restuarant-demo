@@ -108,7 +108,7 @@ export default function MarketPlace() {
 
   return (
     <div className="max-w-6xl mx-auto p-4">
-      <div className="h-screen">
+      <div className="h-screen overflow-y-auto">
         {loading ? <LoadingEffect /> : null}
         <AlertCard
           open={msg.isOpen}
@@ -155,7 +155,7 @@ export default function MarketPlace() {
           >
             <option value="">Categories</option>
             <option value="food">Food</option>
-            <option value="fasion">Frasion</option>
+            <option value="fashion">Fashion</option>
             <option value="eletronic">Electronic</option>
             <option value="phone">Phone</option>
           </select>

@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../../libs/api";
 
@@ -27,7 +27,7 @@ export default function AdminProvider({ children }) {
     try {
       const resp = await api.post("/auths/logout");
       const data = resp.data;
-      navigate("/admin/login");
+      navigate("/vendor-signin");
       return;
     } catch (error) {
       const errorData = error.response.data;
@@ -38,6 +38,16 @@ export default function AdminProvider({ children }) {
       }
     }
   }
+
+  useEffect(() => {
+    const intervalId = setInterval(
+      () => {
+        refreshAdmin();
+      },
+      1000 * 60 * 5,
+    );
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
     <AdminContext.Provider

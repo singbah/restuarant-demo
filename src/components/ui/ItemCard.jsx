@@ -1,3 +1,5 @@
+import { ShoppingBag } from "lucide-react";
+
 export default function ItemCard({
   name,
   price,
@@ -9,18 +11,28 @@ export default function ItemCard({
   return (
     <div className="flex flex-col mx-2 overflow-y-auto p-2">
       <div className="flex relative items-center rounded  shadow active:shadow-lg hover:shadow-lg transition p-0.5">
-        <img
-          src={photo}
-          className={
-            type_ === "item"
-              ? "border border-gray-400 h-12 w-20 rounded mr-4"
-              : "border border-gray-400 h-12 w-12 rounded-full mr-4"
-          }
-          alt="photo"
-        />
+        {photo ? (
+          <img
+            src={photo}
+            className={
+              type_ === "item"
+                ? "border border-gray-400 h-12 w-20 rounded mr-4"
+                : "border border-gray-400 h-12 w-12 rounded-full mr-4"
+            }
+            alt="photo"
+          />
+        ) : (
+          <ShoppingBag
+            className={
+              type_ === "item"
+                ? "border border-gray-400 h-12 w-20 rounded mr-4"
+                : "border border-gray-400 h-12 w-12 rounded-full mr-4"
+            }
+          />
+        )}
         <section className="mr-2">
           <p className="text-lg font-bold">{name}</p>
-          <p className="text-sm text-gray-600">{price}</p>
+          <p className="text-sm text-gray-600">${price}</p>
         </section>
         <button
           className={

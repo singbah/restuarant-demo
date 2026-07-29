@@ -22,6 +22,7 @@ import {
 } from "./components/vendors/VendorsAuths";
 import Product from "./components/ui/SingleProduct";
 import VendorProfile from "./components/vendors/Profile";
+import TermsAndConditions from "./components/pages/Conditions";
 
 export default function App() {
   return (
@@ -33,6 +34,7 @@ export default function App() {
         <Route path="/post/:postSlug" element={<PostsDetails />} />
         <Route path="/product/:prodcutSlug" element={<Product />} />
         <Route path="/policy" element={<PrivacyPolicy />} />
+        <Route path="/conditions" element={<TermsAndConditions />} />
         <Route path="/addItem" element={<ProductListing />} />
         <Route path="/market" element={<MarketPlace />} />
         <Route path="/budget/planer" element={<FullBudgetPlaner />} />

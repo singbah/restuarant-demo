@@ -1,7 +1,7 @@
 import KyiCard from "../layouts/KYICard";
 import { api } from "../../../libs/api";
 import PostEditors from "./PostEditor";
-import { viewFormater, Fdate } from "../../../libs/utilities";
+import { viewFormater } from "../../../libs/utilities";
 
 import { formatDistanceToNow } from "date-fns";
 import { MessageCircle, PlusIcon, ViewIcon } from "lucide-react";
@@ -18,7 +18,7 @@ import LoadingEffect from "../layouts/LoadingEffect";
 import AlertCard from "../layouts/AlertCard";
 
 export default function Analytics() {
-  const { admin, refreshAdmin } = useContext(AdminContext);
+  const { admin } = useContext(AdminContext);
   const [msg, setMsg] = useState({
     msg: "",
     open: false,
@@ -31,7 +31,6 @@ export default function Analytics() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    refreshAdmin();
     refetch();
   }, []);
 
