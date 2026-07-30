@@ -27,7 +27,6 @@ export default function AdminDashboard() {
   const [vendors, setVendors] = useState([]);
   const [products, setProducts] = useState([]);
   const { data, error, loading } = useFetch("/user/me");
-  console.log(data, error);
 
   const getAnalytics = async () => {
     try {
@@ -106,6 +105,7 @@ export default function AdminDashboard() {
       linkTo: "Yes, Remove",
       action: () => {
         setProducts((prev) => prev.filter((p) => p.id !== productId));
+        api.delete(`/admin/delete/product?product_id=${productId}`);
         setMsg({
           isOpen: true,
           title: "Listing Removed",

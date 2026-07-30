@@ -49,7 +49,7 @@ function AdminLogin() {
       }
 
       setAdmin(user);
-      navigate("/admin/analytics");
+      navigate("/admin/dashboard");
     } catch (error) {
       const errData =
         error.response?.data?.detail ||
