@@ -37,14 +37,11 @@ export default function VendorProfile() {
   const { Logout } = useContext(AdminContext);
   const navigate = useNavigate(null);
 
-  const agentActivitive =
-    data && data.is_vendor
-      ? [
-          { name: "Customers Orders", Icon: Users, label: "customers" },
-          { name: "Products", Icon: Tags, label: "products" },
-          { name: "Sales", Icon: Coins, label: "sales" },
-        ]
-      : [];
+  const agentActivitive = [
+    { name: "Customers Orders", Icon: Users, label: "customers" },
+    { name: "Products", Icon: Tags, label: "products" },
+    { name: "Sales", Icon: Coins, label: "sales" },
+  ];
 
   async function get_analytic() {
     setIsLoading(true);
@@ -175,7 +172,7 @@ export default function VendorProfile() {
             ...agentActivitive,
           ].map((item) => (
             <li
-              className="border text-blue-600 font-bold border-2 border-black rounded px-2 py-1 cursor-pointer mb-2.5"
+              className="text-blue-600 font-bold border-2 border-black rounded px-2 py-1 cursor-pointer mb-2.5"
               key={item.name}
               onClick={() => setActiveTap(item.label)}
             >
