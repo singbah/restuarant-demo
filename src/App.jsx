@@ -4,11 +4,7 @@ import HomePage from "./components/pages/Home";
 import Blogs from "./components/pages/Blog";
 import PostsDetails from "./components/blog/PostDetails";
 import ContactPage from "./components/pages/Contact";
-import Analytics from "./components/admins/Analytics";
 import { AdminLogin } from "./components/admins/auths";
-import PostEditors from "./components/admins/PostEditor";
-import Settings from "./components/admins/Settings";
-import ContactMessage from "./components/admins/ContactMessages";
 import FullBudgetPlaner from "./components/utilities/FullBudgetPlaner";
 import PrivacyPolicy from "./components/pages/Policy";
 import ProductListing from "./components/layouts/ProductListing";
@@ -23,6 +19,7 @@ import {
 import Product from "./components/ui/SingleProduct";
 import VendorProfile from "./components/vendors/Profile";
 import TermsAndConditions from "./components/pages/Conditions";
+import AdminDashboard from "./components/admins/AdminDashboard";
 
 export default function App() {
   return (
@@ -38,11 +35,9 @@ export default function App() {
         <Route path="/addItem" element={<ProductListing />} />
         <Route path="/market" element={<MarketPlace />} />
         <Route path="/budget/planer" element={<FullBudgetPlaner />} />
-        <Route path="/admin/analytics" element={<Analytics />} />
-        <Route path="/admin/settings" element={<Settings />} />
+
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin/post/editor" element={<PostEditors />} />
-        <Route path="/admin/messages" element={<ContactMessage />} />
 
         <Route path="/vendor-signin" element={<VendorSignIn />} />
         <Route path="/vendor-signup" element={<VendorSignUp />} />

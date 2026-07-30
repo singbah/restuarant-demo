@@ -1,177 +1,179 @@
 import { useContext, useState } from "react";
 import { AdminContext } from "./adminContext";
 import { useNavigate } from "react-router-dom";
+import {
+  ShieldCheck,
+  Phone,
+  Lock,
+  Eye,
+  EyeOff,
+  ArrowRight,
+} from "lucide-react";
 import AlertCard from "../layouts/AlertCard";
 import { api } from "../../../libs/api";
-import SectionLoading from "../layouts/SectionLoadingEffect";
+import LoadingEffect from "../layouts/LoadingEffect";
 
 function AdminLogin() {
   const { setAdmin } = useContext(AdminContext);
   const [loginData, setLoginData] = useState({ phone: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState({
     message: "",
     open: false,
     title: "",
-    status: null,
+    status: "info",
   });
 
   const navigate = useNavigate();
 
   async function signIn(e) {
     e.preventDefault();
-    setMsg({
-      message: "Please wait while we check your credentails",
-      open: true,
-      title: "Login",
-    });
+    setLoading(true);
+
     try {
       const resp = await api.post("/auths/signin", loginData);
-      console.log(resp.data);
-      if (!resp.data.role || resp.data !== "admin") {
-        navigate("/");
+      const user = resp.data;
+
+      // Ensure user has admin privileges
+      if (!user?.role || user.role !== "admin") {
+        setMsg({
+          title: "Access Denied",
+          message:
+            "You do not have administrative privileges to access this area.",
+          open: true,
+          status: "error",
+        });
+        setLoading(false);
         return;
       }
-      setAdmin(resp.data);
-      setLoading(false);
-      setMsg({ open: false });
+
+      setAdmin(user);
       navigate("/admin/analytics");
     } catch (error) {
-      const errData = error.response?.data.detail || "An Error Occur";
+      const errData =
+        error.response?.data?.detail ||
+        "Invalid admin credentials. Please try again.";
+      setMsg({
+        message: errData,
+        open: true,
+        title: "Authentication Failed",
+        status: "error",
+      });
+    } finally {
       setLoading(false);
-      setMsg({ message: errData, open: true, title: "Login", status: "error" });
     }
   }
 
-  const handelForm = (e) => {
+  const handleFormChange = (e) => {
     const { name, value } = e.target;
     setLoginData((prev) => ({ ...prev, [name]: value }));
   };
 
-  if (loading)
-    return (
-      <SectionLoading
-        open={msg.open}
-        message={msg.message}
-        title={msg.title}
-        onClose={() => setMsg({ open: false })}
-      />
-    );
   return (
-    <div className="h-screen flex flex-col justify-center items-center bg-green-50 relative">
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center p-4">
+      {loading && (
+        <LoadingEffect
+          title="Verifying Admin Access..."
+          message="Checking credentials and security roles."
+        />
+      )}
+
       <AlertCard
         message={msg.message}
         title={msg.title}
         open={msg.open}
+        status={msg.status}
         onClose={() => setMsg((prev) => ({ ...prev, open: false }))}
       />
-      <form
-        onSubmit={signIn}
-        className="border-white p-4 flex flex-col lg:w-1/2 justify-center text-2xl rounded-2xl shadow shadow-green-500"
-      >
-        <h1 className="text-center text-3xl font-bold text-green-600">
-          Admin Login
-        </h1>
-        <label className="m-8">
-          User ID
-          <input
-            className="border-white border-2 inline p-1 rounded-xl shadow shadow-green-400 mx-4"
-            onChange={handelForm}
-            placeholder="User ID"
-            type="text"
-            name="phone"
-          />
-        </label>
 
-        <label className="mx-8">
-          password
-          <input
-            className="border-white border-2 inline p-1 rounded-xl shadow shadow-green-400 mx-4"
-            onChange={handelForm}
-            placeholder="password"
-            type="text"
-            name="password"
-          />
-        </label>
-        <button
-          className="bg-blue-500 m-8 rounded-2xl p-2 font-bold text-white cursor-pointer hover:bg-blue-800 transition-colors active:scale-101"
-          type="submit"
-        >
-          Login
-        </button>
-      </form>
-      <a className="text-red-500 text-center text-xl m-4 font-semibold cursor-pointer hover:text-red-700 active:scale-105 transition-all">
-        forgot password
-      </a>
+      <div className="w-full max-w-sm bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-gray-100 space-y-6">
+        {/* Header Badge */}
+        <div className="text-center space-y-2">
+          <div className="w-12 h-12 bg-slate-900 text-emerald-400 rounded-2xl flex items-center justify-center mx-auto border border-slate-800 shadow-md">
+            <ShieldCheck className="w-6 h-6" />
+          </div>
+          <h1 className="text-xl font-bold text-gray-900 tracking-tight">
+            Admin Portal
+          </h1>
+          <p className="text-xs text-gray-500">
+            Sign in with administrative privileges
+          </p>
+        </div>
+
+        {/* Login Form */}
+        <form onSubmit={signIn} className="space-y-4">
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-gray-700">
+              User ID / Phone Number
+            </label>
+            <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2.5 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20 transition">
+              <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <input
+                required
+                type="text"
+                name="phone"
+                value={loginData.phone}
+                onChange={handleFormChange}
+                placeholder="Enter admin ID or phone"
+                className="w-full text-xs text-gray-800 bg-transparent outline-none placeholder:text-gray-400"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-semibold text-gray-700">
+                Password
+              </label>
+              <a
+                href="/forgot-password"
+                className="text-xs text-emerald-600 hover:underline font-medium"
+              >
+                Forgot password?
+              </a>
+            </div>
+            <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2.5 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20 transition">
+              <Lock className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <input
+                required
+                name="password"
+                type={showPassword ? "text" : "password"}
+                value={loginData.password}
+                onChange={handleFormChange}
+                placeholder="••••••••"
+                className="w-full text-xs text-gray-800 bg-transparent outline-none placeholder:text-gray-400"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-gray-400 hover:text-gray-600 focus:outline-none"
+              >
+                {showPassword ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-slate-900 hover:bg-slate-800 active:scale-[0.99] text-white text-xs font-semibold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <span>Authenticate Admin</span>
+            <ArrowRight className="w-4 h-4 text-emerald-400" />
+          </button>
+        </form>
+
+        <p className="text-center text-xs text-gray-400">
+          Authorized personnel only. All access attempts are logged.
+        </p>
+      </div>
     </div>
   );
 }
 
-function AdminSignUp() {
-  const { login } = useContext(AdminContext);
-  const [loginData, setLoginData] = useState({ username: "", password: "" });
-
-  async function signUp(e) {
-    console.log(loginData);
-    e.preventDefault();
-    adminSignUp(loginData)
-      .then((res) => console.log(res))
-      .catch(() =>
-        setMsg({
-          message: "An error occur!!",
-          title: "Login Error",
-          open: true,
-        }),
-      );
-  }
-
-  const handelForm = (e) => {
-    const { name, value } = e.target;
-    setLoginData((prev) => ({ ...prev, [name]: value }));
-  };
-  return (
-    <div className="h-screen flex flex-col justify-center items-center bg-green-50 relative">
-      <form
-        onSubmit={signUp}
-        className="border-white p-4 flex flex-col lg:w-1/2 justify-center text-2xl rounded-2xl shadow shadow-green-500"
-      >
-        <h1 className="text-center text-3xl font-bold text-green-600">
-          Admin Sign up
-        </h1>
-
-        <label className="m-8">
-          full name
-          <input
-            className="border-white border-2 inline p-1 rounded-xl shadow shadow-green-400 mx-4"
-            onChange={handelForm}
-            placeholder="full name"
-            type="text"
-            name="username"
-          />
-        </label>
-
-        <label className="mx-8">
-          password
-          <input
-            className="border-white border-2 inline p-1 rounded-xl shadow shadow-green-400 mx-4"
-            onChange={handelForm}
-            placeholder="password"
-            type="text"
-            name="password"
-          />
-        </label>
-        <button
-          className="bg-blue-500 m-8 rounded-2xl p-2 font-bold text-white cursor-pointer hover:bg-blue-800 transition-colors active:scale-101"
-          type="submit"
-        >
-          Login
-        </button>
-      </form>
-      <a className="text-red-500 text-center text-xl m-4 font-semibold cursor-pointer hover:text-red-700 active:scale-105 transition-all">
-        Sign In
-      </a>
-    </div>
-  );
-}
-
-export { AdminLogin, AdminSignUp };
+export { AdminLogin };

@@ -6,6 +6,10 @@ import {
   Mail,
   ArrowRight,
   Eye,
+  EyeOff,
+  ShoppingBag,
+  KeyRound,
+  ShieldCheck,
 } from "lucide-react";
 import { api } from "../../../libs/api";
 import AlertCard from "../layouts/AlertCard";
@@ -13,9 +17,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import LoadingEffect from "../layouts/LoadingEffect";
 
-function VendorSignIn() {
-  const navigate = useNavigate(null);
+/* -------------------------------------------------------------------------- */
+/*                               VENDOR SIGN IN                               */
+/* -------------------------------------------------------------------------- */
+export function VendorSignIn() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({ password: "", phone: "" });
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [msg, setMsg] = useState({
@@ -25,20 +33,21 @@ function VendorSignIn() {
     isOpen: false,
   });
 
-  const handelSubmitForm = async (e) => {
+  const handleSubmitForm = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
       const response = await api.post("/auths/signin", form);
       const request = response.data;
-      localStorage.setItem("user", request.id);
+      if (request?.id) {
+        localStorage.setItem("user", request.id);
+      }
       navigate("/market");
     } catch (error) {
       const errData = error.response?.data?.detail;
-      console.error(errData);
       setMsg({
         title: "Login Failed",
-        message: errData || "An error occur",
+        message: errData || "Invalid phone/email or password.",
         status: "error",
         isOpen: true,
       });
@@ -46,58 +55,109 @@ function VendorSignIn() {
       setLoading(false);
     }
   };
+
   return (
-    <div className="flex flex-col h-screen bg-black text-blue-600 justify-center items-center">
-      {loading && <LoadingEffect />}
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center p-4">
+      {loading && (
+        <LoadingEffect
+          title="Signing In..."
+          message="Authenticating your vendor credentials."
+        />
+      )}
       <AlertCard
         message={msg.message}
         open={msg.isOpen}
         status={msg.status}
         title={msg.title}
-        onClose={() => setMsg({ isOpen: false })}
+        onClose={() => setMsg((prev) => ({ ...prev, isOpen: false }))}
       />
-      <div className="p-4 rounded-2xl border-2 flex-col justify-center items-center">
-        <h1 className="text-2xl font-bold mb-6">
-          <BookOpen className="inline mr-5 text-white" size={50} /> Vindor sign
-          in
-        </h1>
-        <form className="space-y-3" onSubmit={handelSubmitForm}>
-          <label className="border p-2 rounded-lg flex justify-between items-center gap-2 mb-4">
-            <Phone />
-            <input
-              type="text"
-              className="bg-transparent text-blue-50 outline-none"
-              placeholder="enter email/phone"
-              onChange={(e) => setForm({ ...form, phone: e.target.value })}
-            />
-          </label>
 
-          <label className="border p-2 rounded-lg flex justify-between items-center gap-2 mb-4">
-            <Lock />
-            <input
-              type="password"
-              value={form.password}
-              className="bg-transparent text-blue-50 outline-none"
-              placeholder="enter your password"
-              onChange={(e) => setForm({ ...form, password: e.target.value })}
-            />
-          </label>
-          <button className="text-2xl py-1 rounded-lg w-full bg-blue-800 text-white font-bold">
-            Login
-          </button>
-          <a
-            className="underline font-bold italic m-2 text-red-600"
-            href="/forgot-password"
+      <div className="w-full max-w-sm bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-gray-100 space-y-6">
+        {/* Header */}
+        <div className="text-center space-y-2">
+          <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto border border-emerald-100">
+            <ShoppingBag className="w-6 h-6" />
+          </div>
+          <h1 className="text-xl font-bold text-gray-900 tracking-tight">
+            Vendor Sign In
+          </h1>
+          <p className="text-xs text-gray-500">
+            Access your store, products, and sales dashboard
+          </p>
+        </div>
+
+        {/* Form */}
+        <form className="space-y-4" onSubmit={handleSubmitForm}>
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-gray-700">
+              Phone or Email
+            </label>
+            <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2.5 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20 transition">
+              <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <input
+                type="text"
+                required
+                className="w-full text-xs text-gray-800 bg-transparent outline-none placeholder:text-gray-400"
+                placeholder="077000000 or email@domain.com"
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-semibold text-gray-700">
+                Password
+              </label>
+              <a
+                href="/forgot-password"
+                className="text-xs text-emerald-600 hover:underline font-medium"
+              >
+                Forgot password?
+              </a>
+            </div>
+            <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2.5 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20 transition">
+              <Lock className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <input
+                type={showPassword ? "text" : "password"}
+                required
+                value={form.password}
+                className="w-full text-xs text-gray-800 bg-transparent outline-none placeholder:text-gray-400"
+                placeholder="••••••••"
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-gray-400 hover:text-gray-600 focus:outline-none"
+              >
+                {showPassword ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white text-xs font-semibold py-3 px-4 rounded-xl shadow-md shadow-emerald-600/20 transition cursor-pointer"
           >
-            Forgot Password
-          </a>
+            Sign In
+          </button>
         </form>
-      </div>
-      <div>
-        <p className="m-4">
-          Don't have account?{" "}
-          <a className="underline font-bold italic" href="/vendor-signup">
-            Register
+
+        {/* Footer Link */}
+        <p className="text-center text-xs text-gray-500">
+          Don't have a vendor account?{" "}
+          <a
+            className="font-semibold text-emerald-600 hover:underline"
+            href="/vendor-signup"
+          >
+            Register store
           </a>
         </p>
       </div>
@@ -105,13 +165,17 @@ function VendorSignIn() {
   );
 }
 
-function VendorSignUp() {
+/* -------------------------------------------------------------------------- */
+/*                               VENDOR SIGN UP                               */
+/* -------------------------------------------------------------------------- */
+export function VendorSignUp() {
   const [form, setForm] = useState({
     name: "",
     phone: "",
     password: "",
     email: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [msg, setMsg] = useState({
     isOpen: false,
     message: "",
@@ -120,135 +184,192 @@ function VendorSignUp() {
     action: null,
     linkTo: "",
   });
-  const navigate = useNavigate(null);
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const handelSubmit = async (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    // do some data eiter and clean up
+
     try {
       const response = await api.post("/auths/signup", form);
       const result = response.data;
       setMsg({
         isOpen: true,
         title: "Registration Success",
-        message: result.detail,
+        message:
+          result.detail || "Your vendor account was created successfully!",
         status: "success",
-        action: () => {
-          navigate("/vendor-signin");
-        },
-        linkTo: "Login",
+        action: () => navigate("/vendor-signin"),
+        linkTo: "Proceed to Sign In",
       });
       setForm({ name: "", phone: "", password: "", email: "" });
     } catch (error) {
       const errData = error.response?.data?.detail;
-      console.log(errData);
       setMsg({
         isOpen: true,
         title: "Registration Failed",
-        message: errData || "An error occur",
+        message:
+          errData || "Could not register account. Please check your inputs.",
         status: "error",
       });
     } finally {
       setLoading(false);
     }
   };
+
   return (
-    <div className="flex flex-col h-screen bg-black text-blue-600 justify-center items-center">
-      {loading && <LoadingEffect />}
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center p-4">
+      {loading && (
+        <LoadingEffect
+          title="Creating Account..."
+          message="Setting up your store workspace."
+        />
+      )}
       <AlertCard
         open={msg.isOpen}
-        onClose={() => setMsg({ isOpen: false })}
+        onClose={() => setMsg((prev) => ({ ...prev, isOpen: false }))}
         message={msg.message}
         title={msg.title}
         linkTo={msg.linkTo}
         action={msg.action}
       />
-      <div className="p-4 rounded-2xl  flex-col  items-center">
-        <h1 className="text-2xl font-bold mb-6 text-center">Sign Up</h1>
-        <form className="space-y-3 " onSubmit={handelSubmit}>
-          <label className="border p-2 rounded-lg flex justify-around gap-2 mb-4">
-            <User />
-            <input
-              type="text"
-              className="bg-transparent text-blue-50 outline-none"
-              placeholder="name"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-            />
-          </label>
-          <label className="border p-2 rounded-lg flex justify-between items-center gap-2 mb-4">
-            <Phone />
-            <input
-              type="tel"
-              className="bg-transparent text-blue-50 outline-none"
-              placeholder="enter phone"
-              value={form.phone}
-              onChange={(e) => setForm({ ...form, phone: e.target.value })}
-            />
-          </label>
-          <label className="border p-2 rounded-lg flex justify-between items-center gap-2 mb-4">
-            <Mail />
-            <input
-              type="email"
-              className="bg-transparent text-blue-50 outline-none"
-              placeholder="enter email"
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-            />
-          </label>
 
-          <label className="border p-2 rounded-lg flex justify-between items-center gap-2 mb-4">
-            <Lock />
-            <input
-              type="password"
-              className="bg-transparent text-blue-50 outline-none"
-              placeholder="create password"
-              value={form.password}
-              onChange={(e) => setForm({ ...form, password: e.target.value })}
-            />
-          </label>
+      <div className="w-full max-w-sm bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-gray-100 space-y-5">
+        <div className="text-center space-y-1">
+          <h1 className="text-xl font-bold text-gray-900 tracking-tight">
+            Create Vendor Account
+          </h1>
+          <p className="text-xs text-gray-500">
+            Start selling products across Liberia
+          </p>
+        </div>
 
-          <button
-            disabled={loading}
-            className="text-2xl py-1 rounded-lg w-full bg-blue-800 text-white font-bold"
-          >
-            Sign Up
-          </button>
-          <label className="text-white">
-            <p className="mb-4">
-              <input className="m-2" type="checkbox" required />
-              By signing up you show that you agreed with our{" "}
+        <form className="space-y-3.5" onSubmit={handleSubmit}>
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-gray-700">
+              Full Name / Store Name
+            </label>
+            <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2.5 focus-within:border-emerald-500 transition">
+              <User className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <input
+                type="text"
+                required
+                className="w-full text-xs text-gray-800 bg-transparent outline-none placeholder:text-gray-400"
+                placeholder="John Doe"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-gray-700">
+              Phone Number
+            </label>
+            <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2.5 focus-within:border-emerald-500 transition">
+              <Phone className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <input
+                type="tel"
+                required
+                className="w-full text-xs text-gray-800 bg-transparent outline-none placeholder:text-gray-400"
+                placeholder="077000000"
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-gray-700">
+              Email Address
+            </label>
+            <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2.5 focus-within:border-emerald-500 transition">
+              <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <input
+                type="email"
+                required
+                className="w-full text-xs text-gray-800 bg-transparent outline-none placeholder:text-gray-400"
+                placeholder="vendor@email.com"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-gray-700">
+              Password
+            </label>
+            <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2.5 focus-within:border-emerald-500 transition">
+              <Lock className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <input
+                type={showPassword ? "text" : "password"}
+                required
+                className="w-full text-xs text-gray-800 bg-transparent outline-none placeholder:text-gray-400"
+                placeholder="••••••••"
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-gray-400 hover:text-gray-600 focus:outline-none"
+              >
+                {showPassword ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-2 pt-1">
+            <input
+              type="checkbox"
+              required
+              id="terms"
+              className="mt-0.5 accent-emerald-600 rounded"
+            />
+            <label
+              htmlFor="terms"
+              className="text-[11px] text-gray-500 leading-snug"
+            >
+              I agree to the{" "}
               <a
                 href="/conditions"
-                className="underline italic text-red-400 cursor-pointer"
+                className="text-emerald-600 underline font-medium"
               >
-                terms and conditions
+                Terms
               </a>{" "}
-              and have read our{" "}
+              and{" "}
               <a
                 href="/policy"
-                className="underline italic text-red-400 cursor-pointer"
+                className="text-emerald-600 underline font-medium"
               >
-                privacy policy{" "}
+                Privacy Policy
               </a>
-              and
-              <a
-                href="/policy"
-                className="underline italic text-red-400 cursor-pointer"
-              >
-                {" "}
-                agrements do{" "}
-              </a>
-            </p>
-          </label>
+              .
+            </label>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white text-xs font-semibold py-3 px-4 rounded-xl shadow-md shadow-emerald-600/20 transition cursor-pointer"
+          >
+            Create Account
+          </button>
         </form>
-      </div>
-      <div>
-        <p className="mt-4">
-          I already have an account?{" "}
-          <a className="underline font-bold italic" href="/vendor-signin">
-            Sing In
+
+        <p className="text-center text-xs text-gray-500">
+          Already have an account?{" "}
+          <a
+            className="font-semibold text-emerald-600 hover:underline"
+            href="/vendor-signin"
+          >
+            Sign In
           </a>
         </p>
       </div>
@@ -256,8 +377,11 @@ function VendorSignUp() {
   );
 }
 
-function ForgotPassword() {
-  const [form, setForm] = useState("");
+/* -------------------------------------------------------------------------- */
+/*                              FORGOT PASSWORD                               */
+/* -------------------------------------------------------------------------- */
+export function ForgotPassword() {
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState({
     title: "",
@@ -265,70 +389,108 @@ function ForgotPassword() {
     isOpen: false,
     status: "",
   });
-  const navigate = useNavigate(null);
+  const navigate = useNavigate();
+
   async function submitForm(e) {
-    setLoading(true);
     e.preventDefault();
+    setLoading(true);
 
     try {
-      const response = await api.post(`/auths/forgot_password?email=${form}`);
+      const response = await api.post(
+        `/auths/forgot_password?email=${encodeURIComponent(email)}`,
+      );
       const request = response.data;
-      console.log(request);
-      navigate("/otp-confirm", { state: request });
+      navigate("/otp-confirm", { state: request || { email } });
     } catch (error) {
-      let errMsg = "Acount failed";
-      if (error.response) {
-        errMsg = error.response?.data?.detail;
-      }
+      const errMsg =
+        error.response?.data?.detail ||
+        "Account recovery failed. Please verify your email.";
       setMsg({
         title: "Recovery Failed",
         message: errMsg,
         status: "error",
         isOpen: true,
       });
-      setForm("");
     } finally {
       setLoading(false);
     }
   }
+
   return (
-    <div className="flex justify-center items-center flex-col h-screen bg-black text-blue-600">
-      {loading && <LoadingEffect />}
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center p-4">
+      {loading && (
+        <LoadingEffect
+          title="Sending OTP..."
+          message="Generating password recovery code."
+        />
+      )}
       <AlertCard
         message={msg.message}
         open={msg.isOpen}
         title={msg.title}
         status={msg.status}
-        onClose={() => setMsg({ isOpen: false })}
+        onClose={() => setMsg((prev) => ({ ...prev, isOpen: false }))}
       />
-      <form onSubmit={submitForm}>
-        <p className="mb-6 font-black text-red-500 text-2xl text-center">
-          account recovery
+
+      <div className="w-full max-w-sm bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-gray-100 space-y-6">
+        <div className="text-center space-y-2">
+          <div className="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto border border-rose-100">
+            <KeyRound className="w-6 h-6" />
+          </div>
+          <h1 className="text-xl font-bold text-gray-900 tracking-tight">
+            Account Recovery
+          </h1>
+          <p className="text-xs text-gray-500">
+            Enter your account email address to receive a reset code.
+          </p>
+        </div>
+
+        <form onSubmit={submitForm} className="space-y-4">
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-gray-700">
+              Email Address
+            </label>
+            <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2.5 focus-within:border-emerald-500 transition">
+              <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <input
+                type="email"
+                required
+                className="w-full text-xs text-gray-800 bg-transparent outline-none placeholder:text-gray-400"
+                placeholder="your@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold py-3 px-4 rounded-xl shadow-md transition active:scale-95 cursor-pointer"
+          >
+            Send Verification Code
+          </button>
+        </form>
+
+        <p className="text-center text-xs text-gray-500">
+          Remember password?{" "}
+          <a
+            className="font-semibold text-emerald-600 hover:underline"
+            href="/vendor-signin"
+          >
+            Sign In
+          </a>
         </p>
-        <p className="mb-1 font-black text-sm">please enter your email</p>
-        <label className="flex-1 justify-between w-full flex border gap-2 p-2 rounded-lg mb-2">
-          <Mail />
-          <input
-            type="email"
-            className="outline-none text-gray-200"
-            placeholder="your@email.com"
-            value={form}
-            onChange={(e) => setForm(e.target.value)}
-          />
-        </label>
-        <button
-          // disabled={true}
-          className="px-4  py-1 mt-2 rounded-lg text-white font-bold border-2 border-blue-600 active:scale-104"
-        >
-          Submit
-        </button>
-      </form>
+      </div>
     </div>
   );
 }
 
-function OTPConfirmation() {
-  const [form, setForm] = useState("");
+/* -------------------------------------------------------------------------- */
+/*                              OTP CONFIRMATION                              */
+/* -------------------------------------------------------------------------- */
+export function OTPConfirmation() {
+  const [otp, setOtp] = useState("");
   const [msg, setMsg] = useState({
     isOpen: false,
     message: "",
@@ -336,36 +498,28 @@ function OTPConfirmation() {
     status: "",
   });
   const location = useLocation();
-  const navigate = useNavigate(null);
-  const email = location.state.email;
-  console.log(location.state.code);
+  const navigate = useNavigate();
+  const email = location.state?.email || "";
   const [loading, setLoading] = useState(false);
 
-  const handelFormSubmit = async (e) => {
-    setLoading(true);
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
     try {
       const response = await api.get(
-        `auths/confirm_opt?otp=${form}&email=${email}`,
+        `auths/confirm_opt?otp=${encodeURIComponent(otp)}&email=${encodeURIComponent(email)}`,
       );
       const result = response.data;
-      navigate("/password-reset", { state: { email: email } });
-      setMsg({
-        isOpen: true,
-        message: result.detail,
-        status: "success",
-        title: "Account Recovered",
-      });
+      navigate("/password-reset", { state: { email } });
     } catch (error) {
-      let errData = "A error occur";
-      if (error.response) {
-        errData = error.response?.data?.detail || "An error occur!!";
-      }
+      const errData =
+        error.response?.data?.detail || "Invalid or expired OTP code.";
       setMsg({
         isOpen: true,
         message: errData,
         status: "error",
-        title: "OTP Error!!",
+        title: "Verification Failed",
       });
     } finally {
       setLoading(false);
@@ -373,54 +527,89 @@ function OTPConfirmation() {
   };
 
   return (
-    <div className="flex justify-center items-center flex-col h-screen bg-black text-blue-600">
-      {loading && <LoadingEffect />}
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center p-4">
+      {loading && (
+        <LoadingEffect
+          title="Verifying Code..."
+          message="Validating OTP credentials."
+        />
+      )}
       <AlertCard
         open={msg.isOpen}
-        onClose={() => setMsg({ isOpen: false })}
+        onClose={() => setMsg((prev) => ({ ...prev, isOpen: false }))}
         title={msg.title}
         message={msg.message}
         status={msg.status}
       />
-      <form onSubmit={handelFormSubmit}>
-        <p className="mb-6 font-black text-red-500 text-2xl">
-          OTP Confirmation
-        </p>
-        <p className="mb-1 font-black text-sm text-white">
-          Please enter the otp from your email
-        </p>
-        <label className="flex-1 justify-between  flex border border-white gap-2 p-2 rounded-lg mb-2">
-          <p>ET-</p>
-          <input
-            type="text"
-            className="outline-none text-gray-200"
-            placeholder="ENTER CODE"
-            value={form}
-            onChange={(e) => setForm(e.target.value)}
-          />
+
+      <div className="w-full max-w-sm bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-gray-100 space-y-6">
+        <div className="text-center space-y-2">
+          <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto border border-indigo-100">
+            <ShieldCheck className="w-6 h-6" />
+          </div>
+          <h1 className="text-xl font-bold text-gray-900 tracking-tight">
+            Enter OTP Code
+          </h1>
+          <p className="text-xs text-gray-500">
+            We sent a security code to{" "}
+            <span className="font-semibold text-gray-700">
+              {email || "your email"}
+            </span>
+          </p>
+        </div>
+
+        <form onSubmit={handleFormSubmit} className="space-y-4">
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-gray-700">
+              Security Code
+            </label>
+            <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2.5 focus-within:border-emerald-500 transition">
+              <span className="text-xs font-bold text-gray-400">ET-</span>
+              <input
+                type="text"
+                required
+                className="w-full text-xs text-gray-800 bg-transparent outline-none uppercase font-mono tracking-wider"
+                placeholder="123456"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+              />
+            </div>
+          </div>
+
           <button
+            type="submit"
             disabled={loading}
-            className="rounded-lg text-white font-bold active:scale-104 cursor-pointer"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-3 px-4 rounded-xl shadow-md transition active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
           >
-            <ArrowRight />
+            <span>Verify & Continue</span>
+            <ArrowRight className="w-4 h-4" />
           </button>
-        </label>
-      </form>
-      <a
-        href="/forgot-password"
-        className="text-left mt-4 active:scale-105 focus:text-red-600 transition"
-      >
-        Resend Code
-      </a>
+        </form>
+
+        <p className="text-center text-xs text-gray-500">
+          Didn't receive code?{" "}
+          <a
+            href="/forgot-password"
+            className="font-semibold text-emerald-600 hover:underline"
+          >
+            Resend OTP
+          </a>
+        </p>
+      </div>
     </div>
   );
 }
 
-function PasswordReset() {
+/* -------------------------------------------------------------------------- */
+/*                               PASSWORD RESET                               */
+/* -------------------------------------------------------------------------- */
+export function PasswordReset() {
   const location = useLocation();
-  const [seePass, setSeePass] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate(null);
+  const navigate = useNavigate();
+  const email = location.state?.email || "";
+
   const [msg, setMsg] = useState({
     isOpen: false,
     message: "",
@@ -434,32 +623,33 @@ function PasswordReset() {
 
   const submitFormData = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    let password;
+
     if (newPassword.password !== newPassword.confirmPassword) {
       setMsg({
         isOpen: true,
-        title: "Password Missmatch",
-        message: "Confirm password not match",
+        title: "Password Mismatch",
+        message: "The confirmation password does not match the new password.",
         status: "error",
       });
-      setLoading(false);
       return;
     }
-    password = newPassword.password;
+
+    setLoading(true);
+
     try {
-      const request = await api.get(
-        `/auths/password-reset?new_password=${password}&email=${location.state.email}`,
+      await api.get(
+        `/auths/password-reset?new_password=${encodeURIComponent(
+          newPassword.password,
+        )}&email=${encodeURIComponent(email)}`,
       );
       navigate("/market");
     } catch (error) {
-      let errData = "Couldn't reset password";
-      if (error.response) {
-        errData = error.response?.data?.detail || "An error occur";
-      }
+      const errData =
+        error.response?.data?.detail ||
+        "Could not reset password. Please try again.";
       setMsg({
         isOpen: true,
-        title: "Password Reset Failed",
+        title: "Reset Failed",
         message: errData,
         status: "error",
       });
@@ -467,72 +657,104 @@ function PasswordReset() {
       setLoading(false);
     }
   };
+
   return (
-    <div className="flex flex-col justify-center items-center h-screen">
-      {loading && <LoadingEffect />}
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center p-4">
+      {loading && (
+        <LoadingEffect
+          title="Updating Password..."
+          message="Saving your new account credentials."
+        />
+      )}
       <AlertCard
         open={msg.isOpen}
         message={msg.message}
         title={msg.title}
         status={msg.status}
-        onClose={() => setMsg({ isOpen: false })}
+        onClose={() => setMsg((prev) => ({ ...prev, isOpen: false }))}
       />
-      <h1 className="text-2xl font-bold mb-4">
-        Create New Password (Optional){" "}
-      </h1>
-      <form onSubmit={submitFormData}>
-        <p>Enter New Password</p>
-        <label className="border p-2 rounded flex justify-around items-center mb-4">
-          <Lock />
-          <input
-            className="outline-none ml-2"
-            type={seePass ? "text" : "password"}
-            placeholder="create new password"
-            value={newPassword.password}
-            required
-            onChange={(e) =>
-              setNewPassword({ ...newPassword, password: e.target.value })
-            }
-          />
-          <Eye onClick={() => setSeePass(seePass == true ? false : true)} />
-        </label>
-        <p>Confirm Password</p>
-        <label
-          className={`border p-2 rounded flex justify-around items-center mb-4`}
-        >
-          <Lock />
-          <input
-            className="outline-none ml-2"
-            type={seePass ? "text" : "password"}
-            placeholder="Confirm password"
-            required
-            onChange={(e) =>
-              setNewPassword({
-                ...newPassword,
-                confirmPassword: e.target.value,
-              })
-            }
-          />
-          <Eye onClick={() => setSeePass(seePass == true ? false : true)} />
-        </label>
-        <button
-          disabled={loading}
-          className="border rounded py-2 px-6 font-bold text-blue-600 border-blue-600 active:scale-105 transition mb-4"
-        >
-          Submit
-        </button>
-      </form>
-      <a href="/market" className="font-bold underline text-blue-600 ">
-        Skip
-      </a>
+
+      <div className="w-full max-w-sm bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-gray-100 space-y-6">
+        <div className="text-center space-y-1">
+          <h1 className="text-xl font-bold text-gray-900 tracking-tight">
+            Set New Password
+          </h1>
+          <p className="text-xs text-gray-500">
+            Choose a secure password for your vendor account
+          </p>
+        </div>
+
+        <form onSubmit={submitFormData} className="space-y-4">
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-gray-700">
+              New Password
+            </label>
+            <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2.5 focus-within:border-emerald-500 transition">
+              <Lock className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <input
+                type={showPassword ? "text" : "password"}
+                required
+                className="w-full text-xs text-gray-800 bg-transparent outline-none placeholder:text-gray-400"
+                placeholder="••••••••"
+                value={newPassword.password}
+                onChange={(e) =>
+                  setNewPassword({ ...newPassword, password: e.target.value })
+                }
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-gray-400 hover:text-gray-600 focus:outline-none"
+              >
+                {showPassword ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-gray-700">
+              Confirm Password
+            </label>
+            <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2.5 focus-within:border-emerald-500 transition">
+              <Lock className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <input
+                type={showPassword ? "text" : "password"}
+                required
+                className="w-full text-xs text-gray-800 bg-transparent outline-none placeholder:text-gray-400"
+                placeholder="••••••••"
+                value={newPassword.confirmPassword}
+                onChange={(e) =>
+                  setNewPassword({
+                    ...newPassword,
+                    confirmPassword: e.target.value,
+                  })
+                }
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white text-xs font-semibold py-3 px-4 rounded-xl shadow-md transition cursor-pointer"
+          >
+            Update Password
+          </button>
+        </form>
+
+        <p className="text-center text-xs text-gray-500">
+          <a
+            href="/market"
+            className="font-semibold text-gray-400 hover:text-gray-600"
+          >
+            Skip for now
+          </a>
+        </p>
+      </div>
     </div>
   );
 }
-
-export {
-  VendorSignIn,
-  VendorSignUp,
-  ForgotPassword,
-  OTPConfirmation,
-  PasswordReset,
-};
