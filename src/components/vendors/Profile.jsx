@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import useFetch from "../hooks/UseFetch";
 import LoadingEffect from "../layouts/LoadingEffect";
 import BottomNav from "../ui/BottomNav";
@@ -8,14 +8,16 @@ import {
   ShoppingCart,
   ShoppingCartIcon,
   Tags,
-  Trash,
+  Trash2,
   TrendingUp,
   User,
   Users,
+  LogOut,
+  ShieldCheck,
+  Sparkles,
 } from "lucide-react";
 import ItemCard from "../ui/ItemCard";
 import { AdminContext } from "../admins/adminContext";
-import { ImSwitch } from "react-icons/im";
 import { BsRobot } from "react-icons/bs";
 import { api } from "../../../libs/api";
 import AnalyticCard from "../ui/Cards";
@@ -32,29 +34,37 @@ export default function VendorProfile() {
     status: "",
   });
   const [cursor, setCursor] = useState(0);
-  const [activeTap, setActiveTap] = useState(null);
+  const [activeTab, setActiveTab] = useState(null);
+
   const { data, error, loading, refetch } = useFetch("/user/me");
   const { Logout } = useContext(AdminContext);
-  const navigate = useNavigate(null);
+  const navigate = useNavigate();
 
-  const agentActivitive = [
-    { name: "Customers Orders", Icon: Users, label: "customers" },
+  const agentActivities = [
+    { name: "Customers", Icon: Users, label: "customers" },
     { name: "Products", Icon: Tags, label: "products" },
     { name: "Sales", Icon: Coins, label: "sales" },
   ];
 
-  async function get_analytic() {
+  const tabNavigation = [
+    { name: "Overview", Icon: TrendingUp, label: null },
+    { name: "Ask AI", Icon: BsRobot, label: "robot" },
+    { name: "My Orders", Icon: ShoppingCartIcon, label: "myorder" },
+    { name: "Cart", Icon: ShoppingBag, label: "mycart" },
+    ...agentActivities,
+  ];
+
+  async function getAnalytic() {
     setIsLoading(true);
     try {
       const result = await api.get(
         `/user/vendor_analytic?cursor=${Number(cursor)}&limit=${Number(20)}`,
       );
       const response = result.data;
-      setAnalytic(response);
-      setCursor(response.cursor);
-      console.log(response);
-    } catch (error) {
-      console.log(error);
+      setAnalytic(response || {});
+      if (response?.cursor) setCursor(response.cursor);
+    } catch (err) {
+      console.error("Error fetching vendor analytics:", err);
     } finally {
       setIsLoading(false);
     }
@@ -67,19 +77,18 @@ export default function VendorProfile() {
         `/user/complete_transaction?order_id=${order_id}`,
       );
       const result = request.data;
-      get_analytic();
+      getAnalytic();
       setMsg({
-        message: result.detail,
-        title: "Order Checked",
+        message: result.detail || "Order processed successfully",
+        title: "Order Updated",
         status: "success",
         isOpen: true,
       });
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.error(err);
       setMsg({
-        message:
-          "Transaction failed while checking orders please check try again",
-        title: "Order Checked Failed",
+        message: "Failed to update order status. Please try again.",
+        title: "Action Failed",
         status: "error",
         isOpen: true,
       });
@@ -88,255 +97,395 @@ export default function VendorProfile() {
     }
   }
 
+  const handleDeleteAccountAlert = () => {
+    if (
+      window.confirm(
+        "Are you sure? All credentials including transactions and profile data will be permanently deleted and cannot be recovered.",
+      )
+    ) {
+      // Handle account deletion logic here
+    }
+  };
+
   useEffect(() => {
-    const _ = () => {
-      refetch();
-      get_analytic();
-    };
-    _();
+    refetch();
+    getAnalytic();
   }, []);
 
   if (loading) return <LoadingEffect />;
+
   if (error || !data) {
     return (
-      <div className="flex flex-col h-screen justify-center items-center">
-        <h1 className="font-bold text-lg">
-          You Have to have an account to have a profile
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 text-center">
+        <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4 text-emerald-600">
+          <User className="w-8 h-8" />
+        </div>
+        <h1 className="text-xl font-bold text-gray-800 mb-2">
+          Sign in to view your profile
         </h1>
-        <a
-          className="border-2 border-blue-600 px-4 py-2 font-bold shadow-lg rounded-2xl hover:scale-105 transition mt-4"
-          href="/vendor-signup"
+        <p className="text-sm text-gray-500 max-w-xs mb-6">
+          Access your vendor dashboard, orders, analytics, and sales records.
+        </p>
+        <button
+          onClick={() => navigate("/vendor-signup")}
+          className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-2.5 rounded-xl shadow-md transition-all active:scale-95"
         >
-          Sign Up Now
-        </a>
+          Sign Up / Login
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="max-w-lg mx-auto h-screen">
+    <div className="min-h-screen bg-gray-50 pb-24">
       {isLoading && <LoadingEffect />}
+
       <AlertCard
         message={msg.message}
         open={msg.isOpen}
         status={msg.status}
         title={msg.title}
-        onClose={() => setMsg({ isOpen: false })}
+        onClose={() => setMsg({ ...msg, isOpen: false })}
       />
-      <div className="h-screen overflow-y-auto">
-        <article className=" bg-black text-blue-600 p-2 flex relative items-center pb-10">
-          {data.photo ? (
-            <img className="border rounded-full mr-10" alt="photo" />
-          ) : (
-            <User className="border rounded-full mr-10" size={80} />
-          )}
-          <section>
-            <h1 className="text-2xl font-bold text-white">
-              {data && data.name}
-            </h1>
-            <p className="text-sm italic">{data && data.phone}</p>
-          </section>
-          <section className="absolute bottom-0 mb-2 mr-4 right-0 flex gap-8 justify-center items-center">
-            <ImSwitch
-              onClick={Logout}
-              className="text-orange-400 cursor-pointer"
-              size={20}
-            />
-            <Trash
-              onClick={() =>
-                alert(
-                  "All your crendentails will be delete including: Transaction details, Personal info etc.. Please note that these information cannot be retrieve once deleted",
-                )
-              }
-              className="text-red-500 cursor-pointer"
-            />
-          </section>
-          {data && data.is_vendor ? (
-            <p className="absolute bottom-8 left-16 w-4 h-4 mb-4  rounded-full bg-green-500 animate-pulse transition"></p>
-          ) : (
-            <p
-              onClick={() => navigate("/policy")}
-              className="absolute bottom-0 border-purple-500 border mb-2 text-[10px] text-purple-600 rounded px-2"
-            >
-              Activate Account
-            </p>
-          )}
-        </article>
 
-        <nav className="flex justify-around mx-2 items-center overflow-x-auto list-none mb-2 mt-4 whitespace-nowrap gap-2">
-          {[
-            { name: "Analytics", Icon: TrendingUp, label: null },
-            { name: "Ask AI", Icon: BsRobot, label: "robot" },
-            { name: "My Orders", Icon: ShoppingCartIcon, label: "myorder" },
-            { name: "Cart Items", Icon: ShoppingBag, label: "mycart" },
-            ...agentActivitive,
-          ].map((item) => (
-            <li
-              className="text-blue-600 font-bold border-2 border-black rounded px-2 py-1 cursor-pointer mb-2.5"
-              key={item.name}
-              onClick={() => setActiveTap(item.label)}
-            >
-              <item.Icon className="inline" /> {item.name}
-            </li>
-          ))}
-        </nav>
-        <hr className="text-white border-gray-400 border-2" />
-        {activeTap === null && (
-          <div className="px-4">
-            <h1 className="text-2xl font-bold mb-4 mt-4">Over View</h1>
-            <section className="grid grid-cols-2 gap-4 justify-center items-center mx-4">
+      <main className="max-w-2xl mx-auto px-4 pt-4">
+        {/* Profile Header Card */}
+        <div className="relative overflow-hidden bg-slate-900 text-white rounded-3xl p-6 shadow-xl mb-6">
+          <div className="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="flex items-start justify-between relative z-10">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                {data.photo ? (
+                  <img
+                    src={data.photo}
+                    alt={data.name}
+                    className="w-16 h-16 rounded-2xl object-cover border-2 border-slate-700 shadow-md"
+                  />
+                ) : (
+                  <div className="w-16 h-16 rounded-2xl bg-slate-800 border-2 border-slate-700 flex items-center justify-center text-slate-400">
+                    <User className="w-8 h-8" />
+                  </div>
+                )}
+                {data.is_vendor && (
+                  <span
+                    className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-slate-900 rounded-full"
+                    title="Active Vendor"
+                  />
+                )}
+              </div>
+
+              <div>
+                <h1 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                  {data.name}
+                  {data.is_vendor && (
+                    <ShieldCheck className="w-4 h-4 text-emerald-400 inline" />
+                  )}
+                </h1>
+                <p className="text-xs text-slate-400 mt-0.5">{data.phone}</p>
+
+                {!data.is_vendor && (
+                  <button
+                    onClick={() => navigate("/policy")}
+                    className="mt-2 text-[11px] bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-medium transition"
+                  >
+                    Activate Vendor Account
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={Logout}
+                className="p-2 text-slate-400 hover:text-amber-400 hover:bg-slate-800/80 rounded-xl transition"
+                title="Log Out"
+              >
+                <LogOut className="w-5 h-5" />
+              </button>
+              <button
+                onClick={handleDeleteAccountAlert}
+                className="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-800/80 rounded-xl transition"
+                title="Delete Account"
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Tab Navigation Pills */}
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-3 mb-4">
+          {tabNavigation.map((tab) => {
+            const Icon = tab.Icon;
+            const isActive = activeTab === tab.label;
+
+            return (
+              <button
+                key={tab.name}
+                onClick={() => setActiveTab(tab.label)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer ${
+                  isActive
+                    ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/20"
+                    : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-100"
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                <span>{tab.name}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* TAB 1: OVERVIEW */}
+        {activeTab === null && (
+          <div className="space-y-4">
+            <h2 className="text-lg font-bold text-gray-900 tracking-tight">
+              Dashboard Overview
+            </h2>
+            <div className="grid grid-cols-2 gap-3">
               <AnalyticCard
-                title={"Total Products"}
-                Num={analytic.product_count}
-                Icon={<ShoppingBag />}
+                title="Total Products"
+                Num={analytic.product_count || 0}
+                Icon={<ShoppingBag className="w-5 h-5 text-emerald-600" />}
               />
-
               <AnalyticCard
-                title={"Total Orders"}
-                Num={analytic.user_orders_count}
-                Icon={<ShoppingCart />}
+                title="Total Orders"
+                Num={analytic.user_orders_count || 0}
+                Icon={<ShoppingCart className="w-5 h-5 text-emerald-600" />}
               />
-
-              {data && data.is_vendor && (
+              {data.is_vendor && (
                 <>
                   <AnalyticCard
-                    title={"Customers Orders"}
-                    Num={analytic.customer_orders_count}
-                    Icon={<Users />}
+                    title="Customers Orders"
+                    Num={analytic.customer_orders_count || 0}
+                    Icon={<Users className="w-5 h-5 text-emerald-600" />}
                   />
                   <AnalyticCard
-                    title={"Earnings"}
-                    Num={`$ ${analytic.sales_record && analytic.sales_record.profit_margin}`}
-                    Icon={<Coins />}
+                    title="Earnings"
+                    Num={`$${analytic.sales_record?.profit_margin?.toFixed(2) || "0.00"}`}
+                    Icon={<Coins className="w-5 h-5 text-emerald-600" />}
                   />
                 </>
               )}
-            </section>
+            </div>
           </div>
         )}
-        {activeTap === "mycart" && (
-          <div>
-            <h1 className="mx-4 font-black text-2xl m-4">Comming Soon!!</h1>
+
+        {/* TAB 2: CART */}
+        {activeTab === "mycart" && (
+          <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center">
+            <ShoppingBag className="w-10 h-10 text-gray-300 mx-auto mb-2" />
+            <h3 className="font-semibold text-gray-800">
+              Cart Feature Coming Soon
+            </h3>
+            <p className="text-xs text-gray-400 mt-1">
+              You will be able to review and manage items saved in your basket.
+            </p>
           </div>
         )}
-        {activeTap === "myorder" && (
-          <div className="overflow-y-auto">
-            <h1 className="mx-4 font-black text-2xl m-4 overflow-y-auto">
-              My Orders
-            </h1>
-            {analytic &&
+
+        {/* TAB 3: MY ORDERS */}
+        {activeTab === "myorder" && (
+          <div className="space-y-3">
+            <h2 className="text-lg font-bold text-gray-900">My Orders</h2>
+            {analytic.user_orders && analytic.user_orders.length > 0 ? (
               analytic.user_orders.map((item, index) => (
                 <ItemCard
                   key={index}
                   name={item.product_name}
                   price={
-                    item.status == "paid"
-                      ? `$ ${item.money} - paid`
-                      : `$ ${item.money} - pending`
+                    item.status === "paid"
+                      ? `$${item.money} • Paid`
+                      : `$${item.money} • Pending`
                   }
-                  lable={"Decline"}
-                  type_={"item"}
+                  lable="Decline"
+                  type_="item"
                 />
-              ))}
+              ))
+            ) : (
+              <p className="text-xs text-gray-500 text-center py-8 bg-white rounded-2xl border border-gray-100">
+                No active orders found.
+              </p>
+            )}
           </div>
         )}
-        {activeTap === "customers" && (
-          <div>
-            <h1 className="mx-4 font-black text-2xl m-4">Customers Orders</h1>
-            {analytic &&
+
+        {/* TAB 4: CUSTOMERS ORDERS */}
+        {activeTab === "customers" && (
+          <div className="space-y-3">
+            <h2 className="text-lg font-bold text-gray-900">Customer Orders</h2>
+            {analytic.customers_orders &&
+            analytic.customers_orders.length > 0 ? (
               analytic.customers_orders.map((item, index) => (
                 <ItemCard
                   onPress={() => completeOrder(item.order_id)}
                   key={index}
                   name={item.product_name}
                   price={
-                    item.status == "paid"
-                      ? `${item.money} - paid`
-                      : `${item.money} - pending`
+                    item.status === "paid"
+                      ? `$${item.money} • Paid`
+                      : `$${item.money} • Pending`
                   }
-                  lable={item.status == "paid" ? "Delete" : "Uncheck"}
-                  type_={"people"}
-                  photo={"photo"}
+                  lable={item.status === "paid" ? "Delete" : "Mark Complete"}
+                  type_="people"
+                  photo="photo"
                 />
-              ))}
+              ))
+            ) : (
+              <p className="text-xs text-gray-500 text-center py-8 bg-white rounded-2xl border border-gray-100">
+                No customer orders received yet.
+              </p>
+            )}
           </div>
         )}
 
-        {activeTap === "products" && (
-          <div className="overflow-y-auto">
-            <h1 className="mx-4 font-black text-2xl mt-4 mb-4">My Products</h1>
-            {analytic &&
+        {/* TAB 5: MY PRODUCTS */}
+        {activeTab === "products" && (
+          <div className="space-y-3">
+            <h2 className="text-lg font-bold text-gray-900">My Listings</h2>
+            {analytic.product && analytic.product.length > 0 ? (
               analytic.product.map((item, index) => (
                 <ItemCard
                   key={index}
                   name={item.product_name}
-                  price={item.price}
-                  lable={"modify"}
-                  type_={"item"}
+                  price={`$${item.price}`}
+                  lable="Modify"
+                  type_="item"
                   photo={item.featured_image}
                 />
-              ))}
-          </div>
-        )}
-        {activeTap === "robot" && (
-          <div>
-            <h1 className="font-bold text-center m-4 text-2xl">
-              AI Comming Soon!!
-            </h1>
-          </div>
-        )}
-        {activeTap === "sales" && (
-          <div className="mx-2">
-            <h1 className="font-bold text-center m-4 text-2xl">Sales Record</h1>
-            {analytic.sales_record && (
-              <div className="mx-2 text-lg ">
-                <section className="mb-4 p-2 rounded-lg bg-purple-200">
-                  <p className="text-center font-bold mb-2">Customer Orders</p>
-                  <p>Total Orders : {analytic.customer_orders_count}</p>
-                  <p>
-                    Total pendding orders :{" "}
-                    {analytic.sales_record.pending_customers_orders}
-                  </p>
-                  <p>
-                    Total Quantities Order{" "}
-                    {analytic.sales_record.total_product_customers_order}
-                  </p>
-                </section>
-
-                <article className=" mb-4 rounded-lg p-2 bg-red-50">
-                  <p className="font-bold text-center mb-2">Agent Inventry</p>
-                  <p>Orders Made : {analytic.user_orders_count}</p>
-                  <p>
-                    Pendding Orders : {analytic.sales_record.pending_orders}
-                  </p>
-                  <p>
-                    Quantities Order{" "}
-                    {analytic.sales_record.total_products_order}
-                  </p>
-                </article>
-
-                <section className="bg-green-100 p-2 rounded-xl border-2">
-                  <p className="font-bold text-center mb-2">Break Down</p>
-                  <p>Total Expenditures: {analytic.sales_record.expenditure}</p>
-                  <p>Total Sales : {analytic.sales_record.total_sales}</p>
-                </section>
-                <p
-                  style={{
-                    color:
-                      analytic.sales_record.profit_margin > 0 ? "green" : "red",
-                  }}
-                  className="text-green-400 font-bold m-4 border rounded-lg px-4"
-                >
-                  Total Profit Margin :{" "}
-                  <span className="font-bold italic">
-                    ${analytic.sales_record.profit_margin.toFixed(2)}
-                  </span>
-                </p>
-              </div>
+              ))
+            ) : (
+              <p className="text-xs text-gray-500 text-center py-8 bg-white rounded-2xl border border-gray-100">
+                No products listed under your account.
+              </p>
             )}
           </div>
         )}
-      </div>
+
+        {/* TAB 6: ASK AI */}
+        {activeTab === "robot" && (
+          <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center space-y-3">
+            <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto text-emerald-600">
+              <Sparkles className="w-6 h-6" />
+            </div>
+            <h3 className="font-bold text-gray-800">
+              AI Assistant Coming Soon
+            </h3>
+            <p className="text-xs text-gray-500 max-w-xs mx-auto">
+              Get intelligent pricing advice, market predictions, and automated
+              customer support recommendations.
+            </p>
+          </div>
+        )}
+
+        {/* TAB 7: SALES RECORD */}
+        {activeTab === "sales" && (
+          <div className="space-y-4">
+            <h2 className="text-lg font-bold text-gray-900">Sales Record</h2>
+            {analytic.sales_record ? (
+              <div className="space-y-3 text-sm">
+                {/* Customer Orders Box */}
+                <div className="p-4 rounded-2xl bg-white border border-gray-100 shadow-2xs space-y-2">
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    Customer Orders
+                  </span>
+                  <div className="grid grid-cols-2 gap-2 text-xs text-gray-700 pt-1">
+                    <p>
+                      Total Orders:{" "}
+                      <span className="font-bold">
+                        {analytic.customer_orders_count || 0}
+                      </span>
+                    </p>
+                    <p>
+                      Pending:{" "}
+                      <span className="font-bold">
+                        {analytic.sales_record.pending_customers_orders || 0}
+                      </span>
+                    </p>
+                    <p className="col-span-2">
+                      Total Units Ordered:{" "}
+                      <span className="font-bold">
+                        {analytic.sales_record.total_product_customers_order ||
+                          0}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+
+                {/* Agent Inventory Box */}
+                <div className="p-4 rounded-2xl bg-white border border-gray-100 shadow-2xs space-y-2">
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    Agent Inventory
+                  </span>
+                  <div className="grid grid-cols-2 gap-2 text-xs text-gray-700 pt-1">
+                    <p>
+                      Orders Placed:{" "}
+                      <span className="font-bold">
+                        {analytic.user_orders_count || 0}
+                      </span>
+                    </p>
+                    <p>
+                      Pending:{" "}
+                      <span className="font-bold">
+                        {analytic.sales_record.pending_orders || 0}
+                      </span>
+                    </p>
+                    <p className="col-span-2">
+                      Total Units:{" "}
+                      <span className="font-bold">
+                        {analytic.sales_record.total_products_order || 0}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+
+                {/* Financial Summary Box */}
+                <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 space-y-2">
+                  <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider">
+                    Financial Summary
+                  </span>
+                  <div className="space-y-1 text-xs text-emerald-950 font-medium">
+                    <div className="flex justify-between">
+                      <span>Total Expenditure:</span>
+                      <span>
+                        ${analytic.sales_record.expenditure || "0.00"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Total Sales:</span>
+                      <span>
+                        ${analytic.sales_record.total_sales || "0.00"}
+                      </span>
+                    </div>
+                    <div className="pt-2 border-t border-emerald-500/20 flex justify-between font-bold text-sm">
+                      <span>Profit Margin:</span>
+                      <span
+                        className={
+                          analytic.sales_record.profit_margin >= 0
+                            ? "text-emerald-700"
+                            : "text-rose-600"
+                        }
+                      >
+                        $
+                        {Number(
+                          analytic.sales_record.profit_margin || 0,
+                        ).toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <p className="text-xs text-gray-500 text-center py-8 bg-white rounded-2xl border border-gray-100">
+                No sales records available yet.
+              </p>
+            )}
+          </div>
+        )}
+      </main>
+
       <BottomNav />
     </div>
   );

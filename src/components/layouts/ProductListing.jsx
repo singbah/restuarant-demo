@@ -1,28 +1,32 @@
 import {
-  ArrowLeftCircle,
+  ArrowLeft,
   DollarSign,
   Camera,
   Upload,
-  ShoppingBasket,
+  ShoppingBag,
   Info,
+  Phone,
+  Store,
+  Grid,
+  X,
+  CheckCircle2,
 } from "lucide-react";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import AlertCard from "./AlertCard";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../../libs/api";
 import useFetch from "../hooks/UseFetch";
-import { BsWhatsapp } from "react-icons/bs";
 import LoadingEffect from "./LoadingEffect";
 import BottomNav from "../ui/BottomNav";
 
 export default function ProductListing() {
-  // const [postListing, PostListing] = useState([]);
   const videoRef = useRef(null);
   const fileRef = useRef(null);
-  const [cameraRef, setCameraRef] = useState(false);
+  const [stream, setStream] = useState(null);
+  const [isCameraActive, setIsCameraActive] = useState(false);
   const [photo, setPhoto] = useState(null);
-
   const [preview, setPreview] = useState(null);
+
   const [form, setForm] = useState({
     productName: "",
     market: "",
@@ -36,54 +40,123 @@ export default function ProductListing() {
     isOpen: false,
     title: "",
     status: "",
-    action: "",
+    action: null,
     message: "",
+    linkTo: "",
   });
 
-  const navigate = useNavigate(null);
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
   const { data, loading, error, refetch } = useFetch(`/user/me`);
-  //   start camera
 
-  async function startCamera() {
-    setPreview(null);
-    setPhoto(null);
-    setCameraRef(true);
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: "environment" },
-    });
-    videoRef.current.srcObject = stream;
-  }
+  // Auto-refetch user data on mount
+  useEffect(() => {
+    refetch();
+  }, []);
 
-  async function takePhoto() {
+  // Set default phone number from user profile once loaded
+  useEffect(() => {
+    if (data?.phone) {
+      setForm((prev) => ({ ...prev, vendor_phone: data.phone }));
+    }
+  }, [data]);
+
+  // Clean up camera stream on component unmount
+  useEffect(() => {
+    return () => {
+      stopCameraStream();
+    };
+  }, [stream]);
+
+  const stopCameraStream = () => {
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
+      setStream(null);
+    }
+    setIsCameraActive(false);
+  };
+
+  const startCamera = async () => {
+    try {
+      if (preview) {
+        URL.revokeObjectURL(preview);
+        setPreview(null);
+        setPhoto(null);
+      }
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" },
+      });
+      setStream(mediaStream);
+      setIsCameraActive(true);
+      if (videoRef.current) {
+        videoRef.current.srcObject = mediaStream;
+      }
+    } catch (err) {
+      setMsg({
+        isOpen: true,
+        title: "Camera Access Error",
+        message:
+          "Unable to access device camera. Please upload an image file instead.",
+        status: "error",
+      });
+    }
+  };
+
+  const takePhoto = () => {
+    if (!videoRef.current) return;
     const canvas = document.createElement("canvas");
     canvas.width = 600;
-    canvas.height = 490;
-    canvas.getContext("2d").drawImage(videoRef.current, 0, 0);
-    canvas.toBlob((blob) => setPhoto(blob), "image/jpeg");
-    setPreview(canvas.toDataURL(videoRef.current));
-    setCameraRef(false);
-  }
+    canvas.height = 480;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+
+    canvas.toBlob((blob) => {
+      setPhoto(blob);
+    }, "image/jpeg");
+
+    setPreview(canvas.toDataURL("image/jpeg"));
+    stopCameraStream();
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    stopCameraStream();
+    if (preview) URL.revokeObjectURL(preview);
+    setPreview(URL.createObjectURL(file));
+    setPhoto(file);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
 
-    if (!Number(form.price)) {
+    if (!photo) {
       setMsg({
         isOpen: true,
-        message: "Price Cant't contain letter",
-        title: "Post Failed",
+        message: "Please select or take a photo of your product.",
+        title: "Photo Required",
         status: "error",
       });
-      setIsLoading(false);
       return;
     }
 
+    if (isNaN(Number(form.price)) || Number(form.price) <= 0) {
+      setMsg({
+        isOpen: true,
+        message: "Please enter a valid numeric price.",
+        title: "Invalid Price",
+        status: "error",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+
     const fd = new FormData();
-    const slug = form.productName.replaceAll(" ", "-");
-    const vendor_phone = form.vendor_phone || data.phone;
+    const slug = form.productName.trim().replaceAll(" ", "-").toLowerCase();
+    const vendor_phone = form.vendor_phone || data?.phone || "";
+
     fd.append("photo", photo);
     fd.append("product_name", form.productName);
     fd.append("vendor_phone", vendor_phone);
@@ -92,31 +165,37 @@ export default function ProductListing() {
     fd.append("category", form.category);
     fd.append("slug", slug);
     fd.append("details", form.details);
-    console.log(slug.toLocaleLowerCase());
-    setIsLoading(false);
+
     try {
       const response = await api.post("/products/upload", fd);
       const result = response.data;
-      console.log(result);
+
       setMsg({
         isOpen: true,
-        message: result.detail,
+        message: result.detail || "Product posted successfully!",
         status: "success",
-        title: "Posted",
+        title: "Product Listed",
       });
-      setForm({ price: 0, productName: "", details: "" });
-      URL.revokeObjectURL(preview);
+
+      // Reset Form State
+      setForm({
+        productName: "",
+        market: "",
+        vendor_phone: data?.phone || "",
+        price: "",
+        category: "",
+        details: "",
+      });
+      if (preview) URL.revokeObjectURL(preview);
       setPreview(null);
       setPhoto(null);
-    } catch (error) {
-      let errData = "An error occur!!";
-      if (error.response) {
-        errData = error.response?.data?.detail || "An error occur!!";
-      }
+    } catch (err) {
+      const errData =
+        err.response?.data?.detail || "Uploading failed, please try again.";
       setMsg({
         isOpen: true,
-        message: "Uploading failed please try again",
-        title: "Upload failed",
+        message: errData,
+        title: "Upload Failed",
         status: "error",
       });
     } finally {
@@ -124,182 +203,305 @@ export default function ProductListing() {
     }
   };
 
-  function goBackHome() {
+  const goBackHome = () => {
     setMsg({
       isOpen: true,
-      message: "Are you sure to discard and to back?",
-      title: "Info",
+      message: "Are you sure you want to discard this listing and leave?",
+      title: "Discard Listing?",
       action: () => navigate("/market"),
       status: "info",
-      linkTo: "Yes",
+      linkTo: "Yes, Leave",
     });
-  }
-
-  useMemo(() => {
-    refetch();
-  }, []);
+  };
 
   if (loading) return <LoadingEffect />;
 
-  if (error || !data)
+  if (error || !data) {
     return (
-      <div className="h-screen flex flex-col justify-center items-center ">
-        <h1 className="font-bold text-2xl text-center mb-4">
-          You must login to access this page
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 text-center">
+        <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4 text-emerald-600">
+          <ShoppingBag className="w-8 h-8" />
+        </div>
+        <h1 className="text-xl font-bold text-gray-800 mb-2">
+          Sign in Required
         </h1>
-        <a
-          href="/vendor-signin"
-          className="text-blue-600 font-bold active:scale-105 cursor-pointer transition border px-4 rounded"
+        <p className="text-xs text-gray-500 max-w-xs mb-6">
+          You need an active vendor account to list items on the marketplace.
+        </p>
+        <button
+          onClick={() => navigate("/vendor-signin")}
+          className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-2.5 rounded-xl shadow-md transition active:scale-95"
         >
-          Sign In
-        </a>
+          Sign In Now
+        </button>
       </div>
     );
+  }
 
   return (
-    <div className="max-w-lg mx-auto p-4 h-screen">
-      <div className="h-screen">
-        {isLoading && <LoadingEffect />}
-        <AlertCard
-          open={msg.isOpen}
-          status={msg.status}
-          title={msg.title}
-          message={msg.message}
-          action={msg.action}
-          linkTo={msg.linkTo}
-          onClose={() => setMsg({ isOpen: false })}
+    <div className="min-h-screen bg-gray-50 pb-28">
+      {isLoading && (
+        <LoadingEffect
+          title="Posting Product..."
+          message="Uploading image and saving details."
         />
-        <div className="flex justify-between items-center mb-4 mt-4">
-          <ArrowLeftCircle
-            onClick={goBackHome}
-            className="text-blue-600 cursor-pointer active:scale-105 transition"
-          />
-          <h1 className="text-2xl font-bold mb-4">Post to Market</h1>
-        </div>
-        {photo ? (
-          <img className="w-100 rounded-lg bg-black mb-2 h-80" src={preview} />
-        ) : (
-          <div className="relative">
-            <video
-              src=""
+      )}
 
-              ref={videoRef}
-              autoPlay
-              className="w-100 h-80 rounded-lg bg-black mb-2 "
-            ></video>
-            <button
-              onClick={takePhoto}
-              style={{ display: cameraRef ? "block" : "none" }}
-              className=" absolute bg-transparent text-red-700 border-4 p-4 rounded-full bottom-4 right-35"
-            >
-              <Camera />
-            </button>
-          </div>
-        )}
-        <div className="flex gap-2 mb-4">
+      <AlertCard
+        open={msg.isOpen}
+        status={msg.status}
+        title={msg.title}
+        message={msg.message}
+        action={msg.action}
+        linkTo={msg.linkTo}
+        onClose={() => setMsg({ ...msg, isOpen: false })}
+      />
+
+      {/* Top Sticky Bar */}
+      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-gray-100 px-4 py-3 shadow-xs">
+        <div className="max-w-lg mx-auto flex items-center justify-between">
           <button
-            className="bg-blue-600 text-white px-4 py-2 rounded"
-            onClick={startCamera}
+            onClick={goBackHome}
+            className="p-1.5 rounded-full text-gray-600 hover:bg-gray-100 transition active:scale-95"
           >
-            <Camera />
+            <ArrowLeft className="w-5 h-5" />
           </button>
+          <h1 className="text-base font-bold text-gray-900 tracking-tight">
+            Post to Market
+          </h1>
+          <div className="w-8" />
+        </div>
+      </header>
 
-          <label className="border justify-center items-center flex px-2 rounded-lg bg-green-500 text-white">
-            <Upload />
+      <main className="max-w-lg mx-auto px-4 pt-4">
+        {/* Media Capture / Upload Card */}
+        <div className="bg-white rounded-2xl border border-gray-100 p-4 shadow-2xs mb-5 space-y-3">
+          <div className="relative w-full h-72 rounded-xl bg-gray-900 overflow-hidden flex items-center justify-center border border-gray-100">
+            {preview ? (
+              <div className="relative w-full h-full">
+                <img
+                  src={preview}
+                  alt="Product preview"
+                  className="w-full h-full object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    URL.revokeObjectURL(preview);
+                    setPreview(null);
+                    setPhoto(null);
+                  }}
+                  className="absolute top-3 right-3 bg-slate-900/80 hover:bg-slate-900 text-white p-1.5 rounded-full backdrop-blur-md transition"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ) : isCameraActive ? (
+              <div className="relative w-full h-full flex items-center justify-center">
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  className="w-full h-full object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={takePhoto}
+                  className="absolute bottom-4 bg-emerald-600 hover:bg-emerald-700 text-white p-4 rounded-full shadow-lg border-2 border-white transition active:scale-95"
+                >
+                  <Camera className="w-6 h-6" />
+                </button>
+              </div>
+            ) : (
+              <div className="text-center p-6 space-y-2">
+                <div className="w-12 h-12 bg-slate-800 text-slate-400 rounded-full flex items-center justify-center mx-auto">
+                  <Camera className="w-6 h-6" />
+                </div>
+                <p className="text-xs text-slate-300 font-medium">
+                  No photo selected yet
+                </p>
+                <p className="text-[11px] text-slate-500">
+                  Take a photo or upload an image file
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={startCamera}
+              className="flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold py-2.5 px-4 rounded-xl transition active:scale-95"
+            >
+              <Camera className="w-4 h-4" />
+              <span>Use Camera</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              className="flex items-center justify-center gap-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-semibold py-2.5 px-4 rounded-xl transition active:scale-95"
+            >
+              <Upload className="w-4 h-4" />
+              <span>Upload Photo</span>
+            </button>
+
             <input
               ref={fileRef}
               type="file"
+              accept="image/*"
               className="hidden"
-              onChange={(e) => {
-                setPreview(URL.createObjectURL(e.target.files[0]));
-                setPhoto(e.target.files[0]);
-              }}
+              onChange={handleFileChange}
             />
-          </label>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <label className="border p-2 rounded-lg flex justify-between items-center gap-2 mb-4">
-            <ShoppingBasket />
-            <input
-              type="text"
-              name="productName"
-              required
-              value={form.productName}
-              className="outline-none w-full"
-              placeholder="Product Name"
-              onChange={(e) =>
-                setForm({ ...form, productName: e.target.value })
-              }
-            />
-          </label>
-          <label className="border p-2 rounded-lg flex justify-between items-center gap-2 mb-4">
-            <DollarSign />
-            <input
-              type="text"
-              value={form.price}
-              className="outline-none w-full"
-              placeholder="Product Price"
-              required
-              onChange={(e) => setForm({ ...form, price: e.target.value })}
-            />
-          </label>
+        {/* Product Details Form */}
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white rounded-2xl border border-gray-100 p-5 shadow-2xs space-y-4"
+        >
+          <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider border-b border-gray-100 pb-2">
+            Product Details
+          </h2>
 
-          <label className="border p-2 rounded-lg flex justify-between items-center gap-2 mb-4">
-            <Info className="text-green-600" />
-            <textarea
-              className="outline-none w-full"
-              required
-              value={form.details}
-              onChange={(e) => setForm({ ...form, details: e.target.value })}
-              placeholder="Please provide a details description about your product"
-            ></textarea>
-          </label>
-          <label className="border p-2 rounded-lg flex justify-between items-center gap-2 mb-4">
-            <BsWhatsapp className="text-green-600" />
-            <input
-              className="outline-none w-full"
-              type="phone"
-              defaultValue={(data && data.phone) || ""}
-              readOnly
-              placeholder="WhatsApp Number 077..."
-              onChange={(e) =>
-                setForm({ ...form, vendor_phone: e.target.value })
-              }
-            />
-          </label>
-          <select
-            onChange={(e) => setForm({ ...form, market: e.target.value })}
-            className="border w-full p-2 rounded"
-          >
-            <option value="redlight">Select Market place</option>
-            <option value="Red Light Market">Red Light Market</option>
-            <option value="Duala Market">Duala Market</option>
-            <option value="Water Side">Water Side Market</option>
-            <option value="Old Road">Old Road Market</option>
-          </select>
+          {/* Product Name Input */}
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-gray-700">
+              Product Title
+            </label>
+            <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2.5 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20 transition">
+              <ShoppingBag className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <input
+                type="text"
+                required
+                value={form.productName}
+                className="w-full text-xs text-gray-800 bg-transparent outline-none placeholder:text-gray-400"
+                placeholder="e.g. Fresh Red Palm Oil (5 Liters)"
+                onChange={(e) =>
+                  setForm({ ...form, productName: e.target.value })
+                }
+              />
+            </div>
+          </div>
 
-          <select
-            onChange={(e) => setForm({ ...form, category: e.target.value })}
-            className="border w-full p-2 rounded"
-          >
-            <option value="">Coose Category</option>
-            <option value="food">Food</option>
-            <option value="fashion">Fashion</option>
-            <option value="phone">Phone</option>
-            <option value="eletronic">Electronic</option>
-            <option value="sports">Sports</option>
-          </select>
+          {/* Price Input */}
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-gray-700">
+              Price ($ USD)
+            </label>
+            <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2.5 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20 transition">
+              <DollarSign className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <input
+                type="text"
+                required
+                value={form.price}
+                className="w-full text-xs text-gray-800 bg-transparent outline-none placeholder:text-gray-400"
+                placeholder="0.00"
+                onChange={(e) => setForm({ ...form, price: e.target.value })}
+              />
+            </div>
+          </div>
+
+          {/* Market & Category Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-gray-700">
+                Market Location
+              </label>
+              <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2.5 focus-within:border-emerald-500 transition">
+                <Store className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                <select
+                  required
+                  value={form.market}
+                  onChange={(e) => setForm({ ...form, market: e.target.value })}
+                  className="w-full text-xs text-gray-800 bg-transparent outline-none"
+                >
+                  <option value="">Select Market</option>
+                  <option value="Red Light Market">Red Light Market</option>
+                  <option value="Duala Market">Duala Market</option>
+                  <option value="Water Side Market">Water Side Market</option>
+                  <option value="Old Road Market">Old Road Market</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-gray-700">
+                Category
+              </label>
+              <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2.5 focus-within:border-emerald-500 transition">
+                <Grid className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                <select
+                  required
+                  value={form.category}
+                  onChange={(e) =>
+                    setForm({ ...form, category: e.target.value })
+                  }
+                  className="w-full text-xs text-gray-800 bg-transparent outline-none"
+                >
+                  <option value="">Select Category</option>
+                  <option value="food">Food & Produce</option>
+                  <option value="fashion">Fashion & Clothing</option>
+                  <option value="phone">Phones & Mobile</option>
+                  <option value="electronic">Electronics</option>
+                  <option value="sports">Sports</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* WhatsApp Phone Input */}
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-gray-700">
+              WhatsApp Phone Number
+            </label>
+            <div className="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2.5 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20 transition">
+              <Phone className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+              <input
+                type="tel"
+                required
+                value={form.vendor_phone}
+                className="w-full text-xs text-gray-800 bg-transparent outline-none placeholder:text-gray-400"
+                placeholder="Phone number e.g. 077000000"
+                onChange={(e) =>
+                  setForm({ ...form, vendor_phone: e.target.value })
+                }
+              />
+            </div>
+          </div>
+
+          {/* Details Textarea */}
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-gray-700">
+              Description / Specifications
+            </label>
+            <div className="flex items-start gap-2 border border-gray-200 rounded-xl px-3 py-2.5 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20 transition">
+              <Info className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
+              <textarea
+                required
+                rows={3}
+                value={form.details}
+                onChange={(e) => setForm({ ...form, details: e.target.value })}
+                className="w-full text-xs text-gray-800 bg-transparent outline-none resize-none placeholder:text-gray-400"
+                placeholder="Provide details about quality, origin, quantity, or delivery notes..."
+              />
+            </div>
+          </div>
+
+          {/* Submit Button */}
           <button
-            disabled={isLoading}
-            className="bg-green-600 py-3 rounded text-white w-full font-bold"
             type="submit"
+            disabled={isLoading}
+            className="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-semibold py-3 px-6 rounded-xl shadow-lg shadow-emerald-600/20 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer mt-2 disabled:opacity-50"
           >
-            Submit
+            <CheckCircle2 className="w-5 h-5" />
+            <span>Publish Listing</span>
           </button>
-          {isLoading ? "Posting" : null}
         </form>
-      </div>
+      </main>
+
       <BottomNav />
     </div>
   );
