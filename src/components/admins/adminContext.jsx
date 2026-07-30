@@ -7,8 +7,6 @@ export const AdminContext = createContext(null);
 export default function AdminProvider({ children }) {
   const [admin, setAdmin] = useState();
   const [analytic, setAnalytic] = useState([]);
-  const [errorMsg, setErrorMsg] = useState(null);
-  const [successMsg, setSuccessMsg] = useState(null);
 
   const navigate = useNavigate(null);
 
