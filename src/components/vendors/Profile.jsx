@@ -255,20 +255,17 @@ export default function VendorProfile() {
                 Num={analytic.user_orders_count || 0}
                 Icon={<ShoppingCart className="w-5 h-5 text-emerald-600" />}
               />
-              {data.is_vendor && (
-                <>
-                  <AnalyticCard
-                    title="Customers Orders"
-                    Num={analytic.customer_orders_count || 0}
-                    Icon={<Users className="w-5 h-5 text-emerald-600" />}
-                  />
-                  <AnalyticCard
-                    title="Earnings"
-                    Num={`$${analytic.sales_record?.profit_margin?.toFixed(2) || "0.00"}`}
-                    Icon={<Coins className="w-5 h-5 text-emerald-600" />}
-                  />
-                </>
-              )}
+
+              <AnalyticCard
+                title="Customers Orders"
+                Num={analytic.customer_orders_count || 0}
+                Icon={<Users className="w-5 h-5 text-emerald-600" />}
+              />
+              <AnalyticCard
+                title="Earnings"
+                Num={`$${analytic.sales_record?.profit_margin?.toFixed(2) || "0.00"}`}
+                Icon={<Coins className="w-5 h-5 text-emerald-600" />}
+              />
             </div>
           </div>
         )}
