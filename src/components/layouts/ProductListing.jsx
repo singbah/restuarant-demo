@@ -18,6 +18,7 @@ import { api } from "../../../libs/api";
 import useFetch from "../hooks/UseFetch";
 import LoadingEffect from "./LoadingEffect";
 import BottomNav from "../ui/BottomNav";
+import ProductShareModal from "../ui/ProductShareModal";
 
 export default function ProductListing() {
   const videoRef = useRef(null);
@@ -26,6 +27,8 @@ export default function ProductListing() {
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [photo, setPhoto] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [shareModalOpen, setShareModelOpen] = useState(false);
+  const [createdProduct, setCreatedProduct] = useState(null);
 
   const [form, setForm] = useState({
     productName: "",
@@ -169,14 +172,8 @@ export default function ProductListing() {
     try {
       const response = await api.post("/products/upload", fd);
       const result = response.data;
-
-      setMsg({
-        isOpen: true,
-        message: result.detail || "Product posted successfully!",
-        status: "success",
-        title: "Product Listed",
-      });
-
+      setCreatedProduct(result);
+      setShareModelOpen(true);
       // Reset Form State
       setForm({
         productName: "",
@@ -246,6 +243,11 @@ export default function ProductListing() {
           message="Uploading image and saving details."
         />
       )}
+      <ProductShareModal
+        isOpen={shareModalOpen}
+        onClose={() => setShareModelOpen(false)}
+        product={createdProduct}
+      />
 
       <AlertCard
         open={msg.isOpen}
