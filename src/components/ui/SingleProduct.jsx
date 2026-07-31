@@ -55,7 +55,7 @@ export default function Product() {
       const phone = productData.vendor_phone || productData.phone;
       const cleanPhone = phone ? phone.replace(/[^0-9]/g, "") : "";
 
-      const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(
+      const whatsappUrl = `https://wa.me/+231${cleanPhone}?text=${encodeURIComponent(
         `Hello, I want to order ${total} units of ${productData.product_name} ($${productData.price} each). Total: $${(total * productData.price).toFixed(2)}`,
       )}`;
 
