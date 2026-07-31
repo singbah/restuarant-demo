@@ -31,7 +31,9 @@ export default function Product() {
   });
 
   // 2. Fetch using correct slug
-  const { data, loading, error } = useFetch(`/products/product/${productSlug}`);
+  const { data, loading, error } = useFetch(
+    productSlug ? `/products/product/${productSlug}` : null,
+  );
 
   const handleQuantityChange = (val) => {
     const newQty = Math.max(1, Number(val) || 1);

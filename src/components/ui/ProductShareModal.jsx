@@ -24,7 +24,7 @@ export default function ProductShareModal({
   if (!isOpen) return null;
 
   // Generate dynamic product link
-  const productUrl = `${window.location.origin}/products/product/${product?.slug || ""}`;
+  const productUrl = `${window.location.origin}/product/${product?.slug || ""}`;
   const shareText = `Check out "${product?.product_name}" on Easi Tech Lr. for ${product?.price || ""}!`;
 
   // Handle Copy to Clipboard
