@@ -29,7 +29,7 @@ export default function App() {
         <Route path="/blog" element={<Blogs />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/post/:postSlug" element={<PostsDetails />} />
-        <Route path="/product/:prodcutSlug" element={<Product />} />
+        <Route path="/product/:productSlug" element={<Product />} />
         <Route path="/policy" element={<PrivacyPolicy />} />
         <Route path="/conditions" element={<TermsAndConditions />} />
         <Route path="/addItem" element={<ProductListing />} />

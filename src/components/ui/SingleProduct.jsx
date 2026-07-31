@@ -1,5 +1,6 @@
 import { useState } from "react";
 import useFetch from "../hooks/UseFetch";
+import { Helmet } from "react-helmet";
 import {
   FileWarning,
   Info,
@@ -17,7 +18,8 @@ import AlertCard from "../layouts/AlertCard";
 import { useParams } from "react-router-dom";
 
 export default function Product() {
-  const { prodcutSlug } = useParams();
+  // 1. Fixed parameter typo here
+  const { productSlug } = useParams();
 
   const [total, setTotal] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -28,34 +30,38 @@ export default function Product() {
     status: "",
   });
 
-  const { data, loading } = useFetch(`/products/product/${prodcutSlug}`);
+  // 2. Fetch using correct slug
+  const { data, loading, error } = useFetch(`/products/product/${productSlug}`);
 
   const handleQuantityChange = (val) => {
     const newQty = Math.max(1, Number(val) || 1);
     setTotal(newQty);
   };
 
-  const sendOrderNOw = async (data) => {
+  const sendOrderNOw = async (productData) => {
     setIsLoading(true);
     const product_info = {
       quantity: total,
-      money: data.price * total,
-      vendor_id: Number(data.vendor_id).toFixed(4),
-      product_name: data.product_name,
-      product_id: data.id,
+      money: productData.price * total,
+      vendor_id: Number(productData.vendor_id).toFixed(4),
+      product_name: productData.product_name,
+      product_id: productData.id,
     };
     try {
-      const request = await api.post("/products/send_order", product_info);
-      const result = request.data;
+      await api.post("/products/send_order", product_info);
 
-      const a = document.createElement("a");
-      a.href = `https://wa.me/+231${data.vendor_phone}?text=I want ${total}pcs of ${data.product_name}`;
-      a.click();
-      console.log(result);
-    } catch (error) {
-      let errData = "Order Can't be sent right now";
-      if (error.response) {
-        errData = error.response?.data?.detail;
+      const phone = productData.vendor_phone || productData.phone;
+      const cleanPhone = phone ? phone.replace(/[^0-9]/g, "") : "";
+
+      const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(
+        `Hello, I want to order ${total} units of ${productData.product_name} ($${productData.price} each). Total: $${(total * productData.price).toFixed(2)}`,
+      )}`;
+
+      window.open(whatsappUrl, "_blank");
+    } catch (err) {
+      let errData = "Order could not be sent right now.";
+      if (err.response) {
+        errData = err.response?.data?.detail;
       }
       setMsg({
         isOpen: true,
@@ -70,7 +76,7 @@ export default function Product() {
 
   if (loading) return <LoadingEffect />;
 
-  if (!data) {
+  if (error || !data) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 text-center">
         <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-4 text-red-500">
@@ -94,6 +100,29 @@ export default function Product() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-24 md:pb-12">
+      {/* 3. Open Graph Meta Tags for Social Sharing */}
+      <Helmet>
+        <title>{data.product_name} | Easi Tech Lr</title>
+        <meta
+          name="description"
+          content={data.details || `Buy ${data.product_name} on Easi Tech Lr.`}
+        />
+
+        <meta property="og:type" content="product" />
+        <meta property="og:title" content={data.product_name} />
+        <meta
+          property="og:description"
+          content={`Price: $${data.price} - ${data.details || "Order via WhatsApp"}`}
+        />
+        <meta property="og:image" content={data.featured_image} />
+        <meta property="og:image:secure_url" content={data.featured_image} />
+        <meta property="og:url" content={window.location.href} />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={data.product_name} />
+        <meta name="twitter:image" content={data.featured_image} />
+      </Helmet>
+
       <AlertCard
         message={msg.message}
         open={msg.isOpen}
@@ -213,10 +242,10 @@ export default function Product() {
                       {data.email}
                     </p>
                   )}
-                  {data.phone && (
+                  {(data.phone || data.vendor_phone) && (
                     <p className="flex items-center gap-2">
                       <Phone className="w-3.5 h-3.5 text-gray-400" />
-                      {data.phone}
+                      {data.vendor_phone || data.phone}
                     </p>
                   )}
                 </div>
